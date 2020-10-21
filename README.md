@@ -5,9 +5,9 @@ The language consists of two parts:
 
 The *Requirements Specification* (file extension _rs_) contains definitions of types and enumerations, which structure the requirements. For every project, it is necessary to define the requirements specification and adapt it to the project's needs.
 
-The "Requirements Data" (file extension _rd_) contains the acutal data. It consists of instances of the types defined in the specification, which always carry the corresponding data.
+The *Requirements Data* (file extension _rd_) contains the actual data. It consists of instances of the types defined in the specification, which carry the corresponding data.
 
-For example, typically in the specification, a type "Requirement" is defined, which has a set of attributes, like the requirement text and a unique id. Within the data part, the type "Requirement" is instantiated multiple times, each instance containing the text of the requirement and its it.
+For example, typically in the specification, a type *Requirement* is defined, which has a set of attributes, like the requirement text and a unique identifier. Within the data part, the type *Requirement* is instantiated multiple times, each instance containing the text of the requirement and its unique identifier.
 
 To get a quick impression, have a look in folder [test](./test), which contains an artificial test project, describing the requirements of a smartphone. Or read the [requirements](./requirements) of REL itself, of course they are written in REL, too (eat your own dogfood!).
 
