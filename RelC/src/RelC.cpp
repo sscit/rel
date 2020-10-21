@@ -48,7 +48,7 @@ void ProcessInputFiles(Logger const &l, std::vector<FileTokenData> &input_files)
 {
     for(unsigned int i=0; i<input_files.size(); i++)
     {
-        l.LOG(LogLevel::INFO, "Processing file " + input_files[i].filepath);
+        l.LOG(LogLevel::INFO, "Reading file " + input_files[i].filepath + " and creating tokens");
         Lexer lex(l);
         lex.Read(input_files[i]);
     }
@@ -65,7 +65,7 @@ void ParseFiles(Logger const &l, std::vector<FileTokenData> &input_files)
         std::vector<FileTokenData>::iterator iter = input_files.begin();
         while( (iter = std::find_if(iter, input_files.end(), [](FileTokenData &d){return (d.GetDataTypeOfTokenList() == DataType::RequirementsSpecification);})) != input_files.end() )
         {
-            l.LOG(LogLevel::INFO, "Parsing of tokens from " + iter->filepath);
+            l.LOG(LogLevel::INFO, "Parsing tokens from " + iter->filepath);
             rs_parser.ParseTokens(*iter);
             iter++;
         }
