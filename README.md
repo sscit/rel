@@ -12,7 +12,7 @@ For example, typically in the specification, a type *Requirement* is defined, wh
 To get a quick impression, have a look in folder [test](./test), which contains an artificial test project, describing the requirements of a smartphone. Or read the [requirements](./requirements) of REL itself, of course they are written in REL, too (eat your own dogfood!).
 
 
-# how to build
+# How to build REL and run it
 
 Clone the repository. Build the C++ parser, which can be used to parse the test project or REL's requirements.
 
