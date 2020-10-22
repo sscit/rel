@@ -32,4 +32,5 @@ cc_library(
       "src/SlidingWindow.h",
       "src/Token.h"
     ],
+    visibility = ["//visibility:public"],
 )

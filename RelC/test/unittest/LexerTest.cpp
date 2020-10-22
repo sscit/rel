@@ -1,10 +1,10 @@
 #include "gtest/gtest.h"
-#include "Lexer.h"
+#include "RelC/src/Lexer.h"
 
 class LexerT : public Lexer
 {
 	public:
-		LexerT() {}
+		LexerT(Logger const& l) : Lexer(l)  {}
 		virtual ~LexerT() {}
 
 		bool TestIsInteger(std::string const &s)
@@ -25,7 +25,8 @@ class LexerT : public Lexer
 };
 
 TEST(LexerTest, IsIdentifier) {
-	LexerT l;
+	Logger tmp;
+	LexerT l(tmp);
 
 	EXPECT_TRUE ( l.TestIsIdentifier("asbd") );
 	EXPECT_TRUE ( l.TestIsIdentifier("Xhdsa") );
@@ -43,7 +44,8 @@ TEST(LexerTest, IsIdentifier) {
 
 TEST(LexerTest, IsString)
 {
-	LexerT l;
+	Logger tmp;
+	LexerT l(tmp);
 
 	EXPECT_TRUE ( l.TestIsString("asbd") );
 	EXPECT_TRUE ( l.TestIsString("A") );
@@ -59,7 +61,8 @@ TEST(LexerTest, IsString)
 
 
 TEST(LexerTest, IsInteger) {
-	LexerT l;
+	Logger tmp;
+	LexerT l(tmp);
 
 	EXPECT_TRUE ( l.TestIsInteger("-1") );
 	EXPECT_TRUE ( l.TestIsInteger("0") );
