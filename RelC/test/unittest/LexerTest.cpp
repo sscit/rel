@@ -1,79 +1,209 @@
 #include "gtest/gtest.h"
 #include "RelC/src/Lexer.h"
 
-class LexerT : public Lexer
+class LexerTestFixture : public ::testing::Test, public Lexer
 {
-	public:
-		LexerT(Logger const& l) : Lexer(l)  {}
-		virtual ~LexerT() {}
+protected:
+  LexerTestFixture() : Lexer(logger)
+  {
 
-		bool TestIsInteger(std::string const &s)
-		{
-			return IsInteger(s);
-		}
+  }
 
-		bool TestIsIdentifier(std::string const &s)
-		{
-			return IsIdentifier(s);
-		}
+  void SetUp() override {
+      token_list = new std::vector<Token>();
+  }
 
-		bool TestIsString(std::string const &s)
-		{
-			return IsString(s);
-		}
+  void TearDown() override
+  {
+      delete token_list;
+  }
 
+  Logger logger;
 };
 
-TEST(LexerTest, IsIdentifier) {
-	Logger tmp;
-	LexerT l(tmp);
-
-	EXPECT_TRUE ( l.TestIsIdentifier("asbd") );
-	EXPECT_TRUE ( l.TestIsIdentifier("Xhdsa") );
-	EXPECT_TRUE ( l.TestIsIdentifier("JDASU") );
-	EXPECT_TRUE ( l.TestIsIdentifier("ash_dhuzd") );
-	EXPECT_TRUE ( l.TestIsIdentifier("XB_dhs_ASdzz") );
-
-	EXPECT_FALSE ( l.TestIsIdentifier("1abs") );
-	EXPECT_FALSE ( l.TestIsIdentifier("/§&dasdas") );
-	EXPECT_FALSE ( l.TestIsIdentifier("asdhdja_&dhas") );
-	EXPECT_FALSE ( l.TestIsIdentifier("-1273t67") );
-	EXPECT_FALSE ( l.TestIsIdentifier("1237") );
-	EXPECT_FALSE ( l.TestIsIdentifier(" ") );
-}
-
-TEST(LexerTest, IsString)
+TEST_F(LexerTestFixture, IsIdentifier)
 {
-	Logger tmp;
-	LexerT l(tmp);
+    EXPECT_TRUE ( IsIdentifier("asbd") );
+    EXPECT_TRUE ( IsIdentifier("Xhdsa") );
+    EXPECT_TRUE ( IsIdentifier("JDASU") );
+    EXPECT_TRUE ( IsIdentifier("ash_dhuzd") );
+    EXPECT_TRUE ( IsIdentifier("XB_dhs_ASdzz") );
 
-	EXPECT_TRUE ( l.TestIsString("asbd") );
-	EXPECT_TRUE ( l.TestIsString("A") );
-	EXPECT_TRUE ( l.TestIsString("Xh---dsa") );
-	EXPECT_FALSE ( l.TestIsString("Xh-\r-dsa") );
-	EXPECT_FALSE ( l.TestIsString("Xh-\n-dsa") );
-	EXPECT_FALSE ( l.TestIsString("Xh-\r\n-dsa") );
-	EXPECT_FALSE ( l.TestIsString("\r") );
-	EXPECT_FALSE ( l.TestIsString("\n") );
-	EXPECT_FALSE ( l.TestIsString(" ") );
-	EXPECT_FALSE ( l.TestIsString("     xx  ") );
+    EXPECT_FALSE ( IsIdentifier("1abs") );
+    EXPECT_FALSE ( IsIdentifier("/§&dasdas") );
+    EXPECT_FALSE ( IsIdentifier("asdhdja_&dhas") );
+    EXPECT_FALSE ( IsIdentifier("-1273t67") );
+    EXPECT_FALSE ( IsIdentifier("1237") );
+    EXPECT_FALSE ( IsIdentifier(" ") );
 }
 
+TEST_F(LexerTestFixture, IsString)
+{
+    EXPECT_TRUE ( IsString("asbd") );
+    EXPECT_TRUE ( IsString("A") );
 
-TEST(LexerTest, IsInteger) {
-	Logger tmp;
-	LexerT l(tmp);
+    EXPECT_TRUE ( IsString("Xh---dsa") );
+    EXPECT_FALSE ( IsString("Xh-\r-dsa") );
+    EXPECT_FALSE ( IsString("Xh-\n-dsa") );
+    EXPECT_FALSE ( IsString("Xh-\r\n-dsa") );
+    EXPECT_FALSE ( IsString("\r") );
+    EXPECT_FALSE ( IsString("\n") );
+    EXPECT_FALSE ( IsString(" ") );
+    EXPECT_FALSE ( IsString("     xx  ") );
+}
 
-	EXPECT_TRUE ( l.TestIsInteger("-1") );
-	EXPECT_TRUE ( l.TestIsInteger("0") );
-	EXPECT_TRUE ( l.TestIsInteger("1") );
-	EXPECT_TRUE ( l.TestIsInteger("17262") );
-	EXPECT_TRUE ( l.TestIsInteger("-14726") );
+TEST_F(LexerTestFixture, IsInteger) {
+    EXPECT_TRUE ( IsInteger("-1") );
+    EXPECT_TRUE ( IsInteger("0") );
+    EXPECT_TRUE ( IsInteger("1") );
+    EXPECT_TRUE ( IsInteger("17262") );
+    EXPECT_TRUE ( IsInteger("-14726") );
 
-	EXPECT_FALSE ( l.TestIsInteger("-1x4726") );
-	EXPECT_FALSE ( l.TestIsInteger("1x4726") );
-	EXPECT_FALSE ( l.TestIsInteger("$1x4726") );
-	EXPECT_FALSE ( l.TestIsInteger("a-1x4726") );
-	EXPECT_FALSE ( l.TestIsInteger("X") );
-	EXPECT_FALSE ( l.TestIsInteger("123sa") );
+    EXPECT_FALSE ( IsInteger("-1x4726") );
+    EXPECT_FALSE ( IsInteger("1x4726") );
+    EXPECT_FALSE ( IsInteger("$1x4726") );
+    EXPECT_FALSE ( IsInteger("a-1x4726") );
+    EXPECT_FALSE ( IsInteger("X") );
+    EXPECT_FALSE ( IsInteger("123sa") );
+}
+
+TEST_F(LexerTestFixture, IsDelimiter) {
+    EXPECT_TRUE ( IsDelimiter('\n') );
+    EXPECT_TRUE ( IsDelimiter('\r') );
+    EXPECT_TRUE ( IsDelimiter(' ') );
+
+    EXPECT_FALSE ( IsDelimiter('a') );
+    EXPECT_FALSE ( IsDelimiter('x') );
+    EXPECT_FALSE ( IsDelimiter('_') );
+    EXPECT_FALSE ( IsDelimiter(0) );
+}
+
+TEST_F(LexerTestFixture, IsLinebreak) {
+    EXPECT_TRUE ( IsLinebreak("\r\n") );
+    EXPECT_TRUE ( IsLinebreak("\n") );
+
+    EXPECT_FALSE ( IsLinebreak("ads") );
+    EXPECT_FALSE ( IsLinebreak("") );
+    EXPECT_FALSE ( IsLinebreak("_") );
+}
+
+TEST_F(LexerTestFixture, IsWhitespace) {
+    EXPECT_TRUE ( IsWhitespace(' ') );
+    EXPECT_TRUE ( IsWhitespace('\t') )
+
+    EXPECT_FALSE ( IsWhitespace('x') );
+    EXPECT_FALSE ( IsWhitespace(0) );
+    EXPECT_FALSE ( IsWhitespace('_') );
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString1) {
+    std::string xx = "hello";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString2) {
+    std::string xx = "43847";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::INTEGER_VALUE);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString3) {
+    std::string xx = "438_47";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::STRING_VALUE);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString4) {
+    std::string xx = ":";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COLON);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString5) {
+    std::string xx = "//";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::LINE_COMMENT);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString6) {
+    std::string xx = "/*";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COMMENT_BLOCK_START);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString7) {
+    std::string xx = "*/";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COMMENT_BLOCK_END);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString8) {
+    std::string xx = ",";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COMMA);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString9) {
+    std::string xx = "{";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::BRACKET_OPEN);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString10) {
+    std::string xx = "link";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::LINK);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString11) {
+    std::string xx = "}";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::BRACKET_CLOSE);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString12) {
+    std::string xx = "id";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::ID);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString13) {
+    std::string xx = "type";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::TYPE);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString14) {
+    std::string xx = "enum";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::ENUM);
 }
