@@ -29,7 +29,7 @@ Clone the repository. Build the C++ parser, which can be used to parse the test 
 REL can be built with GCC. It requires C++17 support.
 
 ```
-bazel build --copt="-std=c++17" --copt="-fconcepts" //RelC:relc
+bazel build --config=default //RelC:relc
 ``` 
 
 After successful compilation, run the binary with the following command.
@@ -44,7 +44,7 @@ bazel-bin/RelC/relc -r -v ./test/
 ## Run Unittests of RelC
 
 ```
-bazel test --copt="-std=c++17" --copt="-fconcepts" //RelC/test/unittest:RelCUnitTest
+bazel test --config=default //RelC/test/unittest:RelCUnitTest
 ```
 
 ## Test Data Set

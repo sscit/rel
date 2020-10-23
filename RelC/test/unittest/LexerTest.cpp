@@ -89,7 +89,7 @@ TEST_F(LexerTestFixture, IsLinebreak) {
 
 TEST_F(LexerTestFixture, IsWhitespace) {
     EXPECT_TRUE ( IsWhitespace(' ') );
-    EXPECT_TRUE ( IsWhitespace('\t') )
+    EXPECT_TRUE ( IsWhitespace('\t') );
 
     EXPECT_FALSE ( IsWhitespace('x') );
     EXPECT_FALSE ( IsWhitespace(0) );

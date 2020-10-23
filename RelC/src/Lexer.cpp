@@ -105,7 +105,7 @@ void Lexer::AddTokenToList(std::string const &s, TokenType const &tt)
     current_position = std::abs(current_position);
 
     Token t(s, tt, filename, current_line, current_position);
-    token_list->push_back(t);
+    token_list->push_back(t); 
 
     std::string logmessage = "Token detected and stored: ";
     logmessage.append(Token::TokenTypeToString(tt));

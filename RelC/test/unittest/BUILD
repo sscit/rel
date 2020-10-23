@@ -1,8 +1,10 @@
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
 cc_test(
     name = "RelCUnitTest",
     srcs = glob(["**/*.cpp"]),
     deps = [
-        "//RelC:relc_lib",
+        "//RelC/src:relc_lib",
         "@googletest//:gtest_main",
     ],
 )
