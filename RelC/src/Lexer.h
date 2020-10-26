@@ -8,9 +8,6 @@
 #ifndef LEXER_H_
 #define LEXER_H_
 
-#include "Token.h"
-#include "SlidingWindow.h"
-#include "Logger.h"
 #include <map>
 #include <vector>
 #include <list>
@@ -19,6 +16,10 @@
 #include <algorithm>
 #include <cctype>
 
+#include "Token.h"
+#include "SlidingWindow.h"
+#include "Logger.h"
+#include "FileReader.h"
 
 enum class DataType
 {
@@ -34,14 +35,21 @@ class FileTokenData
 {
 public:
     FileTokenData(DataType);
+    /* Constructor to supply a string containing the data. Necessary
+     * for testing purposes, to provide test data which is
+     * used instead of opening the file.
+     */
+    FileTokenData(DataType, FileReader&);
 
     DataType GetDataTypeOfTokenList() const;
+    FileReader &GetFileReader();
 
     std::string filepath;
     std::vector<Token> token_list;
 
 private:
     DataType data_type;
+    FileReader file_access;
 };
 
 class SlidingWindow;

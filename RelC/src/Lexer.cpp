@@ -16,9 +16,19 @@ FileTokenData::FileTokenData(DataType d)
     data_type = d;
 }
 
+FileTokenData::FileTokenData(DataType d, FileReader &fr) : file_access(fr)
+{
+    data_type = d;
+}
+
 DataType FileTokenData::GetDataTypeOfTokenList() const
 {
     return data_type;
+}
+
+FileReader& FileTokenData::GetFileReader()
+{
+    return file_access;
 }
 
 
@@ -201,15 +211,16 @@ void Lexer::CheckStringandAddToken(std::string &current_str)
 
 void Lexer::Read(FileTokenData& data)
 {
-    std::fstream fs;
-    fs.open(data.filepath.c_str());
+    FileReader &file_reader = data.GetFileReader();
+
+    file_reader.OpenFile(data.filepath.c_str());
 
     token_list = &data.token_list;
     filename = data.filepath;
     current_line = 1;
     current_position_in_line = 1;
 
-    if(fs.is_open())
+    if(file_reader.IsFileOpen())
     {
         std::string current_str;
         current_str.clear();
@@ -218,7 +229,7 @@ void Lexer::Read(FileTokenData& data)
         char c;
 
         // read first char in advance
-        if(fs.get(c))
+        if(file_reader.GetChar(c))
         {
             current_position_in_line++;
             sliding_window.push_back(c);
@@ -226,7 +237,7 @@ void Lexer::Read(FileTokenData& data)
 
         while(!sliding_window.empty())
         {
-            if(fs.get(c))
+            if(file_reader.GetChar(c))
             {
                 current_position_in_line++;
                 sliding_window.push_back(c);
@@ -264,7 +275,7 @@ void Lexer::Read(FileTokenData& data)
     }
 
 
-    fs.close();
+    file_reader.Close();
 }
 
 Lexer::~Lexer() {
