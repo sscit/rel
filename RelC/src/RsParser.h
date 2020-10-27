@@ -27,7 +27,7 @@ public:
 
     RsType GetType(RsRdIdentifier &type_ident) const;
 
-private:
+protected:
     RsEnum EnumDefinition(FileTokenData const&, unsigned int &);
     RsType TypeDefinition(FileTokenData const&, unsigned int &);
 

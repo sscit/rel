@@ -4,7 +4,7 @@
 class LexerTestFixture : public ::testing::Test, public Lexer
 {
 protected:
-  LexerTestFixture() : Lexer(logger)
+  LexerTestFixture() : Lexer(logger), lexer_test(logger)
   {
 
   }
@@ -19,7 +19,42 @@ protected:
   }
 
   Logger logger;
+  std::string testdata;
+  Lexer lexer_test;
 };
+
+TEST_F(LexerTestFixture, TypeDefinition)
+{
+    testdata = "type XXX { attribute : id, status : New, }";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 12);
+}
+
+TEST_F(LexerTestFixture, EnumDefinition)
+{
+    testdata = "enum XXX { MyAttr }";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 5);
+}
+
+TEST_F(LexerTestFixture, LineComment)
+{
+    testdata = "// test line comment\n";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 5);
+}
 
 TEST_F(LexerTestFixture, IsIdentifier)
 {

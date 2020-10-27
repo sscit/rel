@@ -23,7 +23,7 @@ public:
     bool IsFileOpen() const;
     void Close();
 
-    std::istream& GetChar(char &);
+    bool GetChar(char &);
 
 private:
     std::fstream *filestream;
@@ -31,8 +31,6 @@ private:
      * via string instead of accessing the file system.
      */
     std::string data;
-    std::fstream *valid;
-    std::fstream *eof;
     unsigned int current_pos;
 };
 

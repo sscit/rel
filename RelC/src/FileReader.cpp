@@ -15,11 +15,7 @@ FileReader::FileReader(std::string testdata)
 {
     data = testdata;
     current_pos = 0;
-    eof = new std::fstream();
-    valid = new std::fstream();
     filestream = new std::fstream();
-
-    eof->setstate(std::ios_base::eofbit);
 }
 
 FileReader::FileReader(FileReader const &f) : FileReader("")
@@ -29,8 +25,6 @@ FileReader::FileReader(FileReader const &f) : FileReader("")
 }
 
 FileReader::~FileReader() {
-    delete eof;
-    delete valid;
     delete filestream;
 }
 
@@ -67,11 +61,15 @@ bool FileReader::IsFileOpen() const
     return ret;
 }
 
-std::istream& FileReader::GetChar(char &c)
+bool FileReader::GetChar(char &c)
 {
     if(data.length() == 0)
     {
-        return filestream->get(c);
+        if(filestream->get(c))
+        {
+            return true;
+        }
+        else return false;
     }
     else
     {
@@ -79,11 +77,11 @@ std::istream& FileReader::GetChar(char &c)
         {
             c = data[current_pos];
             current_pos++;
-            return *valid;
+            return true;
         }
         else
         {
-            return *eof;
+            return false;
         }
     }
 }
