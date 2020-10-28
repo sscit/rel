@@ -7,13 +7,9 @@
 
 #include "RdParser.h"
 
-RdParser::RdParser(Logger const &logger, RsParser const & s) : Parser(logger), specification(s) {
-    // TODO Auto-generated constructor stub
+RdParser::RdParser(Logger const &logger, RsParser const & s) : Parser(logger), specification(s) { }
 
-}
-
-ParsingStatistic RdParser::GetParsingStatistics() const
-{
+ParsingStatistic RdParser::GetParsingStatistics() const {
     return statistic;
 }
 
@@ -253,6 +249,4 @@ void RdParser::ParseTokens(FileTokenData const& tokens)
     }
 }
 
-RdParser::~RdParser() {
-    // TODO Auto-generated destructor stub
-}
+RdParser::~RdParser() { }

@@ -31,6 +31,10 @@ protected:
     RsEnum EnumDefinition(FileTokenData const&, unsigned int &);
     RsType TypeDefinition(FileTokenData const&, unsigned int &);
 
+    /* Returns true, if the enum value provided hasn't been defined already
+       within the enum type, false otherwise */
+    bool IsEnumValueUnique(RsEnum const&, RsRdIdentifier const&);
+
     /* Verifies, that the token at dedicated index is of a specific type.
      * If not, throw the exception provided. EOLs are skipped, if there are
      * some.

@@ -6,52 +6,45 @@
 #include "Token.h"
 
 /* Data Structures of AST, used for .rs and .rd syntax */
-class RsRdIdentifier
-{
+class RsRdIdentifier {
 public:
 	std::string name;
 };
 
 // AST elements used in .rs files
-class RsEnum
-{
+class RsEnum {
 public:
     RsRdIdentifier name;
     std::vector<RsRdIdentifier> enum_elements;
 };
 
 // Represents an entry of a type
-class RsTypeElement
-{
+class RsTypeElement {
 public:
     RsRdIdentifier name;
     TokenType token_type;
     RsEnum enum_definition;
 };
 
-class RsType
-{
+class RsType {
 public:
     RsRdIdentifier name;
     std::vector<RsTypeElement> type_elements;
 };
 
 // AST elements used in .rd files
-class RdString
-{
+class RdString {
 public:
     std::string value;
 };
 
-class RdInteger
-{
+class RdInteger {
 public:
     int value;
 };
 
 // represents one entry of the type instance
-class RdTypeInstanceElement
-{
+class RdTypeInstanceElement {
 public:
     RsTypeElement name;
     RdString string_value;
@@ -60,17 +53,10 @@ public:
     RsRdIdentifier enum_value;
 };
 
-class RdTypeInstance
-{
+class RdTypeInstance {
 public:
     RsType type;
     std::vector<RdTypeInstanceElement> type_elements_data;
 };
-
-
-
-
-
-
 
 #endif

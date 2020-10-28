@@ -35,6 +35,13 @@ protected:
     std::string const custom_message;
 };
 
+class WrongTokenException : public ParseException {
+public:
+    WrongTokenException(Token const, std::string const msg = "");
+    ~WrongTokenException();
+
+    virtual const char* what() const throw();
+};
 
 class CommentException : public ParseException {
 public:

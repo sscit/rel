@@ -68,6 +68,39 @@ TEST_F(RsParserTestFixture, TypeDefinition)
     EXPECT_EQ(all_types["XXX"].type_elements.size(), 4);
 }
 
+TEST_F(RsParserTestFixture, WrongToken)
+{
+    testdata = ",type XXX { attribute  id, attribtue2 : link, attr3 : string, attr4 : int,}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), WrongTokenException);
+}
+
+TEST_F(RsParserTestFixture, WrongTypeDefinition)
+{
+    testdata = "type XXX { attribute  id, attribtue2 : link, attr3 : string, attr4 : int,}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), RsTypeException);
+}
+
+TEST_F(RsParserTestFixture, WrongTypeDefinition2)
+{
+    testdata = "type XXX { attribute : id, attribtue2 : link, attr3 : stringXXX, attr4 : int,}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), RsTypeException);
+}
+
 TEST_F(RsParserTestFixture, TypeAndEnum)
 {
     testdata = "enum XXX { A,B,C,} type MyType { att1 : id, /* blabal l */ att2 : XXX, att3 : int,}";
@@ -99,3 +132,35 @@ TEST_F(RsParserTestFixture, EnumDefinitions)
     EXPECT_EQ(all_types.size(), 0);
 }
 
+TEST_F(RsParserTestFixture, WrongEnumDefinition)
+{
+    testdata = "enum XXX { ,A,B,C,}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), RsEnumException);
+}
+
+TEST_F(RsParserTestFixture, WrongEnumDefinition2)
+{
+    testdata = "enumX XXX { A,B,C,}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), RsEnumException);
+}
+
+TEST_F(RsParserTestFixture, WrongEnumDefinition3)
+{
+    testdata = "enum XXX { A,B,B,}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), RsEnumException);
+}

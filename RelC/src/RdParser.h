@@ -17,8 +17,7 @@
 #include "AST.h"
 #include "RsParser.h"
 
-class ParsingStatistic
-{
+class ParsingStatistic {
 public:
     ParsingStatistic() {
         number_of_files = 0;
@@ -40,12 +39,11 @@ public:
     void CheckAllLinks();
     ParsingStatistic GetParsingStatistics() const;
 
-private:
+protected:
     RdInteger Integer(FileTokenData const&, unsigned int&);
     RdString ReadString(FileTokenData const&, unsigned int&);
     RdTypeInstance TypeInstance(FileTokenData const&, unsigned int&);
     bool EnumValueExists(std::vector<RsRdIdentifier> const &enum_values, RsRdIdentifier &enum_value) const;
-
 
     /* Verifies, that the token at dedicated index is of a specific type.
      * If not, throw the exception provided. EOLs are skipped, if there are

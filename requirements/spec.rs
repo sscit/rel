@@ -11,7 +11,6 @@ type Information
     Text : string,
 }
 
-
 enum RequirementState 
 {
     Draft,
