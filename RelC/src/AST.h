@@ -1,3 +1,6 @@
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
+
 #ifndef AST_H_
 #define AST_H_
 
@@ -8,7 +11,7 @@
 /* Data Structures of AST, used for .rs and .rd syntax */
 class RsRdIdentifier {
 public:
-	std::string name;
+    std::string name;
 };
 
 // AST elements used in .rs files

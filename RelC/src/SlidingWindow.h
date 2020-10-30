@@ -1,9 +1,5 @@
-/*
- * SlidingWindow.h
- *
- *  Created on: 04.08.2020
- *      Author: Stefan_2
- */
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
 
 #ifndef SLIDINGWINDOW_H_
 #define SLIDINGWINDOW_H_
@@ -16,7 +12,6 @@ public:
     virtual ~SlidingWindow();
 
     char pop_front();
-
 };
 
 #endif /* SLIDINGWINDOW_H_ */

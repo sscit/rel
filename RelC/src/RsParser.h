@@ -1,9 +1,5 @@
-/*
- * RsParser.h
- *
- *  Created on: 12.10.2020
- *      Author: Stefan_2
- */
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
 
 #ifndef RSPARSER_H_
 #define RSPARSER_H_

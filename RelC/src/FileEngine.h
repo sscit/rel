@@ -1,9 +1,5 @@
-/*
- * FileEngine.h
- *
- *  Created on: 03.08.2020
- *      Author: Stefan_2
- */
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
 
 #ifndef FILEENGINE_H_
 #define FILEENGINE_H_

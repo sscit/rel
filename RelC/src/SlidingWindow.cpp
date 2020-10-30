@@ -1,26 +1,17 @@
-/*
- * SlidingWindow.cpp
- *
- *  Created on: 04.08.2020
- *      Author: Stefan_2
- */
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
 
 #include "SlidingWindow.h"
 
 SlidingWindow::SlidingWindow() {
     reserve(2);
-
 }
 
-SlidingWindow::~SlidingWindow() {
-    // TODO Auto-generated destructor stub
-}
+SlidingWindow::~SlidingWindow() { }
 
-char SlidingWindow::pop_front()
-{
+char SlidingWindow::pop_front() {
     char ret = 0;
-    if(size() > 0)
-    {
+    if(size() > 0) {
         ret = *(begin());
         erase(begin());
     }

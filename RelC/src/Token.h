@@ -1,9 +1,5 @@
-/*
- * Token.h
- *
- *  Created on: 11.07.2020
- *      Author: Stefan_2
- */
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
 
 #ifndef TOKEN_H_
 #define TOKEN_H_
@@ -11,8 +7,7 @@
 #include <string>
 #include <iostream>
 
-enum class TokenType
-{
+enum class TokenType {
     // reserved keywords
     TYPE,
     ENUM,
@@ -40,8 +35,6 @@ enum class TokenType
     INTEGER_VALUE,
 };
 std::ostream &operator<<( std::ostream&, const TokenType&);
-
-
 
 /* Represents a token which is an entity of the language */
 class Token {

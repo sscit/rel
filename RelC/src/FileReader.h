@@ -1,9 +1,5 @@
-/*
- * FileReader.h
- *
- *  Created on: 24.10.2020
- *      Author: Stefan_2
- */
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
 
 #ifndef FILEREADER_H_
 #define FILEREADER_H_

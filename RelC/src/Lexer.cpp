@@ -1,9 +1,5 @@
-/*
- * Lexer.cpp
- *
- *  Created on: 11.07.2020
- *      Author: Stefan_2
- */
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
 
 #include <string>
 #include <cmath>
@@ -11,23 +7,19 @@
 
 
 // ############ Implementation of class FileTokenData
-FileTokenData::FileTokenData(DataType d)
-{
+FileTokenData::FileTokenData(DataType d) {
     data_type = d;
 }
 
-FileTokenData::FileTokenData(DataType d, FileReader &fr) : file_access(fr)
-{
+FileTokenData::FileTokenData(DataType d, FileReader &fr) : file_access(fr) {
     data_type = d;
 }
 
-DataType FileTokenData::GetDataTypeOfTokenList() const
-{
+DataType FileTokenData::GetDataTypeOfTokenList() const {
     return data_type;
 }
 
-FileReader& FileTokenData::GetFileReader()
-{
+FileReader& FileTokenData::GetFileReader() {
     return file_access;
 }
 
@@ -58,20 +50,17 @@ Lexer::Lexer(Logger const &logger) : l(logger)  {
     current_position_in_line = 0;
 }
 
-void Lexer::PrintTokenList(FileTokenData& d)
-{
+void Lexer::PrintTokenList(FileTokenData& d) {
     std::cout << "Nr of Tokens: " << d.token_list.size() << std::endl;
 
-    for(unsigned int i=0; i<d.token_list.size(); ++i)
-    {
+    for(unsigned int i=0; i<d.token_list.size(); ++i) {
         Token const &x = d.token_list[i];
 
         std::cout << "Token Type: " << x.GetTokenType() << ",\t string value: " << x.GetTokenValue() << std::endl;
     }
 }
 
-bool Lexer::IsInteger(std::string const &s)
-{
+bool Lexer::IsInteger(std::string const &s) {
     int offset = 0;
 
     if(s.size() == 0)
@@ -86,8 +75,7 @@ bool Lexer::IsInteger(std::string const &s)
                         }) == s.end();
 }
 
-bool Lexer::IsIdentifier(std::string const &s)
-{
+bool Lexer::IsIdentifier(std::string const &s) {
     unsigned char first_character = s[0];
     if(std::isalpha(first_character) == 0)
         return false;
@@ -98,8 +86,7 @@ bool Lexer::IsIdentifier(std::string const &s)
                         }) == s.end();
 }
 
-bool Lexer::IsString(std::string const &s)
-{
+bool Lexer::IsString(std::string const &s) {
     if(s.size() == 0)
         return false;
 
@@ -109,8 +96,7 @@ bool Lexer::IsString(std::string const &s)
                         }) == s.end();
 }
 
-void Lexer::AddTokenToList(std::string const &s, TokenType const &tt)
-{
+void Lexer::AddTokenToList(std::string const &s, TokenType const &tt) {
     int current_position = current_position_in_line - s.size();
     current_position = std::abs(current_position);
 
@@ -123,23 +109,20 @@ void Lexer::AddTokenToList(std::string const &s, TokenType const &tt)
     l.LOG(LogLevel::DEBUG, logmessage);
 }
 
-bool Lexer::IsDelimiter(char const c)
-{
+bool Lexer::IsDelimiter(char const c) {
     if(c==' ' || c=='\r' || c=='\n')
         return true;
 
     else return false;
 }
 
-bool Lexer::IsOperator(std::string const& s)
-{
+bool Lexer::IsOperator(std::string const& s) {
     if(token_table.count(s) == 1)
         return true;
     else return false;
 }
 
-bool Lexer::IsOperator(SlidingWindow const& l)
-{
+bool Lexer::IsOperator(SlidingWindow const& l) {
     char buf[2];
     buf[0] = l.front();
 
@@ -157,24 +140,20 @@ bool Lexer::IsOperator(SlidingWindow const& l)
     return false;
 }
 
-bool Lexer::IsWhitespace(char const c)
-{
+bool Lexer::IsWhitespace(char const c) {
     if(c == ' ' || c == '\t')
         return true;
 
     else return false;
 }
 
-bool Lexer::IsLinebreak(const std::string& s)
-{
-    if(s.size() == 1)
-    {
+bool Lexer::IsLinebreak(const std::string& s) {
+    if(s.size() == 1) {
         if(s.compare("\n") == 0)
             return true;
     }
 
-    if(s.size() == 2)
-    {
+    if(s.size() == 2) {
         if(s.compare("\r\n") == 0)
             return true;
     }
@@ -183,25 +162,20 @@ bool Lexer::IsLinebreak(const std::string& s)
     return false;
 }
 
-void Lexer::CheckStringandAddToken(std::string &current_str)
-{
-    if(token_table.count(current_str) == 1)
-    {
+void Lexer::CheckStringandAddToken(std::string &current_str) {
+    if(token_table.count(current_str) == 1) {
         AddTokenToList(current_str, token_table[current_str]);
         current_str.clear();
     }
-    else if(IsInteger(current_str))
-    {
+    else if(IsInteger(current_str)) {
         AddTokenToList(current_str, TokenType::INTEGER_VALUE);
         current_str.clear();
     }
-    else if(IsIdentifier(current_str))
-    {
+    else if(IsIdentifier(current_str)) {
         AddTokenToList(current_str, TokenType::IDENTIFIER);
         current_str.clear();
     }
-    else if(IsString(current_str))
-    {
+    else if(IsString(current_str)) {
         AddTokenToList(current_str, TokenType::STRING_VALUE);
         current_str.clear();
     }
@@ -209,8 +183,7 @@ void Lexer::CheckStringandAddToken(std::string &current_str)
 
 
 
-void Lexer::Read(FileTokenData& data)
-{
+void Lexer::Read(FileTokenData& data) {
     FileReader &file_reader = data.GetFileReader();
 
     file_reader.OpenFile(data.filepath.c_str());
@@ -220,8 +193,7 @@ void Lexer::Read(FileTokenData& data)
     current_line = 1;
     current_position_in_line = 1;
 
-    if(file_reader.IsFileOpen())
-    {
+    if(file_reader.IsFileOpen()) {
         std::string current_str;
         current_str.clear();
         // window moving across the input file, always keeps two chars
@@ -229,30 +201,25 @@ void Lexer::Read(FileTokenData& data)
         char c;
 
         // read first char in advance
-        if(file_reader.GetChar(c))
-        {
+        if(file_reader.GetChar(c)) {
             current_position_in_line++;
             sliding_window.push_back(c);
         }
 
-        while(!sliding_window.empty())
-        {
-            if(file_reader.GetChar(c))
-            {
+        while(!sliding_window.empty()) {
+            if(file_reader.GetChar(c)) {
                 current_position_in_line++;
                 sliding_window.push_back(c);
             }
 
             // discard whitespaces
-            if(current_str.size()==0 && IsWhitespace(sliding_window.front()))
-            {
+            if(current_str.size()==0 && IsWhitespace(sliding_window.front())) {
                 sliding_window.pop_front();
                 continue;
             }
 
             // identify line break directly
-            if(IsLinebreak(current_str))
-            {
+            if(IsLinebreak(current_str)) {
                 current_line++;
                 current_position_in_line=1;
                 AddTokenToList(current_str, token_table[current_str]);
@@ -260,8 +227,7 @@ void Lexer::Read(FileTokenData& data)
             }
             else if(IsDelimiter(sliding_window.front()) ||
                     IsOperator(sliding_window) ||
-                    IsOperator(current_str))
-            {
+                    IsOperator(current_str)) {
                 CheckStringandAddToken(current_str);
             }
 
@@ -274,11 +240,7 @@ void Lexer::Read(FileTokenData& data)
         CheckStringandAddToken(current_str);
     }
 
-
     file_reader.Close();
 }
 
-Lexer::~Lexer() {
-    // TODO Auto-generated destructor stub
-}
-
+Lexer::~Lexer() { }

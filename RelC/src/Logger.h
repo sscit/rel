@@ -1,9 +1,5 @@
-/*
- * Logger.h
- *
- *  Created on: 13.10.2020
- *      Author: Stefan_2
- */
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
 
 #ifndef LOGGER_H_
 #define LOGGER_H_
@@ -13,8 +9,7 @@
 
 #define LOG(level, msg) LogMessage(level, msg, __FILE__, __LINE__)
 
-enum class LogLevel
-{
+enum class LogLevel {
     DEBUG = 0,
     INFO = 1,
     WARNING = 2,
@@ -35,7 +30,6 @@ private:
     std::string LogLevelToString(LogLevel const l) const;
 
     LogLevel current_loglevel;
-
 };
 
 #endif /* LOGGER_H_ */

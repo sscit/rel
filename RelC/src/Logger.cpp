@@ -1,36 +1,23 @@
-/*
- * Logger.cpp
- *
- *  Created on: 13.10.2020
- *      Author: Stefan_2
- */
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
 
 #include "Logger.h"
 
-Logger::Logger() : current_loglevel(LogLevel::WARNING) {
-    // TODO Auto-generated constructor stub
+Logger::Logger() : current_loglevel(LogLevel::WARNING) { }
 
-}
+Logger::~Logger() { }
 
-Logger::~Logger() {
-    // TODO Auto-generated destructor stub
-}
-
-void Logger::SetLogLevel(LogLevel const l)
-{
+void Logger::SetLogLevel(LogLevel const l) {
     current_loglevel = l;
 }
 
-LogLevel Logger::GetCurrentLogLevel() const
-{
+LogLevel Logger::GetCurrentLogLevel() const {
     return current_loglevel;
 }
 
-std::string Logger::LogLevelToString(LogLevel const l) const
-{
+std::string Logger::LogLevelToString(LogLevel const l) const {
     std::string result;
-    switch(l)
-    {
+    switch(l) {
         case LogLevel::DEBUG:
             result="DEBUG";
             break;
@@ -45,16 +32,13 @@ std::string Logger::LogLevelToString(LogLevel const l) const
             break;
         default:
             result="UNKNOWN_LOGLEVEL";
-
     }
 
     return result;
 }
 
-void Logger::LogMessage(LogLevel const loglevel, std::string const message, std::string const filename = "Unset", int const line_number = -1) const
-{
-    if (loglevel >= GetCurrentLogLevel())
-    {
+void Logger::LogMessage(LogLevel const loglevel, std::string const message, std::string const filename = "Unset", int const line_number = -1) const {
+    if (loglevel >= GetCurrentLogLevel()) {
         std::cout << LogLevelToString(loglevel) << ": " << "File " << filename << ", Line " << line_number << ": ";
         std::cout << message << std::endl;
     }
