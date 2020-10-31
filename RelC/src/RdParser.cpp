@@ -86,7 +86,6 @@ RdInteger RdParser::Integer(FileTokenData const& tokens, unsigned int &index) {
 
 bool RdParser::EnumValueExists(std::vector<RsRdIdentifier> const &enum_values, RsRdIdentifier &enum_value) const {
     std::vector<RsRdIdentifier>::const_iterator iter = enum_values.begin();
-
     bool found = false;
     for(;iter != enum_values.end(); ++iter) {
         if(iter->name.compare(enum_value.name) == 0) {
@@ -99,9 +98,13 @@ bool RdParser::EnumValueExists(std::vector<RsRdIdentifier> const &enum_values, R
     return found;
 }
 
+bool RdParser::HasAttributeValueCorrectType(RsTypeElement const& type_element, TokenType const current_token) {
+    return (type_element.token_type == current_token);
+}
+
 RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int& index) {
     Token const &type_token = tokens.token_list[index];
-    RdTypeInstance dataset;
+    RdTypeInstance type_instance;
     RsRdIdentifier type_name = Identifier(tokens, index++);
     RsType type_definition;
     l.LOG(LogLevel::DEBUG, "Parsing Type Instance of type " + type_name.name);
@@ -112,7 +115,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
     catch(TypeNotFoundException &e) {
         throw RdTypeException(type_token, "Type instance " + type_name.name + " not found in specification");
     }
-    dataset.type = type_definition;
+    type_instance.type = type_definition;
 
     EnsureToken(tokens, index, TokenType::BRACKET_OPEN, RdTypeException(tokens.token_list[index], "Wrong token, expected {"));
     index++;
@@ -122,60 +125,90 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
         l.LOG(LogLevel::DEBUG, "Starting to parse new data attribute");
         EnsureToken(tokens, index, TokenType::IDENTIFIER, RdTypeException(tokens.token_list[index], "Wrong token, expected attribute"));
         RsRdIdentifier attribute = Identifier(tokens, index);
-        if(attribute.name.compare(dataset.type.type_elements[number_of_elements].name.name) != 0) {
+        if(attribute.name.compare(type_definition.type_elements[number_of_elements].name.name) != 0) {
             throw RdTypeException(tokens.token_list[index], "Attribute not defined in type specification");
         }
         l.LOG(LogLevel::DEBUG, "Parsing data attribute named " + attribute.name);
 
-        RdTypeInstanceElement type_element;
-        type_element.name = dataset.type.type_elements[number_of_elements];
+        RdTypeInstanceElement type_instance_element;
+        type_instance_element.name = type_definition.type_elements[number_of_elements];
         index++;
 
         EnsureToken(tokens, index, TokenType::COLON, RdTypeException(tokens.token_list[index], "Wrong token, expected :"));
         index++;
         if(tokens.token_list[index].GetTokenType() == TokenType::STRING_VALUE) {
-            type_element.string_value.value = tokens.token_list[index].GetTokenValue();
-            l.LOG(LogLevel::DEBUG, "attribute value of type string parsed");
+            if(HasAttributeValueCorrectType(type_instance_element.name, TokenType::STRING)) {
+                type_instance_element.string_value.value = tokens.token_list[index].GetTokenValue();
+                l.LOG(LogLevel::DEBUG, "attribute value of type string parsed");
+            }
+            else {
+                throw RdTypeException(tokens.token_list[index], "Attribute value has wrong type, expected string value");
+            }
         }
         else if(tokens.token_list[index].GetTokenType() == TokenType::QUOTATION_MARK) {
-            type_element.string_value = ReadString(tokens, index);
-            l.LOG(LogLevel::DEBUG, "attribute value of type string parsed");
+            if(HasAttributeValueCorrectType(type_instance_element.name, TokenType::STRING)) {
+                type_instance_element.string_value = ReadString(tokens, index);
+                l.LOG(LogLevel::DEBUG, "attribute value of type string parsed");
+            }
+            else {
+                throw RdTypeException(tokens.token_list[index], "Attribute value has wrong type, expected string value");
+            }
         }
         else if(tokens.token_list[index].GetTokenType() == TokenType::INTEGER_VALUE) {
-            type_element.integer_value = Integer(tokens, index);
-            l.LOG(LogLevel::DEBUG, "attribute value of type integer parsed");
+            if(HasAttributeValueCorrectType(type_instance_element.name, TokenType::INT)) {
+                type_instance_element.integer_value = Integer(tokens, index);
+                l.LOG(LogLevel::DEBUG, "attribute value of type integer parsed");
+            }
+            else {
+                throw RdTypeException(tokens.token_list[index], "Attribute value has wrong type, expected integer value");
+            }
         }
         else if(tokens.token_list[index].GetTokenType() == TokenType::IDENTIFIER) {
             l.LOG(LogLevel::DEBUG, "attribute value of type identifier identified");
-            if(type_element.name.token_type == TokenType::ENUM) {
+            if(type_instance_element.name.token_type == TokenType::ENUM) {
                 // Check that the enum value used exists
-                type_element.enum_value.name = tokens.token_list[index].GetTokenValue();
-                if(!EnumValueExists(type_element.name.enum_definition.enum_elements, type_element.enum_value)) {
-                    throw RdTypeException(tokens.token_list[index], "Enum value " + type_element.enum_value.name + " not found in specification");
+                type_instance_element.enum_value.name = tokens.token_list[index].GetTokenValue();
+                if(!EnumValueExists(type_instance_element.name.enum_definition.enum_elements, type_instance_element.enum_value)) {
+                    throw RdTypeException(tokens.token_list[index], "Enum value " + type_instance_element.enum_value.name + " not found in specification");
                 }
-                l.LOG(LogLevel::DEBUG, "attribute has enum value " + type_element.enum_value.name + ", enum value exists");
+                l.LOG(LogLevel::DEBUG, "attribute has enum value " + type_instance_element.enum_value.name + ", enum value exists");
             }
-            else if(type_element.name.token_type == TokenType::LINK) {
-                type_element.link = Identifier(tokens, index);
+            else if(type_instance_element.name.token_type == TokenType::LINK) {
+                type_instance_element.link = Identifier(tokens, index);
                 l.LOG(LogLevel::DEBUG, "attribute of type link parsed");
+            }
+            else if(type_instance_element.name.token_type == TokenType::ID) {
+                type_instance_element.string_value.value = tokens.token_list[index].GetTokenValue();
+                l.LOG(LogLevel::DEBUG, "attribute of type id parsed");
             }
             else
                 throw RdTypeException(tokens.token_list[index], "Unexpected token");
         }
-        else
+        else if(tokens.token_list[index].GetTokenType() == TokenType::ID) {
+            l.LOG(LogLevel::DEBUG, "attribute value of type id identified");
+            if(HasAttributeValueCorrectType(type_instance_element.name, TokenType::ID)) {
+                type_instance_element.string_value.value = tokens.token_list[index].GetTokenValue();
+                l.LOG(LogLevel::DEBUG, "attribute value of type id parsed");
+            }
+            else {
+                throw RdTypeException(tokens.token_list[index], "Attribute value has wrong type, expected id");
+            }
+        }
+        else {
             throw RdTypeException(tokens.token_list[index], "Unexpected token");
+        }
 
         // check for unique id, if this attribute defined an id
-        if(dataset.type.type_elements[number_of_elements].token_type == TokenType::ID) {
-            if(unique_ids.find(type_element.string_value.value) != unique_ids.end()) {
+        if(type_definition.type_elements[number_of_elements].token_type == TokenType::ID) {
+            if(unique_ids.find(type_instance_element.string_value.value) != unique_ids.end()) {
                 throw RdTypeException(tokens.token_list[index], "ID already used");
             }
             else {
-                unique_ids[type_element.string_value.value] = type_element.string_value;
+                unique_ids[type_instance_element.string_value.value] = type_instance_element.string_value;
             }
         }
 
-        dataset.type_elements_data.push_back(type_element);
+        type_instance.type_elements_data.push_back(type_instance_element);
         index++;
         EnsureToken(tokens, index, TokenType::COMMA, RdTypeException(tokens.token_list[index], "Wrong token, expected ,"));
         index++;
@@ -183,27 +216,33 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
     }
 
     // Check error cases
-    if(dataset.type_elements_data.size() == 0)
+    if(type_instance.type_elements_data.size() == 0)
         throw RdTypeException(tokens.token_list[index], "No attributes defined in type instance");
 
-    l.LOG(LogLevel::DEBUG, "Dataset " + dataset.type.name.name + " (" + std::to_string(dataset.type_elements_data.size()) + " elements) has been created.");
+    l.LOG(LogLevel::DEBUG, "Dataset " + type_instance.type.name.name + " (" + std::to_string(type_instance.type_elements_data.size()) + " elements) has been created.");
 
-    return dataset;
+    return type_instance;
 }
 
 void RdParser::ParseTokens(FileTokenData const& tokens) {
     statistic.number_of_files++;
     for(unsigned int index=0; index<tokens.token_list.size(); ++index) {
-        if(tokens.token_list[index].GetTokenType() == TokenType::LINE_COMMENT) {
+        Token const& current_token = tokens.token_list[index];
+
+        if(current_token.GetTokenType() == TokenType::LINE_COMMENT) {
             LineComment(tokens, index);
         }
-        if(tokens.token_list[index].GetTokenType() == TokenType::COMMENT_BLOCK_START) {
+        else if(current_token.GetTokenType() == TokenType::COMMENT_BLOCK_START) {
             MultiLineComment(tokens, index);
         }
-        if(tokens.token_list[index].GetTokenType() == TokenType::IDENTIFIER) {
+        else if(current_token.GetTokenType() == TokenType::IDENTIFIER) {
             statistic.number_of_type_instances++;
             RdTypeInstance t = TypeInstance(tokens, index);
             database.push_back(t);
+        }
+        else if(current_token.GetTokenType() == TokenType::END_OF_LINE) { }
+        else {
+            throw WrongTokenException(current_token, "Unexpected token");
         }
     }
 }

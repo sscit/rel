@@ -39,8 +39,12 @@ protected:
     RdInteger Integer(FileTokenData const&, unsigned int&);
     RdString ReadString(FileTokenData const&, unsigned int&);
     RdTypeInstance TypeInstance(FileTokenData const&, unsigned int&);
-    bool EnumValueExists(std::vector<RsRdIdentifier> const &enum_values, RsRdIdentifier &enum_value) const;
 
+    bool EnumValueExists(std::vector<RsRdIdentifier> const &enum_values, RsRdIdentifier &enum_value) const;
+    /* Method checks whether the attribute value identified in the data has the right
+     * data type that is expected at this place
+     */
+    bool HasAttributeValueCorrectType(RsTypeElement const&, TokenType const);
     /* Verifies, that the token at dedicated index is of a specific type.
      * If not, throw the exception provided. EOLs are skipped, if there are
      * some.

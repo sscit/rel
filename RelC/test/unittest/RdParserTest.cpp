@@ -5,7 +5,9 @@ class RdParserTestFixture : public ::testing::Test, public RdParser {
 protected:
   RdParserTestFixture() : RdParser(logger, rs_parser), lexer_test(logger), rs_parser(logger) { }
 
-  void SetUp() override { }
+  void SetUp() override { 
+    //logger.SetLogLevel(LogLevel::DEBUG); 
+  }
 
   void TearDown() override { }
 
@@ -18,7 +20,7 @@ protected:
 
 TEST_F(RdParserTestFixture, SingleDataset) {
     spec = "type Req { unique_id : id, Text : string,}";
-    data = "Req { unique_id : \"id1\", Text : \"First Requirement\",}";
+    data = "Req { unique_id : Req12, Text : \"First Requirement\",}";
 
     FileReader r_spec(spec);
     FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
@@ -35,3 +37,248 @@ TEST_F(RdParserTestFixture, SingleDataset) {
     EXPECT_EQ(database.size(), 1);
     EXPECT_EQ(database[0].type_elements_data.size(), 2);
 }
+
+TEST_F(RdParserTestFixture, SingleDataset2) {
+    spec = "type Req { Identifier : id, Number : int, Text : string, Parent : link,}";
+    data = "Req { Identifier : r1, Number : 1234, Text : \"1234\", Parent : r1,}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ParseTokens(d_data);
+
+    EXPECT_EQ(database.size(), 1);
+    EXPECT_EQ(database[0].type_elements_data.size(), 4);
+}
+
+/*
+TEST_F(RdParserTestFixture, DatasetWithEnum) {
+    spec = "type Req { Color : Color,} enum Color {red, blue,}";
+    data = "Req { Color : red,}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+    RdParser rd_parser(logger, rs_parser);
+
+    (rd_parser.ParseTokens(d_data));
+}*/
+
+TEST_F(RdParserTestFixture, ParseErrorWrongToken) {
+    spec = "type Req { unique_id : id, Text : string,}";
+    data = "Req {{} unique_id : r1, Text : \"First Requirement\",}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, ParseErrorWrongToken2) {
+    spec = "type Req { unique_id : id, Text : string,}";
+    data = "type Req { unique_id : r1, Text : \"First Requirement\",}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), WrongTokenException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceElementWrong_Order) {
+    spec = "type Req { unique_id : id, Text : string,}";
+    data = "Req { Text : \"First Requirement\", unique_id : r1,}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceElementWrong_WrongAttributeName) {
+    spec = "type Req { unique_id : id, Text : string,}";
+    data = "Req { unique_id : id1, Text123 : \"First Requirement\",}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceElementWrong_WrongStringType) {
+    spec = "type Req { unique_id : id, Text : string,}";
+    data = "Req { unique_id : r1, Text : 123,}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceWrong_LinkDoesNotExist) {
+    spec = "type Req { attr : id, parent : link,}";
+    data = "Req { attr : r1, parent : r2,}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+    ParseTokens(d_data);
+
+    ASSERT_THROW(CheckAllLinks(), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongLinkValue) {
+    spec = "type Req { attr : id, parent : link,}";
+    data = "Req { attr : r1, parent : \"r1\",}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongStringValue) {
+    spec = "type Req { attr : string,}";
+    data = "Req { attr : MyString,}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongStringValue2) {
+    spec = "type Req { attr : string,}";
+    data = "Req { attr : 1234,}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongIntValue) {
+    spec = "type Req { attr : int,}";
+    data = "Req { attr : \"123\",}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongIdValue) {
+    spec = "type Req { unique_id : id,}";
+    data = "Req { unique_id : \"r1\",}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongIdValue2) {
+    spec = "type Req { unique_id : id,}";
+    data = "Req { unique_id : 1234,}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);   
+    rs_parser.ParseTokens(d_spec);
+        
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
