@@ -55,7 +55,7 @@ multi_line_comment ::= CMT_START [.]* CMT_END
 line_comment ::= CMT_LINE [.]* EOL
 
 type_instance ::= identifier {
-    [identifier : (string | enum_element | integer | link),]+ 
+    [identifier : (string | enum_element | integer | link | identifier),]+ 
 }
 
 link ::= identifier
