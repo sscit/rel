@@ -120,12 +120,13 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
     EnsureToken(tokens, index, TokenType::BRACKET_OPEN, RdTypeException(tokens.token_list[index], "Wrong token, expected {"));
     index++;
 
-    int number_of_elements = 0;
+    unsigned int number_of_elements = 0;
     while( !IsNextToken(tokens, index, TokenType::BRACKET_CLOSE) ) {
         l.LOG(LogLevel::DEBUG, "Starting to parse new data attribute");
         EnsureToken(tokens, index, TokenType::IDENTIFIER, RdTypeException(tokens.token_list[index], "Wrong token, expected attribute"));
         RsRdIdentifier attribute = Identifier(tokens, index);
-        if(attribute.name.compare(type_definition.type_elements[number_of_elements].name.name) != 0) {
+        if( number_of_elements >= type_definition.type_elements.size() ||
+            attribute.name.compare(type_definition.type_elements[number_of_elements].name.name) != 0) {
             throw RdTypeException(tokens.token_list[index], "Attribute not defined in type specification");
         }
         l.LOG(LogLevel::DEBUG, "Parsing data attribute named " + attribute.name);
@@ -218,6 +219,9 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
     // Check error cases
     if(type_instance.type_elements_data.size() == 0)
         throw RdTypeException(tokens.token_list[index], "No attributes defined in type instance");
+
+    if(type_instance.type_elements_data.size() < type_instance.type.type_elements.size())
+        throw RdTypeException(tokens.token_list[index], "Type instance does not match to type definition, missing attributes.");
 
     l.LOG(LogLevel::DEBUG, "Dataset " + type_instance.type.name.name + " (" + std::to_string(type_instance.type_elements_data.size()) + " elements) has been created.");
 

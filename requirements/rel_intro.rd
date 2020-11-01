@@ -1,6 +1,6 @@
 Information
 {
-    Identifier : start1,
+    Identifier : int1,
     Text : "REL is a domain specific language for requirements engineering.
     
     In this document, the key requirments of REL are described.",
@@ -8,7 +8,7 @@ Information
 
 Information
 {
-    Identifier : start2,
+    Identifier : int2,
     Text : "The requirements are structured into different categories,
     where every category is represented by a file.",
 }

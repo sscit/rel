@@ -74,7 +74,7 @@ protected:
     // returns true, if character is a whitespace
     static bool IsWhitespace(char const);
     // check string whether it contains a token
-    void CheckStringandAddToken(std::string&);
+    void CheckStringandAddToken(std::string&, const char next_char = 0);
 
     std::map<std::string, TokenType> token_table;
     std::vector<Token> *token_list;

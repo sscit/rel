@@ -158,14 +158,53 @@ bool Lexer::IsLinebreak(const std::string& s) {
             return true;
     }
 
-
     return false;
 }
 
-void Lexer::CheckStringandAddToken(std::string &current_str) {
+void Lexer::CheckStringandAddToken(std::string &current_str, const char next_char) {
     if(token_table.count(current_str) == 1) {
-        AddTokenToList(current_str, token_table[current_str]);
-        current_str.clear();
+        /* to avoid that a keyword is falsely identified a the beginning
+         * of a string or identifier, e.g. *id*entifier, check the next character, too */
+        if(current_str.compare( Token::TokenTypeToString(TokenType::ENUM).c_str() ) == 0) {
+            if(!std::isalnum(next_char)) {
+                AddTokenToList(current_str, token_table[current_str]);
+                current_str.clear();
+            }
+        }
+        else if(current_str.compare( Token::TokenTypeToString(TokenType::ID).c_str() ) == 0) {
+            if(!std::isalnum(next_char)) {
+                AddTokenToList(current_str, token_table[current_str]);
+                current_str.clear();
+            }
+        }
+        else if(current_str.compare( Token::TokenTypeToString(TokenType::INT).c_str() ) == 0) {
+            if(!std::isalnum(next_char)) {
+                AddTokenToList(current_str, token_table[current_str]);
+                current_str.clear();
+            }
+        }
+        else if(current_str.compare( Token::TokenTypeToString(TokenType::STRING).c_str() ) == 0) {
+            if(!std::isalnum(next_char)) {
+                AddTokenToList(current_str, token_table[current_str]);
+                current_str.clear();
+            }
+        }
+        else if(current_str.compare( Token::TokenTypeToString(TokenType::LINK).c_str() ) == 0) {
+            if(!std::isalnum(next_char)) {
+                AddTokenToList(current_str, token_table[current_str]);
+                current_str.clear();
+            }
+        }
+        else if(current_str.compare( Token::TokenTypeToString(TokenType::TYPE).c_str() ) == 0) {
+            if(!std::isalnum(next_char)) {
+                AddTokenToList(current_str, token_table[current_str]);
+                current_str.clear();
+            }
+        }
+        else {
+            AddTokenToList(current_str, token_table[current_str]);
+            current_str.clear();
+        }
     }
     else if(IsInteger(current_str)) {
         AddTokenToList(current_str, TokenType::INTEGER_VALUE);
@@ -180,8 +219,6 @@ void Lexer::CheckStringandAddToken(std::string &current_str) {
         current_str.clear();
     }
 }
-
-
 
 void Lexer::Read(FileTokenData& data) {
     FileReader &file_reader = data.GetFileReader();
@@ -228,7 +265,7 @@ void Lexer::Read(FileTokenData& data) {
             else if(IsDelimiter(sliding_window.front()) ||
                     IsOperator(sliding_window) ||
                     IsOperator(current_str)) {
-                CheckStringandAddToken(current_str);
+                CheckStringandAddToken(current_str, sliding_window.front());
             }
 
             if(!IsWhitespace(sliding_window.front()))

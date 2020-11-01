@@ -11,6 +11,7 @@ protected:
 
   void SetUp() override {
       token_list = new std::vector<Token>();
+      //logger.SetLogLevel(LogLevel::DEBUG);
   }
 
   void TearDown() override
@@ -132,6 +133,22 @@ TEST_F(LexerTestFixture, IsWhitespace) {
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString1) {
+    std::string xx = "string";
+    CheckStringandAddToken(xx, ',');
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::STRING);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString2) {
+    std::string xx = "stringXX";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString3) {
     std::string xx = "hello";
     CheckStringandAddToken(xx);
 
@@ -139,7 +156,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString1) {
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString2) {
+TEST_F(LexerTestFixture, IdentifyTokenInString4) {
     std::string xx = "43847";
     CheckStringandAddToken(xx);
 
@@ -147,7 +164,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString2) {
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::INTEGER_VALUE);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString3) {
+TEST_F(LexerTestFixture, IdentifyTokenInString5) {
     std::string xx = "438_47";
     CheckStringandAddToken(xx);
 
@@ -155,7 +172,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString3) {
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::STRING_VALUE);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString4) {
+TEST_F(LexerTestFixture, IdentifyTokenInString6) {
     std::string xx = ":";
     CheckStringandAddToken(xx);
 
@@ -163,7 +180,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString4) {
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COLON);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString5) {
+TEST_F(LexerTestFixture, IdentifyTokenInString7) {
     std::string xx = "//";
     CheckStringandAddToken(xx);
 
@@ -171,7 +188,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString5) {
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::LINE_COMMENT);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString6) {
+TEST_F(LexerTestFixture, IdentifyTokenInString8) {
     std::string xx = "/*";
     CheckStringandAddToken(xx);
 
@@ -179,7 +196,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString6) {
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COMMENT_BLOCK_START);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString7) {
+TEST_F(LexerTestFixture, IdentifyTokenInString9) {
     std::string xx = "*/";
     CheckStringandAddToken(xx);
 
@@ -187,7 +204,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString7) {
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COMMENT_BLOCK_END);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString8) {
+TEST_F(LexerTestFixture, IdentifyTokenInString10) {
     std::string xx = ",";
     CheckStringandAddToken(xx);
 
@@ -195,7 +212,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString8) {
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COMMA);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString9) {
+TEST_F(LexerTestFixture, IdentifyTokenInString11) {
     std::string xx = "{";
     CheckStringandAddToken(xx);
 
@@ -203,15 +220,23 @@ TEST_F(LexerTestFixture, IdentifyTokenInString9) {
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::BRACKET_OPEN);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString10) {
+TEST_F(LexerTestFixture, IdentifyTokenInString12) {
     std::string xx = "link";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, ',');
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::LINK);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString11) {
+TEST_F(LexerTestFixture, IdentifyTokenInString13) {
+    std::string xx = "linkXX";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString14) {
     std::string xx = "}";
     CheckStringandAddToken(xx);
 
@@ -219,26 +244,50 @@ TEST_F(LexerTestFixture, IdentifyTokenInString11) {
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::BRACKET_CLOSE);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString12) {
+TEST_F(LexerTestFixture, IdentifyTokenInString15) {
     std::string xx = "id";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, ',');
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::ID);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString13) {
-    std::string xx = "type";
+TEST_F(LexerTestFixture, IdentifyTokenInString16) {
+    std::string xx = "idXX";
     CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString17) {
+    std::string xx = "type";
+    CheckStringandAddToken(xx, '{');
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::TYPE);
 }
 
-TEST_F(LexerTestFixture, IdentifyTokenInString14) {
-    std::string xx = "enum";
+TEST_F(LexerTestFixture, IdentifyTokenInString18) {
+    std::string xx = "typeXX";
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString19) {
+    std::string xx = "enum";
+    CheckStringandAddToken(xx, '{');
+
+    EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::ENUM);
+}
+
+TEST_F(LexerTestFixture, IdentifyTokenInString20) {
+    std::string xx = "enumXX";
+    CheckStringandAddToken(xx);
+
+    EXPECT_EQ(token_list->size(), 1);
+    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
 }

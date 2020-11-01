@@ -92,7 +92,7 @@ TEST_F(RsParserTestFixture, WrongTypeDefinition)
 
 TEST_F(RsParserTestFixture, WrongTypeDefinition2)
 {
-    testdata = "type XXX { attribute : id, attribtue2 : link, attr3 : stringXXX, attr4 : int,}";
+    testdata = "type XXX { attribute : id, attribtue2 : link, attr3 : string, attr4 : int}";
 
     FileReader r(testdata);
     FileTokenData d(DataType::RequirementsSpecification, r);
@@ -151,7 +151,7 @@ TEST_F(RsParserTestFixture, WrongEnumDefinition2)
     FileTokenData d(DataType::RequirementsSpecification, r);
 
     lexer_test.Read(d);
-    ASSERT_THROW(ParseTokens(d), RsEnumException);
+    ASSERT_THROW(ParseTokens(d), WrongTokenException);
 }
 
 TEST_F(RsParserTestFixture, WrongEnumDefinition3)
