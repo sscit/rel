@@ -1,0 +1,32 @@
+{
+    "name": "rel",
+    "displayName": "REL - Requirements Engineering Language",
+    "description": "REL - A Domain Specific Language for Requirements Engineering",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.50.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "rel",
+            "aliases": ["Requirements Engineering Language", "rel"],
+            "extensions": [".rd",".rs"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "rel",
+            "scopeName": "text.rel",
+            "path": "./syntaxes/rel.tmLanguage.json"
+        }],
+        "themes": [{
+            "label": "RELTheme",
+            "uiTheme": "vs-dark",
+            "path": "./themes/reltheme.tmTheme"
+        }]
+    }
+
+
+}

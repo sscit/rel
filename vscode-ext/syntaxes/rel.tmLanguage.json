@@ -1,0 +1,49 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Requirements Engineering Language",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include" : "#single-line-comment"
+		},
+		{
+			"include" : "#multi-line-comment"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.rel",
+				"match": "\\b(type|string|int|id|enum|link)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.rel",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.rel",
+					"match": "\\\\."
+				}
+			]
+		},
+		"single-line-comment": {
+			"name": "comment.line.double-slash.rel",
+			"begin": "(^[ \\t]+)?((//)(?:\\s*((@)internal)(?=\\s|$))?)",
+			"end": "(?=^)"
+		},
+		"multi-line-comment":{
+			"name": "comment.block.js",
+			"begin": "(/\\*)(?:\\s*((@)internal)(?=\\s|(\\*/)))?",
+			"end": "\\*/"
+		}
+	},
+	"scopeName": "text.rel"
+
+}
