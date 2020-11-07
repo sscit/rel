@@ -10,23 +10,40 @@
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "rel",
-            "aliases": ["Requirements Engineering Language", "rel"],
-            "extensions": [".rd",".rs"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "rel",
-            "scopeName": "text.rel",
-            "path": "./syntaxes/rel.tmLanguage.json"
-        }],
-        "themes": [{
-            "label": "RELTheme",
-            "uiTheme": "vs-dark",
-            "path": "./themes/reltheme.tmTheme"
-        }]
+        "languages": [
+            {
+                "id": "rel",
+                "aliases": [
+                    "Requirements Engineering Language",
+                    "rel"
+                ],
+                "extensions": [
+                    ".rd",
+                    ".rs"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "rel",
+                "scopeName": "text.rel",
+                "path": "./syntaxes/rel.tmLanguage.json"
+            }
+        ],
+        "themes": [
+            {
+                "label": "RELTheme",
+                "uiTheme": "vs-dark",
+                "path": "./themes/reltheme.tmTheme"
+            }
+        ]
+    },
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./extension.js",
+    "dependencies": {
+        "vscode-languageclient": "^6.1.3"
     }
-
-
 }
