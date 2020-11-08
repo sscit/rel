@@ -15,7 +15,7 @@
 
 class RsParser : public Parser {
 public:
-    RsParser(Logger const &);
+    RsParser(Logger&);
     virtual ~RsParser();
 
     void ParseTokens(FileTokenData const& tokens);

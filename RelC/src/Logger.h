@@ -6,6 +6,7 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #define LOG(level, msg) LogMessage(level, msg, __FILE__, __LINE__)
 
@@ -19,16 +20,17 @@ enum class LogLevel {
 class Logger {
 public:
     Logger();
+    Logger(std::string const);
     virtual ~Logger();
 
     void SetLogLevel(LogLevel const l);
     LogLevel GetCurrentLogLevel() const;
 
-    void LogMessage(LogLevel const, std::string const, std::string const, int const) const;
+    void LogMessage(LogLevel const, std::string const, std::string const, int const);
 
 private:
     std::string LogLevelToString(LogLevel const l) const;
-
+    std::ofstream file_access;
     LogLevel current_loglevel;
 };
 

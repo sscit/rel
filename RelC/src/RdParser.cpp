@@ -3,7 +3,7 @@
 
 #include "RdParser.h"
 
-RdParser::RdParser(Logger const &logger, RsParser const & s) : Parser(logger), specification(s) { }
+RdParser::RdParser(Logger &logger, RsParser const & s) : Parser(logger), specification(s) { }
 
 ParsingStatistic RdParser::GetParsingStatistics() const {
     return statistic;

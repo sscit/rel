@@ -7,12 +7,13 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include "Logger.h"
 
 // Class is used to build up a message, before
 // the actual JSON interpretation
 class MsgBuffer {
 public:
-    MsgBuffer();
+    MsgBuffer(Logger&);
     ~MsgBuffer();
 
     void AddChar(char const);
@@ -34,6 +35,8 @@ private:
     std::string message;
     
     std::map<std::string, std::string> headers;
+
+    Logger &l;
 };
 
 #endif 

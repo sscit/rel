@@ -28,7 +28,7 @@ public:
 
 class RdParser : public Parser {
 public:
-    RdParser(Logger const &, RsParser const &);
+    RdParser(Logger&, RsParser const &);
     virtual ~RdParser();
 
     void ParseTokens(FileTokenData const&);

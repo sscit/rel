@@ -50,7 +50,7 @@ class SlidingWindow;
 
 class Lexer {
 public:
-    Lexer(Logger const &);
+    Lexer(Logger &);
     virtual ~Lexer();
 
     void Read(FileTokenData&);
@@ -78,7 +78,7 @@ protected:
 
     std::map<std::string, TokenType> token_table;
     std::vector<Token> *token_list;
-    Logger const &l;
+    Logger &l;
 
     std::string filename;
     unsigned int current_line;

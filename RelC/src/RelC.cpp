@@ -36,7 +36,7 @@ void ProcessCommandLine(int const argc, char const * const argv[], FileEngine &f
     }
 }
 
-void ProcessInputFiles(Logger const &l, std::vector<FileTokenData> &input_files) {
+void ProcessInputFiles(Logger &l, std::vector<FileTokenData> &input_files) {
     for(unsigned int i=0; i<input_files.size(); i++) {
         l.LOG(LogLevel::INFO, "Reading file " + input_files[i].filepath + " and creating tokens");
         Lexer lex(l);
@@ -44,7 +44,7 @@ void ProcessInputFiles(Logger const &l, std::vector<FileTokenData> &input_files)
     }
 }
 
-void ParseFiles(Logger const &l, std::vector<FileTokenData> &input_files) {
+void ParseFiles(Logger &l, std::vector<FileTokenData> &input_files) {
     RsParser rs_parser(l);
     RdParser rd_parser(l, rs_parser);
 

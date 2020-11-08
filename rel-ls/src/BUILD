@@ -16,6 +16,9 @@ cc_library(
     hdrs = [
       "MsgBuffer.h",
     ],
+    deps = [
+            "//RelC/src:relc_lib",
+    ],
     includes = [""],
     visibility = ["//visibility:public"],
 )

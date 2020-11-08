@@ -10,7 +10,7 @@
 
 class Parser {
 public:
-    Parser(Logger const &);
+    Parser(Logger&);
     virtual ~Parser();
 
 protected:
@@ -22,7 +22,7 @@ protected:
      */
     bool IsNextToken(FileTokenData const&, unsigned int&, TokenType const&);
 
-    Logger const &l;
+    Logger &l;
 };
 
 #endif /* PARSER_H_ */

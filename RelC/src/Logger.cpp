@@ -5,7 +5,14 @@
 
 Logger::Logger() : current_loglevel(LogLevel::WARNING) { }
 
-Logger::~Logger() { }
+Logger::Logger(std::string const filename) : Logger() {
+    file_access.open(filename);
+}
+
+Logger::~Logger() { 
+    if(file_access.is_open())
+        file_access.close();
+}
 
 void Logger::SetLogLevel(LogLevel const l) {
     current_loglevel = l;
@@ -37,9 +44,16 @@ std::string Logger::LogLevelToString(LogLevel const l) const {
     return result;
 }
 
-void Logger::LogMessage(LogLevel const loglevel, std::string const message, std::string const filename = "Unset", int const line_number = -1) const {
+void Logger::LogMessage(LogLevel const loglevel, std::string const message, std::string const filename = "Unset", int const line_number = -1) {
     if (loglevel >= GetCurrentLogLevel()) {
-        std::cout << LogLevelToString(loglevel) << ": " << "File " << filename << ", Line " << line_number << ": ";
-        std::cout << message << std::endl;
+        if(file_access.is_open()) {
+            file_access << LogLevelToString(loglevel) << ": " << "File " << filename << ", Line " << line_number << ": ";
+            file_access << message << std::endl;
+            file_access.flush();
+        }
+        else {
+            std::cout << LogLevelToString(loglevel) << ": " << "File " << filename << ", Line " << line_number << ": ";
+            std::cout << message << std::endl;
+        }
     }
 }

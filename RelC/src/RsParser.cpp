@@ -3,7 +3,7 @@
 
 #include "RsParser.h"
 
-RsParser::RsParser(Logger const &logger) : Parser(logger) { }
+RsParser::RsParser(Logger &logger) : Parser(logger) { }
 
 RsType RsParser::GetType(RsRdIdentifier &type_ident) const {
     auto search_result = all_types.find(type_ident.name);

@@ -25,7 +25,7 @@ FileReader& FileTokenData::GetFileReader() {
 
 
 // ############ Implementation of class Lexer
-Lexer::Lexer(Logger const &logger) : l(logger)  {
+Lexer::Lexer(Logger &logger) : l(logger)  {
     // setup the map with known tokens
     token_table["type"] = TokenType::TYPE;
     token_table["enum"] = TokenType::ENUM;

@@ -4,7 +4,7 @@
 #include "Parser.h"
 #include "ParseException.h"
 
-Parser::Parser(Logger const &logger) : l(logger) { }
+Parser::Parser(Logger &logger) : l(logger) { }
 
 Parser::~Parser() { }
 
