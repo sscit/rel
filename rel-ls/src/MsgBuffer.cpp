@@ -3,7 +3,7 @@
 
 #include "MsgBuffer.h"
 
-MsgBuffer::MsgBuffer(Logger& logger) : header_finished(false), l(logger) { }
+MsgBuffer::MsgBuffer(Logger& logger) : header_finished(false), message_length(0), l(logger) { }
 MsgBuffer::~MsgBuffer() { }
 
 void MsgBuffer::Clear()
@@ -21,10 +21,8 @@ bool MsgBuffer::IsMessageReady() const {
     
     if(header_finished == false)
         ret = false;
-
-    if(message.length() < message_length) {
+    else if(message.length() < message_length) {
         ret = false;
-        l.LOG(LogLevel::DEBUG, "message not ready: " + std::to_string(message.length()));
     }
     else
         ret = true;
@@ -39,21 +37,20 @@ std::string MsgBuffer::GetMessage() const {
 void MsgBuffer::ParseHeader() { 
     if(current_str == "\r\n") {
         header_finished = true;
-        l.LOG(LogLevel::DEBUG, "header is finished now");
+        l.LOG(LogLevel::DEBUG, "Header has been parsed");
     }
     else
     {
         auto eol_pos = current_str.find("\r\n");
         if (eol_pos != std::string::npos) {
-            l.LOG(LogLevel::DEBUG, "header entry has been identified");
             std::string tuple = current_str.substr(0, eol_pos);
             auto delim_pos = tuple.find(":");
             if (delim_pos != std::string::npos) {
                 std::string key = tuple.substr(0, delim_pos);
                 std::string value = tuple.substr(delim_pos + 1);
                 headers[key] = value;
-                l.LOG(LogLevel::DEBUG, "key: " + key);
-                l.LOG(LogLevel::DEBUG, "value: " + value);
+                l.LOG(LogLevel::DEBUG, "Header key: " + key);
+                l.LOG(LogLevel::DEBUG, "Header value: " + value);
             }
             current_str.clear();
             ExtractDataFromHeader();
@@ -65,7 +62,6 @@ void MsgBuffer::ExtractDataFromHeader() {
     auto search = headers.find("Content-Length");
     if (search != headers.end()) {
         message_length = std::atoi(search->second.c_str());
-        l.LOG(LogLevel::DEBUG, "message length: " + search->second);
     }
 }
 
@@ -75,7 +71,6 @@ void MsgBuffer::AddChar(char const c) {
     }
     else {
         current_str.push_back(c);
-        l.LOG(LogLevel::DEBUG, current_str);
         ParseHeader();
     }
 }
