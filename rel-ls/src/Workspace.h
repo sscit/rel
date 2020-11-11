@@ -17,10 +17,14 @@ public:
 
     bool IsWorkspaceInitialized() const;
     void SetWorkspaceToInitialized();
+    void UpdateFile(std::string const&, std::string const&);
+    std::string& GetFileContent(std::string const&);
 
 private:
     Logger &l;
     bool workspace_is_initialized;
+    // contains the content of the files in workspace
+    std::map<std::string, std::string> files;
 };
 
 #endif 

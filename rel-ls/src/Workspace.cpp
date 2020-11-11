@@ -13,3 +13,13 @@ bool Workspace::IsWorkspaceInitialized() const {
 void Workspace::SetWorkspaceToInitialized() {
     workspace_is_initialized = true;
 }
+
+void Workspace::UpdateFile(std::string const& uri, std::string const& file_content)
+{
+    files[uri] = file_content;
+}
+
+std::string& Workspace::GetFileContent(std::string const& uri)
+{
+    return files[uri];
+}

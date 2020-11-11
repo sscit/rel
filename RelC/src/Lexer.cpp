@@ -227,8 +227,9 @@ void Lexer::Read(FileTokenData& data) {
 
     token_list = &data.token_list;
     filename = data.filepath;
-    current_line = 1;
-    current_position_in_line = 1;
+    // Line and current position start from 0 index
+    current_line = 0;
+    current_position_in_line = 0;
 
     if(file_reader.IsFileOpen()) {
         std::string current_str;
