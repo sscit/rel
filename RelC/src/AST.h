@@ -21,11 +21,13 @@ public:
     std::vector<RsRdIdentifier> enum_elements;
 };
 
-// Represents an entry of a type
+// Represents an entry of a type definition
 class RsTypeElement {
 public:
     RsRdIdentifier name;
-    TokenType token_type;
+    /* Token that defines the type of this RsTypeElement,
+       e.g. link, or the enum identifier */
+    Token token_of_element;
     RsEnum enum_definition;
 };
 

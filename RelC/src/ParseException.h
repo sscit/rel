@@ -58,7 +58,6 @@ public:
 class RsTypeException : public ParseException {
 public:
     RsTypeException(Token const, std::string const msg = "");
-    RsTypeException(RsType const);
     ~RsTypeException();
 
     virtual const char* what() const throw();

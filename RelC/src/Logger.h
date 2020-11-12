@@ -11,10 +11,10 @@
 #define LOG(level, msg) LogMessage(level, msg, __FILE__, __LINE__)
 
 enum class LogLevel {
-    DEBUG = 0,
     ERROR = 1,
     WARNING = 2,
-    INFO = 3
+    INFO = 3,
+    DEBUG = 4,
 };
 
 class Logger {

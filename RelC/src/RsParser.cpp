@@ -22,14 +22,13 @@ void RsParser::CheckAllEnumTypes() {
         RsType &t = it->second;
         for(unsigned int j=0; j<t.type_elements.size(); j++) {
             RsTypeElement &te = t.type_elements[j];
-            if(te.token_type == TokenType::ENUM) {
+            if(te.token_of_element.GetTokenType() == TokenType::ENUM) {
                 auto search_result = all_enums.find(te.enum_definition.name.name);
                 if(search_result != all_enums.end()) {
                     te.enum_definition = search_result->second;
                 }
                 else {
-                    l.LOG(LogLevel::ERROR, "Enum " + te.enum_definition.name.name + " was used but not defined");
-                    throw RsTypeException(t);
+                    throw RsTypeException(te.token_of_element, "Enum " + te.enum_definition.name.name + " was used but not defined");
                 }
             }
         }
@@ -155,14 +154,16 @@ RsType RsParser::TypeDefinition(FileTokenData const& tokens, unsigned int &index
                  tokens.token_list[index].GetTokenType() == TokenType::STRING ||
                tokens.token_list[index].GetTokenType() == TokenType::LINK ||
                tokens.token_list[index].GetTokenType() == TokenType::INT) {
-                type_element.token_type = tokens.token_list[index++].GetTokenType();
+                type_element.token_of_element = tokens.token_list[index++];
             }
             else if(tokens.token_list[index].GetTokenType() == TokenType::IDENTIFIER) {
                 /* An identifier at this place can only identify an enum.
-                 * Keep its name and check later, that it exists
+                 * Keep its details and check later, that it exists
                  */
+                Token const &tmp = tokens.token_list[index];
+                Token enum_token(tmp.GetTokenValue(), TokenType::ENUM, tmp.GetFilename(), tmp.GetLineNumberOfToken(), tmp.GetPositionInLineOfToken());
+                type_element.token_of_element = enum_token;
                 RsRdIdentifier enum_name = Identifier(tokens, index++);
-                type_element.token_type = TokenType::ENUM;
                 type_element.enum_definition.name = enum_name;
             }
             else

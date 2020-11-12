@@ -45,7 +45,7 @@ std::string Logger::LogLevelToString(LogLevel const l) const {
 }
 
 void Logger::LogMessage(LogLevel const loglevel, std::string const message, std::string const filename = "Unset", int const line_number = -1) {
-    if (loglevel >= GetCurrentLogLevel()) {
+    if (loglevel <= GetCurrentLogLevel()) {
         if(file_access.is_open()) {
             file_access << LogLevelToString(loglevel) << ": " << "File " << filename << ", Line " << line_number << ": ";
             file_access << message << std::endl;

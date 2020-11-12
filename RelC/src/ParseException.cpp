@@ -52,10 +52,7 @@ const char* RsEnumException::what() const throw() {
 
 RsTypeException::RsTypeException(Token const t, std::string const msg) : ParseException(t, msg) { }
 
-RsTypeException::RsTypeException(RsType const t) : ParseException(), rs_type(t) { }
-
 RsTypeException::~RsTypeException() {}
-
 
 const char* RsTypeException::what() const throw() {
     return custom_message.c_str();

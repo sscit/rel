@@ -99,7 +99,7 @@ bool RdParser::EnumValueExists(std::vector<RsRdIdentifier> const &enum_values, R
 }
 
 bool RdParser::HasAttributeValueCorrectType(RsTypeElement const& type_element, TokenType const current_token) {
-    return (type_element.token_type == current_token);
+    return (type_element.token_of_element.GetTokenType() == current_token);
 }
 
 RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int& index) {
@@ -166,7 +166,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
         }
         else if(tokens.token_list[index].GetTokenType() == TokenType::IDENTIFIER) {
             l.LOG(LogLevel::DEBUG, "attribute value of type identifier identified");
-            if(type_instance_element.name.token_type == TokenType::ENUM) {
+            if(type_instance_element.name.token_of_element.GetTokenType() == TokenType::ENUM) {
                 // Check that the enum value used exists
                 type_instance_element.enum_value.name = tokens.token_list[index].GetTokenValue();
                 if(!EnumValueExists(type_instance_element.name.enum_definition.enum_elements, type_instance_element.enum_value)) {
@@ -174,11 +174,11 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
                 }
                 l.LOG(LogLevel::DEBUG, "attribute has enum value " + type_instance_element.enum_value.name + ", enum value exists");
             }
-            else if(type_instance_element.name.token_type == TokenType::LINK) {
+            else if(type_instance_element.name.token_of_element.GetTokenType() == TokenType::LINK) {
                 type_instance_element.link = Identifier(tokens, index);
                 l.LOG(LogLevel::DEBUG, "attribute of type link parsed");
             }
-            else if(type_instance_element.name.token_type == TokenType::ID) {
+            else if(type_instance_element.name.token_of_element.GetTokenType() == TokenType::ID) {
                 type_instance_element.string_value.value = tokens.token_list[index].GetTokenValue();
                 l.LOG(LogLevel::DEBUG, "attribute of type id parsed");
             }
@@ -200,7 +200,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
         }
 
         // check for unique id, if this attribute defined an id
-        if(type_definition.type_elements[number_of_elements].token_type == TokenType::ID) {
+        if(type_definition.type_elements[number_of_elements].token_of_element.GetTokenType() == TokenType::ID) {
             if(unique_ids.find(type_instance_element.string_value.value) != unique_ids.end()) {
                 throw RdTypeException(tokens.token_list[index], "ID already used");
             }

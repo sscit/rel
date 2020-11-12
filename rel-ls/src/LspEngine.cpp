@@ -65,6 +65,8 @@ void LspEngine::ParseDocument(std::string const& uri, std::string const& text)
         try {
             RsParser p(l);
             p.ParseTokens(data);
+            p.CheckAllEnumTypes();
+
             l.LOG(LogLevel::DEBUG, ".rs file has been parsed, no errors");
             diag = json::array();
         }
