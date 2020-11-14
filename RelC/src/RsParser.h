@@ -6,12 +6,26 @@
 
 #include <map>
 #include <utility>
+#include <list>
 #include "Lexer.h"
 #include "Token.h"
 #include "ParseException.h"
 #include "Logger.h"
 #include "AST.h"
 #include "Parser.h"
+
+/* class maps the URI of the file, where a 
+   type or enum definition comes from, 
+   to the unique name */
+class TypeOrigin
+{
+public:
+    TypeOrigin();
+    TypeOrigin(std::string const&);
+
+    std::string uri;
+    std::string type_name;
+};
 
 class RsParser : public Parser {
 public:
@@ -25,7 +39,12 @@ public:
 
 protected:
     RsEnum EnumDefinition(FileTokenData const&, unsigned int &);
+    void CleanupEnumDatabase(std::string const&);
+    void AddEnumToDatabase(RsEnum const&, std::string const&);
+
     RsType TypeDefinition(FileTokenData const&, unsigned int &);
+    void CleanupTypeDatabase(std::string const&);
+    void AddTypeToDatabase(RsType const&, std::string const&);
 
     /* Returns true, if the enum value provided hasn't been defined already
        within the enum type, false otherwise */
@@ -40,8 +59,10 @@ protected:
 
     // Key: Name of enum, Value: Enum AST node
     std::map<std::string, RsEnum> all_enums;
+    std::list<TypeOrigin> enum_origin;
     // Key: Name of type, Value: Type AST node
     std::map<std::string, RsType> all_types;
+    std::list<TypeOrigin> type_origin;
 };
 
 #endif /* RSPARSER_H_ */

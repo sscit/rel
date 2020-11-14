@@ -53,30 +53,26 @@ void LspEngine::ParseDocument(std::string const& uri, std::string const& text)
 
     FileReader f(text);
     FileTokenData data(file_type, f);
-    data.filepath = "internal";
+    data.filepath = uri;
 
     Lexer lex(l);
     lex.Read(data);
 
-    if(file_type == DataType::RequirementsSpecification)
-    {
-        json diag;
+    json diag;
 
-        try {
-            RsParser p(l);
-            p.ParseTokens(data);
-            p.CheckAllEnumTypes();
+    try {
+        ws.ParseTokens(data);
 
-            l.LOG(LogLevel::DEBUG, ".rs file has been parsed, no errors");
-            diag = json::array();
-        }
-        catch(ParseException &e) {
-            Token const t  = e.GetToken();
-            l.LOG(LogLevel::DEBUG, t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
-            l.LOG(LogLevel::DEBUG, e.what());
-            l.LOG(LogLevel::DEBUG, "Preparing JSON diagnostic message");
-            diag = CreateDiagnosticsFromException(e);
-        }
+        l.LOG(LogLevel::DEBUG, ".rs file has been parsed, no errors");
+        diag = json::array();
+    }
+    catch(ParseException &e) {
+        Token const t  = e.GetToken();
+        l.LOG(LogLevel::DEBUG, t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
+        l.LOG(LogLevel::DEBUG, e.what());
+        l.LOG(LogLevel::DEBUG, "Preparing JSON diagnostic message");
+        diag = CreateDiagnosticsFromException(e);
+    }
 
         json diag_message{
             { "method", "textDocument/publishDiagnostics" },
@@ -87,7 +83,6 @@ void LspEngine::ParseDocument(std::string const& uri, std::string const& text)
         };
 
         SendMessageToClient(diag_message);
-    }
 }
 
 json LspEngine::CreateDiagnosticsFromException(ParseException const& e)
