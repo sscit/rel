@@ -58,6 +58,15 @@ const char* RsTypeException::what() const throw() {
     return custom_message.c_str();
 }
 
+EnumUsedButNotDefinedException::EnumUsedButNotDefinedException(Token const t, std::string const msg) 
+    : ParseException(t, msg) { }
+
+EnumUsedButNotDefinedException::~EnumUsedButNotDefinedException() {}
+
+const char* EnumUsedButNotDefinedException::what() const throw() {
+    return custom_message.c_str();
+}
+
 
 RdStringException::RdStringException(Token const t, std::string const msg) : ParseException(t, msg) { }
 

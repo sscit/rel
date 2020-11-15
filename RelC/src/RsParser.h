@@ -50,6 +50,9 @@ protected:
        within the enum type, false otherwise */
     bool IsEnumValueUnique(RsEnum const&, RsRdIdentifier const&);
 
+    /* Returns the filename, where a type has been defined */
+    std::string FindUriOfType(RsType const&);
+
     /* Verifies, that the token at dedicated index is of a specific type.
      * If not, throw the exception provided. EOLs are skipped, if there are
      * some.

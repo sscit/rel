@@ -33,7 +33,7 @@ void RsParser::CheckAllEnumTypes() {
                     te.enum_definition = search_result->second;
                 }
                 else {
-                    throw RsTypeException(te.token_of_element, "Enum " + te.enum_definition.name.name + " was used but not defined");
+                    throw EnumUsedButNotDefinedException(te.token_of_element, "Enum " + te.enum_definition.name.name + " was used but not defined");
                 }
             }
         }

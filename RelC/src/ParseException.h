@@ -61,9 +61,14 @@ public:
     ~RsTypeException();
 
     virtual const char* what() const throw();
+};
 
-private:
-    RsType const rs_type;
+class EnumUsedButNotDefinedException : public ParseException {
+public:
+    EnumUsedButNotDefinedException(Token const, std::string const msg = "");
+    ~EnumUsedButNotDefinedException();
+
+    virtual const char* what() const throw();
 };
 
 class RdStringException : public ParseException {

@@ -59,12 +59,21 @@ void LspEngine::ParseDocument(std::string const& uri, std::string const& text)
     lex.Read(data);
 
     json diag;
+    std::string uri_of_file = uri;
 
     try {
         ws.ParseTokens(data);
 
         l.LOG(LogLevel::DEBUG, ".rs file has been parsed, no errors");
         diag = json::array();
+    }
+    catch(EnumUsedButNotDefinedException &e) {
+        Token const t  = e.GetToken();
+        uri_of_file = t.GetFilename();
+        l.LOG(LogLevel::DEBUG, t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
+        l.LOG(LogLevel::DEBUG, e.what());
+        l.LOG(LogLevel::DEBUG, "Preparing JSON diagnostic message");
+        diag = CreateDiagnosticsFromException(e);
     }
     catch(ParseException &e) {
         Token const t  = e.GetToken();
@@ -74,15 +83,15 @@ void LspEngine::ParseDocument(std::string const& uri, std::string const& text)
         diag = CreateDiagnosticsFromException(e);
     }
 
-        json diag_message{
-            { "method", "textDocument/publishDiagnostics" },
-            { "params", {
-                { "uri", uri },
-                { "diagnostics", diag },
-            } }
-        };
+    json diag_message{
+        { "method", "textDocument/publishDiagnostics" },
+        { "params", {
+            { "uri", uri_of_file },
+            { "diagnostics", diag },
+        } }
+    };
 
-        SendMessageToClient(diag_message);
+    SendMessageToClient(diag_message);
 }
 
 json LspEngine::CreateDiagnosticsFromException(ParseException const& e)
