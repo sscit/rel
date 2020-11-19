@@ -14,11 +14,13 @@ cc_library(
       "MsgBuffer.cpp",
       "LspEngine.cpp",
       "Workspace.cpp",
+      "Uri.cpp",
     ],
     hdrs = [
       "MsgBuffer.h",
       "LspEngine.h",
       "Workspace.h",
+      "Uri.h",
     ],
     deps = [
             "//RelC/src:relc_lib",

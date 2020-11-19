@@ -11,10 +11,10 @@
 #include "Lexer.h"
 #include "RsParser.h"
 #include "RdParser.h"
-
 #include "Logger.h"
-#include "Workspace.h"
 
+#include "Workspace.h"
+#include "Uri.h"
 
 using namespace nlohmann;
 
@@ -32,10 +32,10 @@ private:
     // make a full message out of the json data provided and
     // send it out
     void SendMessageToClient(json const&);
-    void ParseDocument(std::string const&, std::string const&);
+    void ParseDocument(Uri const&, std::string const&);
     json CreateDiagnosticsFromException(ParseException const&);
     // Determine type of data out of the uri provided
-    static DataType DetermineDataType(std::string const&);
+    static DataType DetermineDataType(Uri const&);
 
     Workspace ws;
     Logger &l;

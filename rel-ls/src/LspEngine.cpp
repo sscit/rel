@@ -6,13 +6,15 @@
 LspEngine::LspEngine(Logger& logger) : ws(logger), l(logger) { }
 LspEngine::~LspEngine() { }
 
-DataType LspEngine::DetermineDataType(std::string const& uri)
+
+
+DataType LspEngine::DetermineDataType(Uri const& uri)
 {
     DataType ret = DataType::Unknown;
 
-    if (uri.find(".rs") != std::string::npos)
+    if (uri.IsRequirementsSpecification())
         ret = DataType::RequirementsSpecification;
-    else if(uri.find(".rd") != std::string::npos)
+    else if(uri.IsRequirementsData())
         ret = DataType::RequirementsData;
 
     return ret;
@@ -21,8 +23,10 @@ DataType LspEngine::DetermineDataType(std::string const& uri)
 void LspEngine::HandleMessage(json const input_message) {
     if(input_message["method"] == "initialize") {
         l.LOG(LogLevel::DEBUG, "Initialize Message received");
-        
-        ws.SetWorkspaceToInitialized();
+
+        Uri root_uri( input_message["params"]["rootUri"] );
+        // TODO what if root uri is Null?
+        ws.SetWorkspaceToInitialized(root_uri);
         RespondToInitialize(input_message);
     }
     else if (input_message["method"] == "initialized") {
@@ -30,7 +34,7 @@ void LspEngine::HandleMessage(json const input_message) {
     }
     else if (input_message["method"] == "textDocument/didOpen" ||
              input_message["method"] == "textDocument/didChange") {
-        std::string uri = input_message["params"]["textDocument"]["uri"];
+        Uri uri (input_message["params"]["textDocument"]["uri"]);
         std::string text;
 
         if(input_message["method"] == "textDocument/didOpen") {
@@ -41,25 +45,25 @@ void LspEngine::HandleMessage(json const input_message) {
         }
 
         ws.UpdateFile(uri, text);
-        l.LOG(LogLevel::DEBUG, "REL document " + uri + " has been opened or changed");
+        l.LOG(LogLevel::DEBUG, "REL document " + uri.GetPath() + " has been opened or changed");
 
         ParseDocument(uri, text);
     }
 }
 
-void LspEngine::ParseDocument(std::string const& uri, std::string const& text)
+void LspEngine::ParseDocument(Uri const& uri, std::string const& text)
 {
     DataType file_type = DetermineDataType(uri);
 
     FileReader f(text);
     FileTokenData data(file_type, f);
-    data.filepath = uri;
+    data.filepath = uri.GetPath();
 
     Lexer lex(l);
     lex.Read(data);
 
     json diag;
-    std::string uri_of_file = uri;
+    Uri uri_of_file = uri;
 
     try {
         ws.ParseTokens(data);
@@ -69,7 +73,7 @@ void LspEngine::ParseDocument(std::string const& uri, std::string const& text)
     }
     catch(EnumUsedButNotDefinedException &e) {
         Token const t  = e.GetToken();
-        uri_of_file = t.GetFilename();
+        uri_of_file = Uri::CreateFileUriFromPath(t.GetFilename());
         l.LOG(LogLevel::DEBUG, t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
         l.LOG(LogLevel::DEBUG, e.what());
         l.LOG(LogLevel::DEBUG, "Preparing JSON diagnostic message");
@@ -86,7 +90,7 @@ void LspEngine::ParseDocument(std::string const& uri, std::string const& text)
     json diag_message{
         { "method", "textDocument/publishDiagnostics" },
         { "params", {
-            { "uri", uri_of_file },
+            { "uri", uri_of_file.GetUri() },
             { "diagnostics", diag },
         } }
     };
