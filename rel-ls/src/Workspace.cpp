@@ -59,6 +59,14 @@ void Workspace::ParseAllFilesOnceAtStart()
         iter++;
     }
 
+    try {
+        rs_parser.CheckAllEnumTypes();
+    }
+    catch(const std::exception& e) {
+            /* do not handle errors at this point, just continue
+               with the next file */
+    }
+
     // Now parse the data and build up data structures
     iter = input_files.begin();
     while( (iter = std::find_if(iter, input_files.end(), [](FileTokenData &d){return (d.GetDataTypeOfTokenList() == DataType::RequirementsData);})) != input_files.end() ) {

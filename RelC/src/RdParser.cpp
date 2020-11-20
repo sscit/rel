@@ -114,7 +114,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
         type_definition = specification.GetType(type_name);
     }
     catch(TypeNotFoundException &e) {
-        throw RdTypeException(type_token, "Type instance " + type_name.name + " not found in specification");
+        throw RdTypeException(type_token, "Type " + type_name.name + " not found in specification");
     }
     type_instance.type = type_definition;
     type_instance.file_origin = tokens.filepath;
