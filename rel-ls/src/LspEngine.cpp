@@ -68,21 +68,21 @@ void LspEngine::ParseDocument(Uri const& uri, std::string const& text)
     try {
         ws.ParseTokens(data);
 
-        l.LOG(LogLevel::DEBUG, ".rs file has been parsed, no errors");
+        l.LOG(LogLevel::DEBUG, "REL file has been parsed, no errors");
         diag = json::array();
     }
     catch(EnumUsedButNotDefinedException &e) {
         Token const t  = e.GetToken();
         uri_of_file = Uri::CreateFileUriFromPath(t.GetFilename());
-        l.LOG(LogLevel::DEBUG, t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
-        l.LOG(LogLevel::DEBUG, e.what());
+        l.LOG(LogLevel::ERROR, t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
+        l.LOG(LogLevel::ERROR, e.what());
         l.LOG(LogLevel::DEBUG, "Preparing JSON diagnostic message");
         diag = CreateDiagnosticsFromException(e);
     }
     catch(ParseException &e) {
         Token const t  = e.GetToken();
-        l.LOG(LogLevel::DEBUG, t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
-        l.LOG(LogLevel::DEBUG, e.what());
+        l.LOG(LogLevel::ERROR, t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
+        l.LOG(LogLevel::ERROR, e.what());
         l.LOG(LogLevel::DEBUG, "Preparing JSON diagnostic message");
         diag = CreateDiagnosticsFromException(e);
     }

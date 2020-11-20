@@ -35,11 +35,12 @@ void RdParser::CheckAllLinks() {
         RdTypeInstance const &instance = database[i];
 
         for(unsigned int j=0; j<instance.type_elements_data.size(); j++) {
-            RsRdIdentifier const &link = instance.type_elements_data[j].link;
-            if(link.name.length() > 0) {
-                auto const search = unique_ids.find(link.name);
+            RdTypeInstanceElement const &element = instance.type_elements_data[j];
+            if(element.name.token_of_element.GetTokenType() == TokenType::LINK) {
+                auto const search = unique_ids.find(element.link.name);
+                l.LOG(LogLevel::DEBUG, "search for " + element.link.name);
                 if(search == unique_ids.end()) {
-                    throw RdTypeException(instance);
+                    throw RdTypeException(element.token_of_value, "Link points to id that does not exist");
                 }
             }
         }
@@ -116,6 +117,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
         throw RdTypeException(type_token, "Type instance " + type_name.name + " not found in specification");
     }
     type_instance.type = type_definition;
+    type_instance.file_origin = tokens.filepath;
 
     EnsureToken(tokens, index, TokenType::BRACKET_OPEN, RdTypeException(tokens.token_list[index], "Wrong token, expected {"));
     index++;
@@ -137,6 +139,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
 
         EnsureToken(tokens, index, TokenType::COLON, RdTypeException(tokens.token_list[index], "Wrong token, expected :"));
         index++;
+        type_instance_element.token_of_value = tokens.token_list[index];
         if(tokens.token_list[index].GetTokenType() == TokenType::STRING_VALUE) {
             if(HasAttributeValueCorrectType(type_instance_element.name, TokenType::STRING)) {
                 type_instance_element.string_value.value = tokens.token_list[index].GetTokenValue();
@@ -205,7 +208,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
                 throw RdTypeException(tokens.token_list[index], "ID already used");
             }
             else {
-                unique_ids[type_instance_element.string_value.value] = type_instance_element.string_value;
+                AddUniqueIdToDatabase(type_instance_element.string_value, tokens.filepath);
             }
         }
 
@@ -228,8 +231,43 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
     return type_instance;
 }
 
+void RdParser::CleanupUniqueIdDatabase(std::string const& uri) {
+    // Clear old unique ids originating from this file out of the data base
+    for( auto const & to : unique_id_origin) {
+        if(to.uri.compare(uri) == 0) {
+            unique_ids.erase(to.type_name); 
+        }
+    }
+
+    unique_id_origin.remove_if(
+        [&](TypeOrigin &to){
+            return (to.uri.compare(uri) == 0);
+        }
+    );
+}
+
+void RdParser::AddUniqueIdToDatabase(RdString const& unique_id, std::string const& uri) {
+    unique_ids.insert({unique_id.value, unique_id});
+
+    TypeOrigin new_unique_id(uri);
+    new_unique_id.type_name = unique_id.value;
+    unique_id_origin.push_back(new_unique_id);
+}
+
+void RdParser::CleanupDatabase(std::string const& path) {
+    // Clear old database entries originating from this file
+    database.erase( std::remove_if(database.begin(), database.end(),
+        [&](RdTypeInstance &ti){
+            return (ti.file_origin.compare(path) == 0);
+        }
+    ), database.end() );
+}
+
 void RdParser::ParseTokens(FileTokenData const& tokens) {
     statistic.number_of_files++;
+    CleanupUniqueIdDatabase(tokens.filepath);
+    CleanupDatabase(tokens.filepath);
+
     for(unsigned int index=0; index<tokens.token_list.size(); ++index) {
         Token const& current_token = tokens.token_list[index];
 

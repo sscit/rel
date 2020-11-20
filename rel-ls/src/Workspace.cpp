@@ -3,13 +3,18 @@
 
 #include "Workspace.h"
 
-Workspace::Workspace(Logger& logger) : l(logger), workspace_is_initialized(false), rs_parser(logger) { }
+Workspace::Workspace(Logger& logger) : l(logger), workspace_is_initialized(false), 
+                                       rs_parser(logger), rd_parser(logger, rs_parser) { }
 Workspace::~Workspace() { }
 
 void Workspace::ParseTokens(FileTokenData const& tokens) {
     if(tokens.GetDataTypeOfTokenList() == DataType::RequirementsSpecification) {
         rs_parser.ParseTokens(tokens);
         rs_parser.CheckAllEnumTypes();
+    }
+    else if(tokens.GetDataTypeOfTokenList() == DataType::RequirementsData) {
+        rd_parser.ParseTokens(tokens);
+        rd_parser.CheckAllLinks();
     }
 }
 
@@ -53,15 +58,20 @@ void Workspace::ParseAllFilesOnceAtStart()
         }
         iter++;
     }
-#if 0
+
     // Now parse the data and build up data structures
     iter = input_files.begin();
     while( (iter = std::find_if(iter, input_files.end(), [](FileTokenData &d){return (d.GetDataTypeOfTokenList() == DataType::RequirementsData);})) != input_files.end() ) {
         l.LOG(LogLevel::INFO, "Parsing of tokens from " + iter->filepath);
-        rd_parser.ParseTokens(*iter);
+        try {
+            rd_parser.ParseTokens(*iter);
+        }
+        catch(const std::exception& e) {
+            /* do not handle errors at this point, just continue
+               with the next file */
+        }
         iter++;
     }
-    #endif
 }
 
 void Workspace::UpdateFile(Uri const& uri, std::string const& file_content) {

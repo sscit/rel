@@ -40,6 +40,10 @@ protected:
     RdString ReadString(FileTokenData const&, unsigned int&);
     RdTypeInstance TypeInstance(FileTokenData const&, unsigned int&);
 
+    void CleanupUniqueIdDatabase(std::string const&);
+    void CleanupDatabase(std::string const&);
+    void AddUniqueIdToDatabase(RdString const&, std::string const&);
+
     bool EnumValueExists(std::vector<RsRdIdentifier> const &enum_values, RsRdIdentifier &enum_value) const;
     /* Method checks whether the attribute value identified in the data has the right
      * data type that is expected at this place
@@ -57,6 +61,7 @@ protected:
     std::vector<RdTypeInstance> database;
     // Map contains all unique ids, to quickly check if an id has been used before
     std::map<std::string, RdString> unique_ids;
+    std::list<TypeOrigin> unique_id_origin;
     ParsingStatistic statistic;
 };
 

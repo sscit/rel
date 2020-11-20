@@ -64,7 +64,7 @@ void RsParser::CleanupEnumDatabase(std::string const& uri) {
         if(to.uri.compare(uri) == 0)
             all_enums.erase(to.type_name);
     }
-    std::remove_if(enum_origin.begin(), enum_origin.end(), 
+    enum_origin.remove_if(
         [&](TypeOrigin &to){ 
             return (to.uri.compare(uri) == 0); 
         }
@@ -77,7 +77,7 @@ void RsParser::CleanupTypeDatabase(std::string const& uri) {
         if(to.uri.compare(uri) == 0)
             all_types.erase(to.type_name);
     }
-    std::remove_if(type_origin.begin(), type_origin.end(),
+    type_origin.remove_if(
         [&](TypeOrigin &to){
             return (to.uri.compare(uri) == 0);
         }

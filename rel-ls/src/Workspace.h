@@ -9,6 +9,7 @@
 #include <map>
 #include "Logger.h"
 #include "RsParser.h"
+#include "RdParser.h"
 #include "FileEngine.h"
 
 #include "Uri.h"
@@ -38,6 +39,7 @@ private:
     std::map<std::string, std::string> files;
 
     RsParser rs_parser;
+    RdParser rd_parser;
 };
 
 #endif 

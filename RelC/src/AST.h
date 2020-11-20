@@ -48,7 +48,7 @@ public:
     int value;
 };
 
-// represents one entry of the type instance
+// represents one attribute of the type instance
 class RdTypeInstanceElement {
 public:
     RsTypeElement name;
@@ -56,11 +56,15 @@ public:
     RdInteger integer_value;
     RsRdIdentifier link;
     RsRdIdentifier enum_value;
+    // Represents the token of the attribute's value 
+    Token token_of_value;
 };
 
 class RdTypeInstance {
 public:
     RsType type;
+    // path to the file, where this type instance originates from
+    std::string file_origin;
     std::vector<RdTypeInstanceElement> type_elements_data;
 };
 
