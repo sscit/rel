@@ -9,10 +9,22 @@
 
 using namespace nlohmann;
 
+void ProcessCommandLine(int const argc, char const * const argv[], Logger &l) {
+    if(argc > 1) {
+        for(int i=1; i<argc; ++i) {
+            std::string argument(argv[i]);
+
+            if(argument.compare("-v") == 0)
+                l.SetLogLevel(LogLevel::INFO);
+            else if(argument.compare("-vv") == 0)
+                l.SetLogLevel(LogLevel::DEBUG);
+        }
+    }
+}
+
 int main(int argc, char* argv[]) {
-    std::ofstream myfile;
     Logger l("/tmp/relc_ls_log");
-    l.SetLogLevel(LogLevel::DEBUG);
+    ProcessCommandLine(argc, argv, l);
 
     MsgBuffer message(l);
     LspEngine lsp(l);
@@ -32,6 +44,4 @@ int main(int argc, char* argv[]) {
             message.Clear();
         }
     }
-
-    myfile.close();
 }

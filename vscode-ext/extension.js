@@ -4,7 +4,7 @@ module.exports = {
   activate(context) {
     const executable = {
       command: './rel_ls',
-      args: [''],
+      args: ['-vv'],
     }
 
     const serverOptions = {
