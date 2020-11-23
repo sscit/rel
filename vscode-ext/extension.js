@@ -3,8 +3,12 @@ const { LanguageClient } = require('vscode-languageclient')
 module.exports = {
   activate(context) {
     const executable = {
-      command: './rel_ls',
+      command: '$HOME/bin/rel-ls/rel_ls',
       args: ['-vv'],
+      options: {
+        env: process.env,
+        shell: true,
+      }
     }
 
     const serverOptions = {
