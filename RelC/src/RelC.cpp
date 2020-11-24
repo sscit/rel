@@ -77,10 +77,9 @@ void ParseFiles(Logger &l, std::vector<FileTokenData> &input_files) {
         l.LOG(LogLevel::ERROR, e.what());
     }
 
-    std::cout << "### summary ###" << std::endl;
     ParsingStatistic s = rd_parser.GetParsingStatistics();
-    std::cout << "files: " << s.number_of_files << std::endl;
-    std::cout << "type instances: " << s.number_of_type_instances << std::endl;
+    l.LOG(LogLevel::INFO, "# files parsed: " + std::to_string(s.number_of_files));
+    l.LOG(LogLevel::INFO, "# type instances parsed: " + std::to_string(s.number_of_type_instances));
 }
 
 int main(int argc, char* argv[]) {
@@ -99,7 +98,8 @@ int main(int argc, char* argv[]) {
 
     auto t2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "duration " <<  duration;
+    
+    g_logger_object->LOG(LogLevel::INFO, "Execution Time: " + std::to_string(duration) + " microseconds");
 
     /* Cleanup singletons */
     delete g_logger_object;

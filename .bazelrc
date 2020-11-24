@@ -1,1 +1,1 @@
-build:default --copt="-std=c++17" --copt="-fconcepts" --copt="-Werror"
+build:default --copt="-std=c++17" --copt="-fconcepts" --copt="-Werror" --copt="-O3"

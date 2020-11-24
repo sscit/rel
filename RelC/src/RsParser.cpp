@@ -58,51 +58,35 @@ void RsParser::EnsureToken(FileTokenData const& tokens, unsigned int& index, Tok
         throw e;
 }
 
-void RsParser::CleanupEnumDatabase(std::string const& uri) {
-    // Clear old enum definitions originating from this file out of the data base
-    for( auto const & to : enum_origin) {
+template<class T>
+void RsParser::CleanupDatabase(std::string const& uri, std::map<std::string, T>& all,
+                     std::list<TypeOrigin>& origin) {
+    // Clear old definitions originating from this file out of the data base
+    for( auto const & to : origin) {
         if(to.uri.compare(uri) == 0)
-            all_enums.erase(to.type_name);
+            all.erase(to.type_name);
     }
-    enum_origin.remove_if(
+    origin.remove_if(
         [&](TypeOrigin &to){ 
             return (to.uri.compare(uri) == 0); 
         }
     );
 }
 
-void RsParser::CleanupTypeDatabase(std::string const& uri) {
-    // Clear old type definitions originating from this file out of the data base
-    for( auto const & to : type_origin) {
-        if(to.uri.compare(uri) == 0)
-            all_types.erase(to.type_name);
-    }
-    type_origin.remove_if(
-        [&](TypeOrigin &to){
-            return (to.uri.compare(uri) == 0);
-        }
-    );
-}
-
-void RsParser::AddEnumToDatabase(RsEnum const& enum_type, std::string const& uri) {
-    all_enums.insert({enum_type.name.name, enum_type});
-
-    TypeOrigin new_enum(uri);
-    new_enum.type_name = enum_type.name.name;
-    enum_origin.push_back(new_enum);
-}
-
-void RsParser::AddTypeToDatabase(RsType const& rs_type, std::string const& uri) {
-    all_types.insert({rs_type.name.name, rs_type});
+template<class T>
+void RsParser::AddToDatabase(T const& type, std::string const& uri,
+                             std::map<std::string, T>& all,
+                             std::list<TypeOrigin>& origin) {
+    all.insert({type.name.name, type});
 
     TypeOrigin new_type(uri);
-    new_type.type_name = rs_type.name.name;
-    type_origin.push_back(new_type);
+    new_type.type_name = type.name.name;
+    origin.push_back(new_type);
 }
 
 void RsParser::ParseTokens(FileTokenData const& tokens) {
-    CleanupEnumDatabase(tokens.filepath);
-    CleanupTypeDatabase(tokens.filepath);
+    CleanupDatabase(tokens.filepath, all_enums, enum_origin);
+    CleanupDatabase(tokens.filepath, all_types, type_origin);
 
     for(unsigned int index=0; index<tokens.token_list.size(); ++index) {
         Token const& current_token = tokens.token_list[index];
@@ -115,11 +99,11 @@ void RsParser::ParseTokens(FileTokenData const& tokens) {
         }
         else if(current_token.GetTokenType() == TokenType::ENUM) {
             RsEnum e = EnumDefinition(tokens, index);
-            AddEnumToDatabase(e, tokens.filepath);
+            AddToDatabase(e, tokens.filepath, all_enums, enum_origin);
         }
         else if(current_token.GetTokenType() == TokenType::TYPE) {
             RsType t = TypeDefinition(tokens, index);
-            AddTypeToDatabase(t, tokens.filepath);
+            AddToDatabase(t, tokens.filepath, all_types, type_origin);
         }
         else if(current_token.GetTokenType() == TokenType::END_OF_LINE) { }
         else {

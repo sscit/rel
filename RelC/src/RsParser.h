@@ -38,13 +38,22 @@ public:
     RsType GetType(RsRdIdentifier &type_ident) const;
 
 protected:
+    // Parse enum definition out of AST
     RsEnum EnumDefinition(FileTokenData const&, unsigned int &);
-    void CleanupEnumDatabase(std::string const&);
-    void AddEnumToDatabase(RsEnum const&, std::string const&);
-
+    // Parse type definition out of AST
     RsType TypeDefinition(FileTokenData const&, unsigned int &);
-    void CleanupTypeDatabase(std::string const&);
-    void AddTypeToDatabase(RsType const&, std::string const&);
+
+    /* Remove type definitions read previously from a file from
+       the internal data structures */
+    template<class T>
+    void CleanupDatabase(std::string const&,
+                       std::map<std::string, T>&,
+                       std::list<TypeOrigin>&);
+    /* Add type definitions to internal data structures */
+    template<class T>
+    void AddToDatabase(T const&, std::string const&,
+                       std::map<std::string, T>&,
+                       std::list<TypeOrigin>&);
 
     /* Returns true, if the enum value provided hasn't been defined already
        within the enum type, false otherwise */
@@ -62,9 +71,11 @@ protected:
 
     // Key: Name of enum, Value: Enum AST node
     std::map<std::string, RsEnum> all_enums;
+    // contains data structure that maps every key to the URI where it comes from
     std::list<TypeOrigin> enum_origin;
     // Key: Name of type, Value: Type AST node
     std::map<std::string, RsType> all_types;
+    // contains data structure that maps every key to the URI where it comes from
     std::list<TypeOrigin> type_origin;
 };
 

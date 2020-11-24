@@ -173,7 +173,9 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
                 // Check that the enum value used exists
                 type_instance_element.enum_value.name = tokens.token_list[index].GetTokenValue();
                 if(!EnumValueExists(type_instance_element.name.enum_definition.enum_elements, type_instance_element.enum_value)) {
-                    throw RdTypeException(tokens.token_list[index], "Enum value " + type_instance_element.enum_value.name + " not found in specification");
+                    throw RdTypeException(tokens.token_list[index], "Enum value " + type_instance_element.enum_value.name + \
+                                          " not found in specification of enum type " + \
+                                          type_instance_element.name.enum_definition.name.name);
                 }
                 l.LOG(LogLevel::DEBUG, "attribute has enum value " + type_instance_element.enum_value.name + ", enum value exists");
             }
