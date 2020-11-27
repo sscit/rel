@@ -2,7 +2,12 @@
     "name": "rel",
     "displayName": "REL - Requirements Engineering Language",
     "description": "REL - A Domain Specific Language for Requirements Engineering",
-    "version": "0.0.1",
+    "version": "0.5.0",
+    "publisher": "sscit",
+    "author": {
+        "name": "Stefan Schlichthärle"
+    },
+    "license": "SEE LICENSE IN LICENSE.txt",
     "engines": {
         "vscode": "^1.50.0"
     },
@@ -45,5 +50,10 @@
     "main": "./extension.js",
     "dependencies": {
         "vscode-languageclient": "^6.1.3"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sscit/rel.git"
+    },
+    "homepage": "https://github.com/sscit/rel/blob/main/README.md"
 }

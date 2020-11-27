@@ -2,8 +2,6 @@
 
 All notable changes to the "rel" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
+## 0.5.0
 
 - Initial release of VSCode extension for REL
