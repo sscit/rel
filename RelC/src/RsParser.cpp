@@ -42,9 +42,10 @@ void RsParser::CheckAllEnumTypes() {
 
 template<class T>
 void RsParser::EnsureToken(FileTokenData const& tokens, unsigned int& index, TokenType const& tt, T const e) {
-    while(tokens.token_list[index].GetTokenType() == TokenType::END_OF_LINE ||
+    while( index < tokens.token_list.size() && (
+          tokens.token_list[index].GetTokenType() == TokenType::END_OF_LINE ||
           tokens.token_list[index].GetTokenType() == TokenType::LINE_COMMENT ||
-          tokens.token_list[index].GetTokenType() == TokenType::COMMENT_BLOCK_START) {
+          tokens.token_list[index].GetTokenType() == TokenType::COMMENT_BLOCK_START) ) {
         if(tokens.token_list[index].GetTokenType() == TokenType::LINE_COMMENT) {
             LineComment(tokens, index);
         }
@@ -53,8 +54,7 @@ void RsParser::EnsureToken(FileTokenData const& tokens, unsigned int& index, Tok
         }
         index++;
     }
-
-    if(tokens.token_list[index].GetTokenType() != tt)
+    if( (index >= tokens.token_list.size()) || (tokens.token_list[index].GetTokenType() != tt) )
         throw e;
 }
 
@@ -98,12 +98,24 @@ void RsParser::ParseTokens(FileTokenData const& tokens) {
             MultiLineComment(tokens, index);
         }
         else if(current_token.GetTokenType() == TokenType::ENUM) {
-            RsEnum e = EnumDefinition(tokens, index);
-            AddToDatabase(e, tokens.filepath, all_enums, enum_origin);
+            try {
+                RsEnum e = EnumDefinition(tokens, index);
+                AddToDatabase(e, tokens.filepath, all_enums, enum_origin);
+            }
+            catch(std::out_of_range &e) {
+                l.LOG(LogLevel::DEBUG, "Enumeration not ready to be parsed completely, hit Array out of bounds.");
+                throw RsEnumException(current_token, "Enum definition incomplete");
+            }
         }
         else if(current_token.GetTokenType() == TokenType::TYPE) {
-            RsType t = TypeDefinition(tokens, index);
-            AddToDatabase(t, tokens.filepath, all_types, type_origin);
+            try {
+                RsType t = TypeDefinition(tokens, index);
+                AddToDatabase(t, tokens.filepath, all_types, type_origin);
+            }
+            catch(std::out_of_range &e) {
+                l.LOG(LogLevel::DEBUG, "Type definition not ready to be parsed completely, hit Array out of bounds.");
+                throw RsTypeException(current_token, "Type definition incomplete");
+            }
         }
         else if(current_token.GetTokenType() == TokenType::END_OF_LINE) { }
         else {
@@ -128,25 +140,25 @@ bool RsParser::IsEnumValueUnique(RsEnum const& enum_type, RsRdIdentifier const& 
 
 RsEnum RsParser::EnumDefinition(FileTokenData const& tokens, unsigned int &index) {
     l.LOG(LogLevel::DEBUG, "Parsing Enumeration");
-    Token const &enum_token = tokens.token_list[index];
+    Token const &enum_token = tokens.token_list.at(index);
     RsEnum enumeration;
 
     index++;
-    if(tokens.token_list[index].GetTokenType() == TokenType::IDENTIFIER) {
+    if(tokens.token_list.at(index).GetTokenType() == TokenType::IDENTIFIER) {
         enumeration.name = Identifier(tokens, index++);
-        EnsureToken(tokens, index, TokenType::BRACKET_OPEN, RsEnumException(tokens.token_list[index], "Wrong token, expected {"));
+        EnsureToken(tokens, index, TokenType::BRACKET_OPEN, RsEnumException(tokens.token_list.at(index), "Wrong token, expected {"));
         index++;
 
         while( !IsNextToken(tokens, index, TokenType::BRACKET_CLOSE) ) {
-            EnsureToken(tokens, index, TokenType::IDENTIFIER, RsEnumException(tokens.token_list[index], "Wrong token, expected identifier"));
+            EnsureToken(tokens, index, TokenType::IDENTIFIER, RsEnumException(tokens.token_list.at(index), "Wrong token, expected identifier"));
             RsRdIdentifier enum_value = Identifier(tokens, index);
             if(IsEnumValueUnique(enumeration, enum_value))
                 enumeration.enum_elements.push_back(enum_value);
             else
-                throw RsEnumException(tokens.token_list[index], "Enum value " + enum_value.name + " already defined");
+                throw RsEnumException(tokens.token_list.at(index), "Enum value " + enum_value.name + " already defined");
             index++;
 
-            EnsureToken(tokens, index, TokenType::COMMA, RsEnumException(tokens.token_list[index], "Wrong token, expected ,"));
+            EnsureToken(tokens, index, TokenType::COMMA, RsEnumException(tokens.token_list.at(index), "Wrong token, expected ,"));
             index++;
         }
 
@@ -168,44 +180,44 @@ RsEnum RsParser::EnumDefinition(FileTokenData const& tokens, unsigned int &index
 
 RsType RsParser::TypeDefinition(FileTokenData const& tokens, unsigned int &index) {
     l.LOG(LogLevel::DEBUG, "Parsing Type");
-    Token const &type_token = tokens.token_list[index];
+    Token const &type_token = tokens.token_list.at(index);
     RsType type;
 
     index++;
-    if(tokens.token_list[index].GetTokenType() == TokenType::IDENTIFIER) {
+    if(tokens.token_list.at(index).GetTokenType() == TokenType::IDENTIFIER) {
         type.name = Identifier(tokens, index++);
-        EnsureToken(tokens, index, TokenType::BRACKET_OPEN, RsTypeException(tokens.token_list[index], "Wrong token, expected {"));
+        EnsureToken(tokens, index, TokenType::BRACKET_OPEN, RsTypeException(tokens.token_list.at(index), "Wrong token, expected {"));
         index++;
 
         while( !IsNextToken(tokens, index, TokenType::BRACKET_CLOSE) ) {
-            EnsureToken(tokens, index, TokenType::IDENTIFIER, RsTypeException(tokens.token_list[index], "Wrong token, expected identifier"));
+            EnsureToken(tokens, index, TokenType::IDENTIFIER, RsTypeException(tokens.token_list.at(index), "Wrong token, expected identifier"));
 
             RsTypeElement type_element;
             type_element.name = Identifier(tokens, index++);
-            EnsureToken(tokens, index, TokenType::COLON, RsTypeException(tokens.token_list[index], "Wrong token, expected :"));
+            EnsureToken(tokens, index, TokenType::COLON, RsTypeException(tokens.token_list.at(index), "Wrong token, expected :"));
             index++;
-            if(tokens.token_list[index].GetTokenType() == TokenType::ID ||
-                 tokens.token_list[index].GetTokenType() == TokenType::STRING ||
-               tokens.token_list[index].GetTokenType() == TokenType::LINK ||
-               tokens.token_list[index].GetTokenType() == TokenType::INT) {
-                type_element.token_of_element = tokens.token_list[index++];
+            if(tokens.token_list.at(index).GetTokenType() == TokenType::ID ||
+                 tokens.token_list.at(index).GetTokenType() == TokenType::STRING ||
+               tokens.token_list.at(index).GetTokenType() == TokenType::LINK ||
+               tokens.token_list.at(index).GetTokenType() == TokenType::INT) {
+                type_element.token_of_element = tokens.token_list.at(index++);
             }
-            else if(tokens.token_list[index].GetTokenType() == TokenType::IDENTIFIER) {
+            else if(tokens.token_list.at(index).GetTokenType() == TokenType::IDENTIFIER) {
                 /* An identifier at this place can only identify an enum.
                  * Keep its details and check later, that it exists
                  */
-                Token const &tmp = tokens.token_list[index];
+                Token const &tmp = tokens.token_list.at(index);
                 Token enum_token(tmp.GetTokenValue(), TokenType::ENUM, tmp.GetFilename(), tmp.GetLineNumberOfToken(), tmp.GetPositionInLineOfToken());
                 type_element.token_of_element = enum_token;
                 RsRdIdentifier enum_name = Identifier(tokens, index++);
                 type_element.enum_definition.name = enum_name;
             }
             else
-                throw RsTypeException(tokens.token_list[index], "Wrong type attribute definition");
+                throw RsTypeException(tokens.token_list.at(index), "Wrong type attribute definition");
 
             type.type_elements.push_back(type_element);
 
-            EnsureToken(tokens, index, TokenType::COMMA, RsTypeException(tokens.token_list[index], "Wrong token, expected ,"));
+            EnsureToken(tokens, index, TokenType::COMMA, RsTypeException(tokens.token_list.at(index), "Wrong token, expected ,"));
             index++;
         }
 

@@ -6,7 +6,7 @@ class RsParserTestFixture : public ::testing::Test, public RsParser
 protected:
   RsParserTestFixture() : RsParser(logger), lexer_test(logger)
   {
-
+    //logger.SetLogLevel(LogLevel::DEBUG);
   }
 
   void SetUp() override {
@@ -163,4 +163,59 @@ TEST_F(RsParserTestFixture, WrongEnumDefinition3)
 
     lexer_test.Read(d);
     ASSERT_THROW(ParseTokens(d), RsEnumException);
+}
+
+TEST_F(RsParserTestFixture, EmptyEnumDefinition)
+{
+    testdata = "enum XXX { }";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), RsEnumException);
+}
+
+TEST_F(RsParserTestFixture, DeveloperWritesATypeNotFinished)
+{
+    testdata = "enum XXX";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), RsEnumException);
+}
+
+TEST_F(RsParserTestFixture, DeveloperWritesATypeNotFinished2)
+{
+    testdata = "type XXX";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), RsTypeException);
+}
+
+TEST_F(RsParserTestFixture, DeveloperWritesAComment)
+{
+    testdata = "// hdakjsh djkashd kjas ";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ParseTokens(d);
+}
+
+TEST_F(RsParserTestFixture, DeveloperWritesACommentNotFinished)
+{
+    testdata = "/* hdakjsh djkashd kjas ";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), CommentException);
 }

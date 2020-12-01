@@ -22,15 +22,10 @@ RsRdIdentifier Parser::Identifier(FileTokenData const& tokens, unsigned int cons
 
 void Parser::LineComment(FileTokenData const& tokens, unsigned int &index) {
     l.LOG(LogLevel::DEBUG, "Parsing Line Comment");
-    Token const &line_comment_start = tokens.token_list[index];
 
     while(tokens.token_list[index].GetTokenType() != TokenType::END_OF_LINE
           && index < tokens.token_list.size())
         index++;
-
-    if(index == tokens.token_list.size()) {
-        throw CommentException(line_comment_start);
-    }
 }
 
 void Parser::MultiLineComment(FileTokenData const& tokens, unsigned int &index) {

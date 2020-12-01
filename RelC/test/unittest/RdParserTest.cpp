@@ -336,3 +336,20 @@ TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongIdValue2) {
     ASSERT_THROW(ParseTokens(d_data), RdTypeException);
 }
 
+TEST_F(RdParserTestFixture, DeveloperIsWritingReqsNotFinished) {
+    spec = "type Req { unique_id : id,}";
+    data = "Req ";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+
+    ASSERT_THROW(ParseTokens(d_data), RdTypeException);
+}
+
