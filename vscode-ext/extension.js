@@ -4,7 +4,7 @@ module.exports = {
   activate(context) {
     const executable = {
       command: '$HOME/bin/rel-ls/rel_ls',
-      args: ['-vv'],
+      args: [''],
       options: {
         env: process.env,
         shell: true,

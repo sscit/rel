@@ -10,7 +10,13 @@ Currently supported version of LSP: [3.15](https://microsoft.github.io/language-
 
 ## Implementation Status of Features
 
-# How to build and use REL Language Server with Visual Studio Code
+| Feature         | Status      |
+| -------------   |-------------|
+| Diagnostics     | implemented |
+| Auto Completion | Planned     |
+
+
+# How to build REL Language Server
 
 Build language server binary with the following bazel command:
 
