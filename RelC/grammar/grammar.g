@@ -31,7 +31,7 @@ enum_definition ::= ENUM identifier {
     [identifier,]+
 }
 
-identifier ::= [a-zA-Z0-9_]+
+identifier ::= [a-zA-Z_][a-zA-Z0-9_]*
 
 
 
@@ -66,4 +66,4 @@ enum_element ::= identifier
 
 string ::= QUOTATION_MARK [.*] QUOTATION_MARK
 
-identifier ::= [a-zA-Z0-9_]+
+identifier ::= [a-zA-Z_][a-zA-Z0-9_]*

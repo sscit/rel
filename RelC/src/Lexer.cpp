@@ -77,7 +77,7 @@ bool Lexer::IsInteger(std::string const &s) {
 
 bool Lexer::IsIdentifier(std::string const &s) {
     unsigned char first_character = s[0];
-    if(std::isalpha(first_character) == 0)
+    if( !(std::isalpha(first_character) != 0 || first_character == '_') )
         return false;
 
     return std::find_if(s.begin()+1, s.end(),

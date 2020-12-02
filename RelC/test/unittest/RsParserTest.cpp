@@ -132,6 +132,31 @@ TEST_F(RsParserTestFixture, EnumDefinitions)
     EXPECT_EQ(all_types.size(), 0);
 }
 
+TEST_F(RsParserTestFixture, EnumDefinitions2)
+{
+    testdata = "enum XXX { d20_30,d30_40,}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ParseTokens(d);
+
+    EXPECT_EQ(all_enums.size(), 1);
+    EXPECT_EQ(all_enums["XXX"].enum_elements.size(), 2);
+}
+
+TEST_F(RsParserTestFixture, EnumDefinitionWithWrongAttribute)
+{
+    testdata = "enum XXX { 20_30,30_40,}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), RsEnumException);
+}
+
 TEST_F(RsParserTestFixture, WrongEnumDefinition)
 {
     testdata = "enum XXX { ,A,B,C,}";

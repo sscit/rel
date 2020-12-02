@@ -64,7 +64,15 @@ TEST_F(LexerTestFixture, IsIdentifier)
     EXPECT_TRUE ( IsIdentifier("JDASU") );
     EXPECT_TRUE ( IsIdentifier("ash_dhuzd") );
     EXPECT_TRUE ( IsIdentifier("XB_dhs_ASdzz") );
+    EXPECT_TRUE ( IsIdentifier("a20_30") );
+    EXPECT_TRUE ( IsIdentifier("_20_30") );
+    EXPECT_TRUE ( IsIdentifier("_ident") );
+    EXPECT_TRUE ( IsIdentifier("a") );
+    EXPECT_TRUE ( IsIdentifier("X") );
+    EXPECT_TRUE ( IsIdentifier("_") );
 
+    EXPECT_FALSE ( IsIdentifier("20_30") );
+    EXPECT_FALSE ( IsIdentifier("1") );
     EXPECT_FALSE ( IsIdentifier("1abs") );
     EXPECT_FALSE ( IsIdentifier("/§&dasdas") );
     EXPECT_FALSE ( IsIdentifier("asdhdja_&dhas") );
