@@ -4,7 +4,7 @@ cc_binary(
     name = "rel_ls",
     srcs = ["//rel-ls/src:main"],
     deps = [
-            "//RelC/src:relc_lib",
+            "//rel-lib/src:rel_lib",
             "//rel-ls/src:rel_ls_lib",
             "@json//:json_lib",
     ],

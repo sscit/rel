@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "RelC/src/Parser.h"
+#include "rel-lib/src/Parser.h"
 
 class ParserTestFixture : public ::testing::Test, public Parser
 {

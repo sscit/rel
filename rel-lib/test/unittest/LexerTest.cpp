@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "RelC/src/Lexer.h"
+#include "rel-lib/src/Lexer.h"
 
 class LexerTestFixture : public ::testing::Test, public Lexer
 {

@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "RelC/src/RdParser.h"
+#include "rel-lib/src/RdParser.h"
 
 class RdParserTestFixture : public ::testing::Test, public RdParser {
 protected:

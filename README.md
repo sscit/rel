@@ -1,7 +1,5 @@
 # REL
-Requirements Engineering Language - a domain specific language to handle requirements in large software projects.
-
-The language consists of two parts:
+Requirements Engineering Language - a domain specific language to handle requirements in large software projects. It is used to create a REL model, which consists of the model's specification and the actual requirements data.
 
 The *Requirements Specification* (file extension _rs_) contains definitions of types and enumerations, which structure the requirements. For every project, it is necessary to define the requirements specification and adapt it to the project's needs.
 
@@ -61,9 +59,7 @@ Additionally, the following projects give an impression of the language on a lar
 
 # Development Environment
 
-Folder [RelC](./RelC) contains the compiler for requirements specification and requirements data files. It parses the files and prints the errors.
-
-Folder [RelC/test](./RelC/test) contains unittests for RelC.
+Folder [rel-lib](./rel-lib) contains the C++ library that implements lexer and parser for REL. It also contains the [unit tests](./rel-lib/test) for the library. In [rel-cli](./rel-cli), a basic command line interface can be found for rel-lib, to execute REL on the command line and parse a REL model consisting of requirements specification and requirements data files.
 
 In [test](./test), a test data set is located, representing an artifical project.
 
@@ -71,31 +67,40 @@ Folder [rel-ls](./rel-ls) contains the Language Server for REL, which can for ex
 
 Build environment to build and run tests is [Bazel](https://bazel.build)
 
-# How to build REL and run it
-
-Clone the repository. Build the [C++ parser](./RelC), which can be used to parse the test project or REL's requirements.
+# How to build REL and use it
 
 REL can be built with GCC. It requires C++17 support.
 
+Clone the repository. Build the [REL command line interface](./rel-cli), which can be used to parse the test project or REL's requirements.
+
 ```
-bazel build --config=default //RelC:relc
+bazel build --config=default //rel-cli:rel_cli
 ``` 
 
 After successful compilation, run the binary with the following command.
 
 ```
-bazel-bin/RelC/relc -r -v ./test/
+bazel-bin/rel-cli/rel_cli -r -v ./test/
 ```
 
 Compilation, integration and usage of Language Server for REL is described [here](./rel-ls/README.md)
 
 # Test Environment
 
-## Run Unittests of RelC
+## Unit Tests
+
+Run unit tests of REL library:
 
 ```
-bazel test --config=default //RelC/test/unittest:RelCUnitTest
+bazel test --config=default //rel-lib/test/unittest:RelLibUnitTest
 ```
+
+Run all unit tests in the project:
+
+```
+bazel test --config=default ...
+```
+
 
 ## Test Data Set
 Folder [test](./test) contains an exemplary set of requirements for a smartphone device. The data set can be used to test the tools and also to get a feeling, how a large project with 1000s of requirements looks like. For the sake of simplicity, only a fraction of the requirements are properly formulated, the rest uses fake text.

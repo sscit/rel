@@ -23,7 +23,7 @@ cc_library(
       "Uri.h",
     ],
     deps = [
-            "//RelC/src:relc_lib",
+            "//rel-lib/src:rel_lib",
             "@json//:json_lib",
     ],
     includes = [""],
