@@ -8,6 +8,9 @@
 #include <fstream>
 #include <iostream>
 
+/* Class abstracts from C++ file reading interface.
+   FileReader can either read from a file, or read data directly
+   from string provided. */
 class FileReader {
 public:
     FileReader();

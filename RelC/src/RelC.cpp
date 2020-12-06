@@ -4,17 +4,11 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include "Lexer.h"
 #include "FileEngine.h"
-#include "ParseException.h"
-#include "RsParser.h"
-#include "RdParser.h"
+#include "RelParser.h"
 #include "Logger.h"
 
 using namespace std;
-
-/* Singletons */
-Logger *g_logger_object;
 
 /* Method Definitions */
 void ProcessCommandLine(int const argc, char const * const argv[], FileEngine &f, Logger &l) {
@@ -36,73 +30,22 @@ void ProcessCommandLine(int const argc, char const * const argv[], FileEngine &f
     }
 }
 
-void ProcessInputFiles(Logger &l, std::vector<FileTokenData> &input_files) {
-    for(unsigned int i=0; i<input_files.size(); i++) {
-        l.LOG(LogLevel::INFO, "Reading file " + input_files[i].filepath + " and creating tokens");
-        Lexer lex(l);
-        lex.Read(input_files[i]);
-    }
-}
-
-void ParseFiles(Logger &l, std::vector<FileTokenData> &input_files) {
-    RsParser rs_parser(l);
-    RdParser rd_parser(l, rs_parser);
-
-    try {
-        // Parse the specifications and build up the data structures
-        std::vector<FileTokenData>::iterator iter = input_files.begin();
-        while( (iter = std::find_if(iter, input_files.end(), [](FileTokenData &d){return (d.GetDataTypeOfTokenList() == DataType::RequirementsSpecification);})) != input_files.end() ) {
-            l.LOG(LogLevel::INFO, "Parsing tokens from " + iter->filepath);
-            rs_parser.ParseTokens(*iter);
-            iter++;
-        }
-
-        // Ensure, that all enum types used exist
-        rs_parser.CheckAllEnumTypes();
-
-        // Now parse the data and build up data structures
-        iter = input_files.begin();
-        while( (iter = std::find_if(iter, input_files.end(), [](FileTokenData &d){return (d.GetDataTypeOfTokenList() == DataType::RequirementsData);})) != input_files.end() ) {
-            l.LOG(LogLevel::INFO, "Parsing of tokens from " + iter->filepath);
-            rd_parser.ParseTokens(*iter);
-            iter++;
-        }
-
-        // check all links
-        rd_parser.CheckAllLinks();
-    }
-    catch(ParseException &e) {
-        Token t  = e.GetToken();
-        l.LOG(LogLevel::ERROR, t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
-        l.LOG(LogLevel::ERROR, e.what());
-    }
-
-    ParsingStatistic s = rd_parser.GetParsingStatistics();
-    l.LOG(LogLevel::INFO, "# files parsed: " + std::to_string(s.number_of_files));
-    l.LOG(LogLevel::INFO, "# type instances parsed: " + std::to_string(s.number_of_type_instances));
-}
-
+/* main method of rel_cli, the command line interface for REL
+   parser */
 int main(int argc, char* argv[]) {
     auto t1 = std::chrono::high_resolution_clock::now();
     /* Initialize singletons */
-    g_logger_object = new Logger();
-
+    Logger logger_object;
     FileEngine input_file_handler;
-    ProcessCommandLine(argc, argv, input_file_handler, *g_logger_object);
+    ProcessCommandLine(argc, argv, input_file_handler, logger_object);
 
-    std::vector<FileTokenData> input_files;
-    input_files = input_file_handler.GetListOfFiles();
-    ProcessInputFiles(*g_logger_object, input_files);
-
-    ParseFiles(*g_logger_object, input_files);
+    RelParser rel(logger_object, input_file_handler);
+    rel.ProcessRelModel();
 
     auto t2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
     
-    g_logger_object->LOG(LogLevel::INFO, "Execution Time: " + std::to_string(duration) + " microseconds");
-
-    /* Cleanup singletons */
-    delete g_logger_object;
+    logger_object.LOG(LogLevel::INFO, "Execution Time: " + std::to_string(duration) + " microseconds");
 
     return 0;
 }

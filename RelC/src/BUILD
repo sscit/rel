@@ -20,7 +20,8 @@ cc_library(
       "RdParser.cpp",
       "SlidingWindow.cpp",
       "Token.cpp",
-      "FileReader.cpp"
+      "FileReader.cpp",
+      "RelParser.cpp",
     ],
     hdrs = [
       "AST.h",
@@ -33,7 +34,8 @@ cc_library(
       "RdParser.h",
       "SlidingWindow.h",
       "Token.h",
-      "FileReader.h"
+      "FileReader.h",
+      "RelParser.h",
     ],
     includes = [""],
     visibility = ["//visibility:public"],
