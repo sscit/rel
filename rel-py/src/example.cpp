@@ -45,7 +45,7 @@ std::vector<Data> fibonacci(unsigned int const n) {
 
 
 
-PYBIND11_MODULE(example, m) {
+PYBIND11_MODULE(librel_py, m) {
     py::class_<Data>(m, "Data")
         .def(py::init<>())
         .def_readwrite("index", &Data::index)
