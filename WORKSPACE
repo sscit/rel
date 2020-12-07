@@ -13,3 +13,16 @@ new_git_repository(
     remote = "https://github.com/nlohmann/json",
     tag = "v3.9.1",
 )
+
+new_git_repository(
+    name = "pybind11",
+    build_file = "pybind11.BUILD",
+    remote = "https://github.com/pybind/pybind11",
+    tag = "v2.6.1",
+)
+
+new_local_repository(
+    name = "python_linux",
+    path = "/usr/include/python3.7m",
+    build_file = "external/python3.BUILD",
+)
