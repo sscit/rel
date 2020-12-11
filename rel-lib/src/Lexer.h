@@ -67,8 +67,8 @@ protected:
     // returns true, if string represents line break
     static bool IsLinebreak(std::string const&);
     // returns true, if the characters in the data structure form an operator
-    bool IsOperator(SlidingWindow const &);
-    bool IsOperator(std::string const&);
+    bool IsOperator(SlidingWindow const &) const;
+    bool IsOperator(std::string const&) const;
     // returns true, if character is a whitespace
     static bool IsWhitespace(char const);
     // check string whether it contains a token

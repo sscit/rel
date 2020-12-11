@@ -28,6 +28,7 @@ enum class TokenType {
     COMMA,
     END_OF_LINE,
     QUOTATION_MARK,
+    QUOTATION_MARK_MASKED,
 
     // strings or integer values
     IDENTIFIER,

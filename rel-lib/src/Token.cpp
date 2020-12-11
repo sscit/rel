@@ -97,7 +97,11 @@ std::string Token::TokenTypeToString(TokenType const &tt) {
         break;
 
     case TokenType::QUOTATION_MARK:
-        output = "quotation";
+        output = "quotation mark";
+        break;
+
+    case TokenType::QUOTATION_MARK_MASKED:
+        output = "quotation mark masked";
         break;
 
     case TokenType::IDENTIFIER:

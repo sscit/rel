@@ -43,6 +43,7 @@ Lexer::Lexer(Logger &logger) : l(logger)  {
     token_table[":"] = TokenType::COLON;
     token_table[","] = TokenType::COMMA;
     token_table["\""] = TokenType::QUOTATION_MARK;
+    token_table["\\\""] = TokenType::QUOTATION_MARK_MASKED;
     token_table["\n"] = TokenType::END_OF_LINE;
     token_table["\r\n"] = TokenType::END_OF_LINE;
 
@@ -116,13 +117,13 @@ bool Lexer::IsDelimiter(char const c) {
     else return false;
 }
 
-bool Lexer::IsOperator(std::string const& s) {
+bool Lexer::IsOperator(std::string const& s) const {
     if(token_table.count(s) == 1)
         return true;
     else return false;
 }
 
-bool Lexer::IsOperator(SlidingWindow const& l) {
+bool Lexer::IsOperator(SlidingWindow const& l) const {
     char buf[2];
     buf[0] = l.front();
 
@@ -134,7 +135,8 @@ bool Lexer::IsOperator(SlidingWindow const& l) {
 
     if( (buf[0] == '/' && buf[1] == '/') ||
         (buf[0] == '/' && buf[1] == '*') ||
-        (buf[0] == '*' && buf[1] == '/') )
+        (buf[0] == '*' && buf[1] == '/') ||
+        (buf[0] == '\\' && buf[1] == '\"') )
         return true;
 
     return false;
@@ -205,6 +207,10 @@ void Lexer::CheckStringandAddToken(std::string &current_str, const char next_cha
             AddTokenToList(current_str, token_table[current_str]);
             current_str.clear();
         }
+    }
+    else if(current_str.compare("\\") == 0 && next_char == '\"') {
+        /* quotation mark is masked, therefore do nothing here and
+        wait until the next char is properly added to current_str */
     }
     else if(IsInteger(current_str)) {
         AddTokenToList(current_str, TokenType::INTEGER_VALUE);

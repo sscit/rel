@@ -38,18 +38,18 @@ identifier ::= [a-zA-Z_][a-zA-Z0-9_]*
 
 // Grammar for .rd file
 
-
 /*
 Operators and Symbols:
-                ,           comma delimiter
-                :           colon
-CMT_START       /*          begin of multi-line commment
-CMT_END         */          end of multi-line comment
-CMT_LINE        //          inline commment
-                {           begin of type instance
-                }           end of type instance
-EOL             [\n|\r\n]   end of line
-QUOTATION_MARK  "           quotation mark, indicating begin and end of string
+                        ,           comma delimiter
+                        :           colon
+CMT_START               /*          begin of multi-line commment
+CMT_END                 */          end of multi-line comment
+CMT_LINE                //          inline commment
+                        {           begin of type instance
+                        }           end of type instance
+EOL                     [\n|\r\n]   end of line
+QUOTATION_MARK          "           quotation mark, indicating begin and end of string
+QUOTATION_MARK_MASKED   \"          quotation mark, masked, to use it within strings
 
 multi_line_comment ::= CMT_START [.]* CMT_END
 line_comment ::= CMT_LINE [.]* EOL
@@ -64,6 +64,6 @@ integer ::= [0-9]+
 
 enum_element ::= identifier
 
-string ::= QUOTATION_MARK [.*] QUOTATION_MARK
+string ::= QUOTATION_MARK [QUOTATION_MARK_MASKED | .]* QUOTATION_MARK
 
 identifier ::= [a-zA-Z_][a-zA-Z0-9_]*

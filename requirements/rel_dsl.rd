@@ -51,7 +51,7 @@ Requirement
 Requirement
 {
     Identifier : dsl7,
-    Text : "The REL language shall support quotation marks within strings, if they are masked",
+    Text : "The REL language shall support \"quotation marks\" within strings, if they are masked.",
     State : Accepted,
-    ImplementationStatus : Not_Implemented,
+    ImplementationStatus : Implemented,
 }

@@ -24,6 +24,77 @@ protected:
   Lexer lexer_test;
 };
 
+TEST_F(LexerTestFixture, AllTokensInString) {
+    std::string testdata = "\"this string has 7 tokens\"";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsData, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 7);
+    EXPECT_EQ(d.token_list[0].GetTokenType(), TokenType::QUOTATION_MARK);
+}
+
+TEST_F(LexerTestFixture, AllTokensInString2) {
+    std::string testdata = "\"to \\\"emphasize\\\"\"";
+    logger.LOG(LogLevel::DEBUG, testdata);
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsData, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 6);
+    EXPECT_EQ(d.token_list[0].GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(d.token_list[2].GetTokenType(), TokenType::QUOTATION_MARK_MASKED);
+}
+
+TEST_F(LexerTestFixture, AllTokensInString3) {
+    std::string testdata = "\"to\\\"emphasize\\\"\"";
+    logger.LOG(LogLevel::DEBUG, testdata);
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsData, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 6);
+    EXPECT_EQ(d.token_list[0].GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(d.token_list[2].GetTokenType(), TokenType::QUOTATION_MARK_MASKED);
+}
+
+TEST_F(LexerTestFixture, AllTokensInString4) {
+    std::string testdata = "\"\\\\\\\\x\"";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsData, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 3);
+    EXPECT_EQ(d.token_list[0].GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(d.token_list[1].GetTokenType(), TokenType::STRING_VALUE);
+    EXPECT_EQ(d.token_list[1].GetTokenValue().size(), 5);
+    EXPECT_EQ(d.token_list[2].GetTokenType(), TokenType::QUOTATION_MARK);
+}
+
+TEST_F(LexerTestFixture, AllTokensInString5) {
+    std::string testdata = "\"a string \\ with \\ 9 tokens \"";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsData, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 9);
+    EXPECT_EQ(d.token_list[0].GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(d.token_list[8].GetTokenType(), TokenType::QUOTATION_MARK);
+}
+
+TEST_F(LexerTestFixture, AllTokensInString6) {
+    std::string testdata = "\"a string \\with \\7 tokens \"";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsData, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 7);
+}
+
 TEST_F(LexerTestFixture, TypeDefinition)
 {
     testdata = "type XXX { attribute : id, status : New, }";
@@ -46,6 +117,17 @@ TEST_F(LexerTestFixture, EnumDefinition)
     EXPECT_EQ(d.token_list.size(), 5);
 }
 
+TEST_F(LexerTestFixture, EnumDefinitionWithComment)
+{
+    testdata = "enum XXX/*anInlineComment*/{ MyAttr }";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 8);
+}
+
 TEST_F(LexerTestFixture, LineComment)
 {
     testdata = "// test line comment\n";
@@ -55,6 +137,49 @@ TEST_F(LexerTestFixture, LineComment)
     lexer_test.Read(d);
 
     EXPECT_EQ(d.token_list.size(), 5);
+}
+
+TEST_F(LexerTestFixture, IsOperator)
+{
+    SlidingWindow v;
+
+    v.push_back('/');
+    v.push_back('*');
+    EXPECT_TRUE( IsOperator(v) );
+
+    v.clear();
+    v.push_back('*');
+    v.push_back('/');
+    EXPECT_TRUE( IsOperator(v) );
+
+    v.clear();
+    v.push_back('\\');
+    v.push_back('\"');
+    EXPECT_TRUE( IsOperator(v) );
+
+    EXPECT_TRUE( IsOperator("//") );
+    EXPECT_TRUE( IsOperator("/*") );
+    EXPECT_TRUE( IsOperator("\"") );
+    EXPECT_TRUE( IsOperator("\\\"") );
+
+    EXPECT_FALSE( IsOperator("xx") );
+    EXPECT_FALSE( IsOperator("1hd") );
+}
+
+TEST_F(LexerTestFixture, IsWhitespaceOrDelimiter)
+{
+    EXPECT_TRUE( IsWhitespace(' ') );
+    EXPECT_TRUE( IsWhitespace('\t') );
+    EXPECT_FALSE( IsWhitespace('b') );
+    EXPECT_FALSE( IsWhitespace('x') );
+    EXPECT_FALSE( IsWhitespace('0') );
+
+    EXPECT_TRUE( IsDelimiter(' ') );
+    EXPECT_TRUE( IsDelimiter('\r') );
+    EXPECT_TRUE( IsDelimiter('\n') );
+    EXPECT_FALSE( IsDelimiter('b') );
+    EXPECT_FALSE( IsDelimiter('x') );
+    EXPECT_FALSE( IsDelimiter('0') );
 }
 
 TEST_F(LexerTestFixture, IsIdentifier)

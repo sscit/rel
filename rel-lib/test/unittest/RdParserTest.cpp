@@ -78,6 +78,26 @@ TEST_F(RdParserTestFixture, SingleDataset2) {
     EXPECT_EQ(database[0].type_elements_data.size(), 4);
 }
 
+TEST_F(RdParserTestFixture, DatasetWithMaskedQuotationMark) {
+    spec = "type Req { Text : string, }";
+    data = "Req { Text : \"I would like to \\\"emphasize\\\" this part and mo\\\"re\",}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+
+    ParseTokens(d_data);
+
+    EXPECT_EQ(database.size(), 1);
+    EXPECT_EQ(database[0].type_elements_data.size(), 1);
+}
+
 /*
 TEST_F(RdParserTestFixture, DatasetWithEnum) {
     spec = "type Req { Color : Color,} enum Color {red, blue,}";
