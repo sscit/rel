@@ -3,7 +3,8 @@
 
 #include "RelParser.h"
 
-RelParser::RelParser(Logger &logger, FileEngine const &files) : l(logger), rel_model(files) {}
+RelParser::RelParser(Logger &logger, FileEngine const &files) 
+    : l(logger), rel_model(files), rs_parser(l), rd_parser(l, rs_parser) {}
 RelParser::~RelParser() {}
 
 void RelParser::ProcessRelModel()
@@ -17,6 +18,11 @@ void RelParser::ProcessRelModel()
     ParseFiles(input_files);
 }
 
+std::vector<RdTypeInstance> RelParser::GetDatabase()
+{
+    return rd_parser.GetDatabase();
+}
+
 void RelParser::ReadAndLexInputFiles(std::vector<FileTokenData> &input_files) {
     for(unsigned int i=0; i<input_files.size(); i++) {
         l.LOG(LogLevel::INFO, "Reading file " + input_files[i].filepath + " and creating tokens");
@@ -26,9 +32,6 @@ void RelParser::ReadAndLexInputFiles(std::vector<FileTokenData> &input_files) {
 }
 
 void RelParser::ParseFiles(std::vector<FileTokenData> &input_files) {
-    RsParser rs_parser(l);
-    RdParser rd_parser(l, rs_parser);
-
     try {
         // Parse the specifications and build up the data structures
         std::vector<FileTokenData>::iterator iter = input_files.begin();

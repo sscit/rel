@@ -22,12 +22,18 @@ public:
 
     void ProcessRelModel();
 
+    // returns all type instances that have been read
+    std::vector<RdTypeInstance> GetDatabase();
+
 private:
     void ReadAndLexInputFiles(std::vector<FileTokenData>&);
     void ParseFiles(std::vector<FileTokenData>&);
 
     Logger &l;
     FileEngine const &rel_model;
+
+    RsParser rs_parser;
+    RdParser rd_parser;
 };
 
 #endif

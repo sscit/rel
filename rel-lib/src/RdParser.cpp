@@ -9,6 +9,11 @@ ParsingStatistic RdParser::GetParsingStatistics() const {
     return statistic;
 }
 
+std::vector<RdTypeInstance> RdParser::GetDatabase()
+{
+    return database;
+}
+
 template<class T>
 void RdParser::EnsureToken(FileTokenData const& tokens, unsigned int& index, TokenType const& tt, T const e) {
     while(tokens.token_list[index].GetTokenType() == TokenType::END_OF_LINE ||

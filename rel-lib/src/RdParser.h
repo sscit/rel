@@ -35,6 +35,9 @@ public:
     void CheckAllLinks();
     ParsingStatistic GetParsingStatistics() const;
 
+    // returns all type instances that have been read
+    std::vector<RdTypeInstance> GetDatabase();
+
 protected:
     RdInteger Integer(FileTokenData const&, unsigned int&);
     RdString ReadString(FileTokenData const&, unsigned int&);
