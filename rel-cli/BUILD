@@ -4,7 +4,7 @@ cc_binary(
     name = "rel_cli",
     srcs = ["//rel-cli/src:rel_cli_main"],
     deps = [
-            "//rel-lib/src:rel_lib",
+            "//rel-lib:rel_lib",
     ],
 )
 
