@@ -1,56 +1,44 @@
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2020-present Stefan Schlichthärle */
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include "rel-lib/src/Logger.h"
 #include "rel-lib/src/FileEngine.h"
-
-
+#include "rel-lib/src/RelParser.h"
 
 namespace py = pybind11;
 
-
-
-
-
-class Data
-{
-public:
-    Data(std::string xx) : one_str(xx) {}
-    virtual ~Data() {}
-
-    std::string GetS() { return one_str;}
-    std::string one_str;
-};
-
-
-#if 0
-std::vector<Data> fibonacci(unsigned int const n) {
-    std::vector<Data> v;
-
-    Data d;
-    d.index = 1;
-    d.fibo = 1;
-    v.push_back(d);
-
-    d.index = 2;
-    v.push_back(d);
-    for(unsigned int i=1; i<n; i++) {
-        int res = v[i].fibo + v[i-1].fibo;
-        Data x;
-        x.index = i;
-        x.fibo = res;
-        v.push_back(x);
-    }
-    
-    return v;
-}
-#endif
-
 PYBIND11_MODULE(librel_py, m) {
-    py::class_<Data>(m, "Data")
-        .def(py::init<const std::string>())
-        .def("GetS", &Data::GetS);
+    // Classes of AST
+    py::class_<RsRdIdentifier>(m, "RsRdIdentifier")
+        .def_readwrite("name", &RsRdIdentifier::name);
 
+    py::class_<RsTypeElement>(m, "RsTypeElement")
+        .def_readwrite("name", &RsTypeElement::name);
+
+    py::class_<RsType>(m, "RsType")
+        .def_readwrite("name", &RsType::name);
+
+    py::class_<RdString>(m, "RdString")
+        .def_readwrite("value", &RdString::value);
+
+    py::class_<RdInteger>(m, "RdInteger")
+        .def_readwrite("value", &RdInteger::value);
+
+    py::class_<RdTypeInstanceElement>(m, "RdTypeInstanceElement")
+        .def_readwrite("name", &RdTypeInstanceElement::name)
+        .def_readwrite("string_value", &RdTypeInstanceElement::string_value)
+        .def_readwrite("integer_value", &RdTypeInstanceElement::integer_value)
+        .def_readwrite("link", &RdTypeInstanceElement::link)
+        .def_readwrite("enum_value", &RdTypeInstanceElement::enum_value);
+
+    py::class_<RdTypeInstance>(m, "RdTypeInstance")
+        .def_readwrite("type", &RdTypeInstance::type)
+        .def_readwrite("type_elements_data", &RdTypeInstance::type_elements_data);
+    
+    // Data types used in Logger Class
     py::enum_<LogLevel>(m, "LogLevel")
         .value("ERROR", LogLevel::ERROR)
         .value("WARNING", LogLevel::WARNING)
@@ -65,17 +53,16 @@ PYBIND11_MODULE(librel_py, m) {
         .def("LogMessage", &Logger::LogMessage, 
              py::arg("loglevel") = LogLevel::WARNING, py::arg("message") = "", py::arg("filename") = "Unset", py::arg("line_number") = -1);
 
-
     py::class_<FileEngine>(m, "FileEngine")
         .def(py::init<>())
         .def("SetSearchRecursive", &FileEngine::SetSearchRecursive)
         .def("GetSearchRecursive", &FileEngine::GetSearchRecursive)
-        .def("SetStartDirectory", &FileEngine::SetStartDirectory)
-        .def("GetListOfFiles", &FileEngine::GetListOfFiles);
+        .def("SetStartDirectory", &FileEngine::SetStartDirectory);
 
-    
-    
+    py::class_<RelParser>(m, "RelParser")
+        .def(py::init<Logger&, FileEngine const&>())
+        .def("ProcessRelModel", &RelParser::ProcessRelModel)
+        .def("GetDatabase", &RelParser::GetDatabase);
+
     m.doc() = "REL - python integration"; // optional module docstring
-
-    
 }
