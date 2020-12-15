@@ -4,7 +4,7 @@ cc_test(
     name = "RelLibUnitTest",
     srcs = glob(["**/*.cpp"]),
     deps = [
-        "//rel-lib/src:rel_lib",
+        "//rel-lib:rel_lib",
         "@googletest//:gtest_main",
     ],
 )
