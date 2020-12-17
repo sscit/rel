@@ -36,6 +36,7 @@ PYBIND11_MODULE(librel_py, m) {
 
     py::class_<RdTypeInstance>(m, "RdTypeInstance")
         .def_readwrite("type", &RdTypeInstance::type)
+        .def_readwrite("file_origin", &RdTypeInstance::file_origin)
         .def_readwrite("type_elements_data", &RdTypeInstance::type_elements_data);
     
     // Data types used in Logger Class
@@ -58,6 +59,10 @@ PYBIND11_MODULE(librel_py, m) {
         .def("SetSearchRecursive", &FileEngine::SetSearchRecursive)
         .def("GetSearchRecursive", &FileEngine::GetSearchRecursive)
         .def("SetStartDirectory", &FileEngine::SetStartDirectory);
+
+    py::enum_<ParseResult>(m, "ParseResult")
+        .value("NoExceptionOccurred", ParseResult::NoExceptionOccurred)
+        .value("ExceptionOccurred", ParseResult::ExceptionOccurred);
 
     py::class_<RelParser>(m, "RelParser")
         .def(py::init<Logger&, FileEngine const&>())

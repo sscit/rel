@@ -7,7 +7,7 @@ RelParser::RelParser(Logger &logger, FileEngine const &files)
     : l(logger), rel_model(files), rs_parser(l), rd_parser(l, rs_parser) {}
 RelParser::~RelParser() {}
 
-void RelParser::ProcessRelModel()
+ParseResult RelParser::ProcessRelModel()
 {
     l.LOG(LogLevel::INFO, "Starting to read REL model");
     std::vector<FileTokenData> input_files;
@@ -15,7 +15,7 @@ void RelParser::ProcessRelModel()
 
     ReadAndLexInputFiles(input_files);
 
-    ParseFiles(input_files);
+    return ParseFiles(input_files);
 }
 
 std::vector<RdTypeInstance> RelParser::GetDatabase()
@@ -31,7 +31,9 @@ void RelParser::ReadAndLexInputFiles(std::vector<FileTokenData> &input_files) {
     }
 }
 
-void RelParser::ParseFiles(std::vector<FileTokenData> &input_files) {
+ParseResult RelParser::ParseFiles(std::vector<FileTokenData> &input_files) {
+    ParseResult result = ParseResult::NoExceptionOccurred;
+
     try {
         // Parse the specifications and build up the data structures
         std::vector<FileTokenData>::iterator iter = input_files.begin();
@@ -59,9 +61,13 @@ void RelParser::ParseFiles(std::vector<FileTokenData> &input_files) {
         Token t  = e.GetToken();
         l.LOG(LogLevel::ERROR, t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
         l.LOG(LogLevel::ERROR, e.what());
+
+        result = ParseResult::ExceptionOccurred;
     }
 
     ParsingStatistic s = rd_parser.GetParsingStatistics();
     l.LOG(LogLevel::INFO, "# files parsed: " + std::to_string(s.number_of_files));
     l.LOG(LogLevel::INFO, "# type instances parsed: " + std::to_string(s.number_of_type_instances));
+
+    return result;
 }

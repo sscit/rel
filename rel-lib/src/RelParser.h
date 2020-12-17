@@ -9,6 +9,11 @@
 #include "RsParser.h"
 #include "RdParser.h"
 
+enum class ParseResult {
+    NoExceptionOccurred = 0,
+    ExceptionOccurred  = 1
+};
+
 /* This class implements a workflow, which uses Lexer and Parser of
    REL specification and REL data to process a REL model.
 
@@ -20,14 +25,14 @@ public:
     RelParser(Logger &l, FileEngine const &files);
     virtual ~RelParser();
 
-    void ProcessRelModel();
+    ParseResult ProcessRelModel();
 
     // returns all type instances that have been read
     std::vector<RdTypeInstance> GetDatabase();
 
 private:
     void ReadAndLexInputFiles(std::vector<FileTokenData>&);
-    void ParseFiles(std::vector<FileTokenData>&);
+    ParseResult ParseFiles(std::vector<FileTokenData>&);
 
     Logger &l;
     FileEngine const &rel_model;

@@ -45,6 +45,7 @@ public:
 
 class RdInteger {
 public:
+    RdInteger() : value(0) { }
     int value;
 };
 
