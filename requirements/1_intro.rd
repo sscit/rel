@@ -3,7 +3,7 @@ Information
     Identifier : int1,
     Text : "REL is a domain specific language for requirements engineering.
     
-    In this document, the key requirments of REL are described.",
+    In this document, the key requirements of REL are described.",
 }
 
 Information
