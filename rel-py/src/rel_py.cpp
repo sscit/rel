@@ -13,31 +13,32 @@ namespace py = pybind11;
 PYBIND11_MODULE(librel_py, m) {
     // Classes of AST
     py::class_<RsRdIdentifier>(m, "RsRdIdentifier")
-        .def_readwrite("name", &RsRdIdentifier::name);
+        .def("Get", &RsRdIdentifier::Get);
 
-    py::class_<RsTypeElement>(m, "RsTypeElement")
-        .def_readwrite("name", &RsTypeElement::name);
+    py::class_<RsTypeAttribute>(m, "RsTypeAttribute")
+        .def("Get", &RsTypeAttribute::Get);
 
     py::class_<RsType>(m, "RsType")
-        .def_readwrite("name", &RsType::name);
+        .def("Get", &RsType::Get);
 
     py::class_<RdString>(m, "RdString")
-        .def_readwrite("value", &RdString::value);
+        .def("Get", &RdString::Get);
 
     py::class_<RdInteger>(m, "RdInteger")
-        .def_readwrite("value", &RdInteger::value);
+        .def("Get", &RdInteger::Get)
+        .def("IsValid", &RdInteger::IsValid);
 
-    py::class_<RdTypeInstanceElement>(m, "RdTypeInstanceElement")
-        .def_readwrite("name", &RdTypeInstanceElement::name)
-        .def_readwrite("string_value", &RdTypeInstanceElement::string_value)
-        .def_readwrite("integer_value", &RdTypeInstanceElement::integer_value)
-        .def_readwrite("link", &RdTypeInstanceElement::link)
-        .def_readwrite("enum_value", &RdTypeInstanceElement::enum_value);
+    py::class_<RdTypeInstanceAttribute>(m, "RdTypeInstanceAttribute")
+        .def_readwrite("name", &RdTypeInstanceAttribute::name)
+        .def_readwrite("string_value", &RdTypeInstanceAttribute::string_value)
+        .def_readwrite("integer_value", &RdTypeInstanceAttribute::integer_value)
+        .def_readwrite("link_value", &RdTypeInstanceAttribute::link_value)
+        .def_readwrite("enum_value", &RdTypeInstanceAttribute::enum_value);
 
     py::class_<RdTypeInstance>(m, "RdTypeInstance")
         .def_readwrite("type", &RdTypeInstance::type)
         .def_readwrite("file_origin", &RdTypeInstance::file_origin)
-        .def_readwrite("type_elements_data", &RdTypeInstance::type_elements_data);
+        .def_readwrite("attributes", &RdTypeInstance::attributes);
     
     // Data types used in Logger Class
     py::enum_<LogLevel>(m, "LogLevel")

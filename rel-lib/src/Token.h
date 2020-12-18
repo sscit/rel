@@ -44,6 +44,7 @@ public:
     Token(std::string const&, TokenType const&, std::string const&, unsigned int const, unsigned int const);
     bool Compare(std::string const input);
     virtual ~Token();
+    
     TokenType GetTokenType() const;
     std::string GetTokenValue() const;
     std::string GetFilename() const;

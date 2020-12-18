@@ -39,11 +39,11 @@ void RdParser::CheckAllLinks() {
     for(unsigned int i=0; i<database.size(); i++) {
         RdTypeInstance const &instance = database[i];
 
-        for(unsigned int j=0; j<instance.type_elements_data.size(); j++) {
-            RdTypeInstanceElement const &element = instance.type_elements_data[j];
-            if(element.name.token_of_element.GetTokenType() == TokenType::LINK) {
-                auto const search = unique_ids.find(element.link.name);
-                l.LOG(LogLevel::DEBUG, "search for " + element.link.name);
+        for(unsigned int j=0; j<instance.attributes.size(); j++) {
+            RdTypeInstanceAttribute const &element = instance.attributes[j];
+            if(element.name.token_of_attribute.GetTokenType() == TokenType::LINK) {
+                auto const search = unique_ids.find(element.link_value.name);
+                l.LOG(LogLevel::DEBUG, "search for " + element.link_value.name);
                 if(search == unique_ids.end()) {
                     throw RdTypeException(element.token_of_value, "Link points to id that does not exist");
                 }
@@ -83,9 +83,7 @@ RdString RdParser::ReadString(FileTokenData const& tokens, unsigned int &index) 
 }
 
 RdInteger RdParser::Integer(FileTokenData const& tokens, unsigned int &index) {
-    RdInteger integer_value;
-
-    integer_value.value = std::stoi(tokens.token_list[index].GetTokenValue());
+    RdInteger integer_value(std::stoi(tokens.token_list[index].GetTokenValue()));
 
     return integer_value;
 }
@@ -104,8 +102,8 @@ bool RdParser::EnumValueExists(std::vector<RsRdIdentifier> const &enum_values, R
     return found;
 }
 
-bool RdParser::HasAttributeValueCorrectType(RsTypeElement const& type_element, TokenType const current_token) {
-    return (type_element.token_of_element.GetTokenType() == current_token);
+bool RdParser::HasAttributeValueCorrectType(RsTypeAttribute const& type_element, TokenType const current_token) {
+    return (type_element.token_of_attribute.GetTokenType() == current_token);
 }
 
 RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int& index) {
@@ -132,14 +130,14 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
         l.LOG(LogLevel::DEBUG, "Starting to parse new data attribute");
         EnsureToken(tokens, index, TokenType::IDENTIFIER, RdTypeException(tokens.token_list.at(index), "Wrong token, expected attribute"));
         RsRdIdentifier attribute = Identifier(tokens, index);
-        if( number_of_elements >= type_definition.type_elements.size() ||
-            attribute.name.compare(type_definition.type_elements[number_of_elements].name.name) != 0) {
+        if( number_of_elements >= type_definition.attributes.size() ||
+            attribute.name.compare(type_definition.attributes[number_of_elements].name.name) != 0) {
             throw RdTypeException(tokens.token_list.at(index), "Attribute not defined in type specification");
         }
         l.LOG(LogLevel::DEBUG, "Parsing data attribute named " + attribute.name);
 
-        RdTypeInstanceElement type_instance_element;
-        type_instance_element.name = type_definition.type_elements[number_of_elements];
+        RdTypeInstanceAttribute type_instance_element;
+        type_instance_element.name = type_definition.attributes[number_of_elements];
         index++;
 
         EnsureToken(tokens, index, TokenType::COLON, RdTypeException(tokens.token_list.at(index), "Wrong token, expected :"));
@@ -174,7 +172,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
         }
         else if(tokens.token_list.at(index).GetTokenType() == TokenType::IDENTIFIER) {
             l.LOG(LogLevel::DEBUG, "attribute value of type identifier identified");
-            if(type_instance_element.name.token_of_element.GetTokenType() == TokenType::ENUM) {
+            if(type_instance_element.name.token_of_attribute.GetTokenType() == TokenType::ENUM) {
                 // Check that the enum value used exists
                 type_instance_element.enum_value.name = tokens.token_list.at(index).GetTokenValue();
                 if(!EnumValueExists(type_instance_element.name.enum_definition.enum_elements, type_instance_element.enum_value)) {
@@ -184,11 +182,11 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
                 }
                 l.LOG(LogLevel::DEBUG, "attribute has enum value " + type_instance_element.enum_value.name + ", enum value exists");
             }
-            else if(type_instance_element.name.token_of_element.GetTokenType() == TokenType::LINK) {
-                type_instance_element.link = Identifier(tokens, index);
+            else if(type_instance_element.name.token_of_attribute.GetTokenType() == TokenType::LINK) {
+                type_instance_element.link_value = Identifier(tokens, index);
                 l.LOG(LogLevel::DEBUG, "attribute of type link parsed");
             }
-            else if(type_instance_element.name.token_of_element.GetTokenType() == TokenType::ID) {
+            else if(type_instance_element.name.token_of_attribute.GetTokenType() == TokenType::ID) {
                 type_instance_element.string_value.value = tokens.token_list.at(index).GetTokenValue();
                 l.LOG(LogLevel::DEBUG, "attribute of type id parsed");
             }
@@ -210,7 +208,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
         }
 
         // check for unique id, if this attribute defined an id
-        if(type_definition.type_elements[number_of_elements].token_of_element.GetTokenType() == TokenType::ID) {
+        if(type_definition.attributes[number_of_elements].token_of_attribute.GetTokenType() == TokenType::ID) {
             if(unique_ids.find(type_instance_element.string_value.value) != unique_ids.end()) {
                 throw RdTypeException(tokens.token_list.at(index), "ID already used");
             }
@@ -219,7 +217,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
             }
         }
 
-        type_instance.type_elements_data.push_back(type_instance_element);
+        type_instance.attributes.push_back(type_instance_element);
         index++;
         EnsureToken(tokens, index, TokenType::COMMA, RdTypeException(tokens.token_list.at(index), "Wrong token, expected ,"));
         index++;
@@ -227,13 +225,13 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
     }
 
     // Check error cases
-    if(type_instance.type_elements_data.size() == 0)
+    if(type_instance.attributes.size() == 0)
         throw RdTypeException(tokens.token_list.at(index), "No attributes defined in type instance");
 
-    if(type_instance.type_elements_data.size() < type_instance.type.type_elements.size())
+    if(type_instance.attributes.size() < type_instance.type.attributes.size())
         throw RdTypeException(tokens.token_list.at(index), "Type instance does not match to type definition, missing attributes.");
 
-    l.LOG(LogLevel::DEBUG, "Dataset " + type_instance.type.name.name + " (" + std::to_string(type_instance.type_elements_data.size()) + " elements) has been created.");
+    l.LOG(LogLevel::DEBUG, "Dataset " + type_instance.type.name.name + " (" + std::to_string(type_instance.attributes.size()) + " elements) has been created.");
 
     return type_instance;
 }

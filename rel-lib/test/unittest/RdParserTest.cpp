@@ -35,7 +35,7 @@ TEST_F(RdParserTestFixture, UsingReservedKeywords) {
     ParseTokens(d_data);
 
     EXPECT_EQ(database.size(), 1);
-    EXPECT_EQ(database[0].type_elements_data.size(), 6);
+    EXPECT_EQ(database[0].attributes.size(), 6);
 }
 
 TEST_F(RdParserTestFixture, SingleDataset) {
@@ -55,7 +55,7 @@ TEST_F(RdParserTestFixture, SingleDataset) {
     ParseTokens(d_data);
 
     EXPECT_EQ(database.size(), 1);
-    EXPECT_EQ(database[0].type_elements_data.size(), 2);
+    EXPECT_EQ(database[0].attributes.size(), 2);
 }
 
 TEST_F(RdParserTestFixture, SingleDataset2) {
@@ -75,7 +75,7 @@ TEST_F(RdParserTestFixture, SingleDataset2) {
     ParseTokens(d_data);
 
     EXPECT_EQ(database.size(), 1);
-    EXPECT_EQ(database[0].type_elements_data.size(), 4);
+    EXPECT_EQ(database[0].attributes.size(), 4);
 }
 
 TEST_F(RdParserTestFixture, DatasetWithMaskedQuotationMark) {
@@ -95,7 +95,7 @@ TEST_F(RdParserTestFixture, DatasetWithMaskedQuotationMark) {
     ParseTokens(d_data);
 
     EXPECT_EQ(database.size(), 1);
-    EXPECT_EQ(database[0].type_elements_data.size(), 1);
+    EXPECT_EQ(database[0].attributes.size(), 1);
 }
 
 /*

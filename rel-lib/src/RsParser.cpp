@@ -25,15 +25,15 @@ void RsParser::CheckAllEnumTypes() {
     l.LOG(LogLevel::DEBUG, "Checking that all enum types used are defined");
     for(it = all_types.begin(); it != all_types.end(); it++) {
         RsType &t = it->second;
-        for(unsigned int j=0; j<t.type_elements.size(); j++) {
-            RsTypeElement &te = t.type_elements[j];
-            if(te.token_of_element.GetTokenType() == TokenType::ENUM) {
-                auto search_result = all_enums.find(te.enum_definition.name.name);
+        for(unsigned int j=0; j<t.attributes.size(); j++) {
+            RsTypeAttribute &te = t.attributes[j];
+            if(te.token_of_attribute.GetTokenType() == TokenType::ENUM) {
+                auto search_result = all_enums.find(te.enum_definition.Get());
                 if(search_result != all_enums.end()) {
                     te.enum_definition = search_result->second;
                 }
                 else {
-                    throw EnumUsedButNotDefinedException(te.token_of_element, "Enum " + te.enum_definition.name.name + " was used but not defined");
+                    throw EnumUsedButNotDefinedException(te.token_of_attribute, "Enum " + te.enum_definition.Get() + " was used but not defined");
                 }
             }
         }
@@ -166,14 +166,14 @@ RsEnum RsParser::EnumDefinition(FileTokenData const& tokens, unsigned int &index
         if(enumeration.enum_elements.size() == 0)
             throw RsEnumException(enum_token, "No enum attributes defined");
         // Check that name hasn't been used before
-        if(all_enums.find(enumeration.name.name) != all_enums.end())
+        if(all_enums.find(enumeration.Get()) != all_enums.end())
             throw RsEnumException(enum_token, "Enum with this name already defined");
     }
     else {
         throw RsEnumException(enum_token, "Wrong token, expected identifier");
     }
 
-    l.LOG(LogLevel::DEBUG, "Enumeration " + enumeration.name.name + " (" + std::to_string(enumeration.enum_elements.size()) + " elements) has been created.");
+    l.LOG(LogLevel::DEBUG, "Enumeration " + enumeration.Get() + " (" + std::to_string(enumeration.enum_elements.size()) + " elements) has been created.");
 
     return enumeration;
 }
@@ -192,15 +192,15 @@ RsType RsParser::TypeDefinition(FileTokenData const& tokens, unsigned int &index
         while( !IsNextToken(tokens, index, TokenType::BRACKET_CLOSE) ) {
             EnsureToken(tokens, index, TokenType::IDENTIFIER, RsTypeException(tokens.token_list.at(index), "Wrong token, expected identifier"));
 
-            RsTypeElement type_element;
-            type_element.name = Identifier(tokens, index++);
+            RsTypeAttribute type_attribute;
+            type_attribute.name = Identifier(tokens, index++);
             EnsureToken(tokens, index, TokenType::COLON, RsTypeException(tokens.token_list.at(index), "Wrong token, expected :"));
             index++;
             if(tokens.token_list.at(index).GetTokenType() == TokenType::ID ||
                  tokens.token_list.at(index).GetTokenType() == TokenType::STRING ||
                tokens.token_list.at(index).GetTokenType() == TokenType::LINK ||
                tokens.token_list.at(index).GetTokenType() == TokenType::INT) {
-                type_element.token_of_element = tokens.token_list.at(index++);
+                type_attribute.token_of_attribute = tokens.token_list.at(index++);
             }
             else if(tokens.token_list.at(index).GetTokenType() == TokenType::IDENTIFIER) {
                 /* An identifier at this place can only identify an enum.
@@ -208,31 +208,31 @@ RsType RsParser::TypeDefinition(FileTokenData const& tokens, unsigned int &index
                  */
                 Token const &tmp = tokens.token_list.at(index);
                 Token enum_token(tmp.GetTokenValue(), TokenType::ENUM, tmp.GetFilename(), tmp.GetLineNumberOfToken(), tmp.GetPositionInLineOfToken());
-                type_element.token_of_element = enum_token;
+                type_attribute.token_of_attribute = enum_token;
                 RsRdIdentifier enum_name = Identifier(tokens, index++);
-                type_element.enum_definition.name = enum_name;
+                type_attribute.enum_definition.name = enum_name;
             }
             else
                 throw RsTypeException(tokens.token_list.at(index), "Wrong type attribute definition");
 
-            type.type_elements.push_back(type_element);
+            type.attributes.push_back(type_attribute);
 
             EnsureToken(tokens, index, TokenType::COMMA, RsTypeException(tokens.token_list.at(index), "Wrong token, expected ,"));
             index++;
         }
 
         // Check error cases
-        if(type.type_elements.size() == 0)
+        if(type.attributes.size() == 0)
             throw RsTypeException(type_token, "Type definition empty");
         // Check that name hasn't been used before
-        if(all_types.find(type.name.name) != all_types.end())
+        if(all_types.find(type.Get()) != all_types.end())
             throw RsTypeException(type_token, "Type with this name already defined");
     }
     else {
         throw RsTypeException(type_token, "Wrong token, expected identifier");
     }
 
-    l.LOG(LogLevel::DEBUG, "Type " + type.name.name + " (" + std::to_string(type.type_elements.size()) + " elements) has been created.");
+    l.LOG(LogLevel::DEBUG, "Type " + type.Get() + " (" + std::to_string(type.attributes.size()) + " elements) has been created.");
 
     return type;
 }

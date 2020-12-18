@@ -11,62 +11,85 @@
 /* Data Structures of AST, used for .rs and .rd syntax */
 class RsRdIdentifier {
 public:
+    // returns the name of the identifier
+    std::string Get() const { return name; }
     std::string name;
 };
 
 // AST elements used in .rs files
 class RsEnum {
 public:
+    // returns the name of the enum type
+    std::string Get() const { return name.Get(); }
     RsRdIdentifier name;
     std::vector<RsRdIdentifier> enum_elements;
 };
 
 // Represents an entry of a type definition
-class RsTypeElement {
+class RsTypeAttribute {
 public:
+    // returns the name of the attribute
+    std::string Get() const { return name.Get(); }
     RsRdIdentifier name;
-    /* Token that defines the type of this RsTypeElement,
+    /* Token that defines the type of this RsTypeAttribute,
        e.g. link, or the enum identifier */
-    Token token_of_element;
+    Token token_of_attribute;
+    // If attribute is an enum, enum definition is located here
     RsEnum enum_definition;
 };
 
 class RsType {
 public:
+    // returns the name of the type
+    std::string Get() const { return name.Get(); }
     RsRdIdentifier name;
-    std::vector<RsTypeElement> type_elements;
+    std::vector<RsTypeAttribute> attributes;
 };
 
 // AST elements used in .rd files
 class RdString {
 public:
+    // returns the string value
+    std::string Get() const { return value; }
     std::string value;
 };
 
 class RdInteger {
 public:
-    RdInteger() : value(0) { }
+    RdInteger() : value(0), is_valid(false) { }
+    RdInteger(int const v) : value(v), is_valid(true) { }
+    // returns the integer value
+    int Get() const { return value; }
+    // returns true, if class contains valid data
+    bool IsValid() const { return is_valid;}
+
+private:
     int value;
+    // true, if class contains valid data
+    bool is_valid;
 };
 
 // represents one attribute of the type instance
-class RdTypeInstanceElement {
+class RdTypeInstanceAttribute {
 public:
-    RsTypeElement name;
+    // copy of the definition of the attribute from type definition
+    RsTypeAttribute name;
+    // attribute's value
     RdString string_value;
     RdInteger integer_value;
-    RsRdIdentifier link;
+    RsRdIdentifier link_value;
     RsRdIdentifier enum_value;
-    // Represents the token of the attribute's value 
+    // copy of the token, that contains the attribute's value
     Token token_of_value;
 };
 
 class RdTypeInstance {
 public:
+    // copy of the type specification
     RsType type;
     // path to the file, where this type instance originates from
     std::string file_origin;
-    std::vector<RdTypeInstanceElement> type_elements_data;
+    std::vector<RdTypeInstanceAttribute> attributes;
 };
 
 #endif

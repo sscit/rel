@@ -51,7 +51,7 @@ protected:
     /* Method checks whether the attribute value identified in the data has the right
      * data type that is expected at this place
      */
-    bool HasAttributeValueCorrectType(RsTypeElement const&, TokenType const);
+    bool HasAttributeValueCorrectType(RsTypeAttribute const&, TokenType const);
     /* Verifies, that the token at dedicated index is of a specific type.
      * If not, throw the exception provided. EOLs are skipped, if there are
      * some.

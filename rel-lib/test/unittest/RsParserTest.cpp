@@ -50,7 +50,7 @@ TEST_F(RsParserTestFixture, TypeDefinitionWithComments)
 
     EXPECT_EQ(all_enums.size(), 0);
     EXPECT_EQ(all_types.size(), 1);
-    EXPECT_EQ(all_types["XXX"].type_elements.size(), 3);
+    EXPECT_EQ(all_types["XXX"].attributes.size(), 3);
 }
 
 TEST_F(RsParserTestFixture, TypeDefinition)
@@ -65,7 +65,7 @@ TEST_F(RsParserTestFixture, TypeDefinition)
 
     EXPECT_EQ(all_enums.size(), 0);
     EXPECT_EQ(all_types.size(), 1);
-    EXPECT_EQ(all_types["XXX"].type_elements.size(), 4);
+    EXPECT_EQ(all_types["XXX"].attributes.size(), 4);
 }
 
 TEST_F(RsParserTestFixture, WrongToken)
@@ -114,7 +114,7 @@ TEST_F(RsParserTestFixture, TypeAndEnum)
     EXPECT_EQ(all_enums.size(), 1);
     EXPECT_EQ(all_enums["XXX"].enum_elements.size(), 3);
     EXPECT_EQ(all_types.size(), 1);
-    EXPECT_EQ(all_types["MyType"].type_elements.size(), 3);
+    EXPECT_EQ(all_types["MyType"].attributes.size(), 3);
 }
 
 TEST_F(RsParserTestFixture, EnumDefinitions)
