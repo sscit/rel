@@ -1,5 +1,5 @@
 # REL
-Requirements Engineering Language - a domain specific language to handle requirements in large software projects. It is used to create a REL model, which consists of the model's specification and the actual requirements data.
+Requirements Engineering Language - a domain specific language to handle requirements in large software projects. It is used to create a requirements model, which consists of the specification and the actual requirements data.
 
 The *Requirements Specification* (file extension _rs_) contains definitions of types and enumerations, which structure the requirements. For every project, it is necessary to define the requirements specification and adapt it to the project's needs.
 
@@ -50,57 +50,44 @@ Requirement
 
 Within the data part, the type *Requirement* is instantiated multiple times, each instance containing the text of the requirement, its unique identifier and the current state of the requirement.
 
-For more examples, have a look at the [Developers Guide](./doc/developers_guide.md), for a more detailed documentation of the language.
+# REL Framework
+
+The following libraries and tools are part of the REL framework:
+
+- [rel-lib](./rel-lib) - library containing the implementation of REL: Parser and model validation is located there. The library can be embedded into different tool environments.
+
+- [rel-cli](./rel-cli) - command line interface for REL, to parse a requirements model and check its validity.
+
+- [rel-ls](./rel-ls) - language server implementation for REL, which can be used in IDEs supporting the [Language Server Protocol (LSP)](https://microsoft.github.io/language-server-protocol/), to get syntax highlighting, online validation and more for REL within the IDE.
+
+- [vscode-ext](./vscode-ext) - Extension for [Vidual Studio Code](https://code.visualstudio.com/), using the language server implementation to support REL in this IDE.
+
+- [rel-py](./rel-py) - python3 integration of REL, so that developers can use python language to write project-specific data exporters and validators for their requirements model.
+
+# Getting Started
+
+## Prerequisites
+
+The following tools are required to build and run REL:
+
+- Linux OS (REL framework has been tested with Ubuntu 19.03)
+- [Bazel](https://bazel.build) build environment (>=3.7)
+- C++ Compiler supporting C++17
+- Python 3.7 (to write custom Python scripts using REL module)
+- Visual Studio Code (>=1.50) for IDE support via language server
+
+## Validate REL framework requirements
+
+To process [REL framework requirements](./requirements), execute the following steps:
+
+1. Clone this repository from Github
+1. Build [REL command line interface](./rel-cli): `bazel build --config=default //rel-cli:rel_cli`
+1. Run the binary with the following command: `bazel-bin/rel-cli/rel_cli -r -v ./requirements/`
+
+# Further Documentation
+
+- [Developers Guide](./doc/developers_guide.md): Describes typical use cases and how to make the most out of REL for software projects.
 
 Additionally, the following projects give an impression of the language on a larger scale:
  - folder [test](./test), which contains an artificial test project, describing the requirements of a smartphone. 
  - Have a look at the [requirements](./requirements) of REL itself, of course they are written in REL, too (eat your own dogfood!).
-
-
-# Development Environment
-
-Folder [rel-lib](./rel-lib) contains the C++ library that implements lexer and parser for REL. It also contains the [unit tests](./rel-lib/test) for the library. In [rel-cli](./rel-cli), a basic command line interface can be found for rel-lib, to execute REL on the command line and parse a REL model consisting of requirements specification and requirements data files.
-
-In [test](./test), a test data set is located, representing an artifical project.
-
-Folder [rel-ls](./rel-ls) contains the Language Server for REL, which can for example be used with [Visual Studio Code](https://code.visualstudio.com/), for syntax highlighting, online validation, etc. The corresponding Visual Studio Code extension is located in folder [vscode-ext](./vscode-ext).
-
-Build environment to build and run tests is [Bazel](https://bazel.build)
-
-# How to build REL and use it
-
-REL can be built with GCC. It requires C++17 support.
-
-Clone the repository. Build the [REL command line interface](./rel-cli), which can be used to parse the test project or REL's requirements.
-
-```
-bazel build --config=default //rel-cli:rel_cli
-``` 
-
-After successful compilation, run the binary with the following command.
-
-```
-bazel-bin/rel-cli/rel_cli -r -v ./test/
-```
-
-Compilation, integration and usage of Language Server for REL is described [here](./rel-ls/README.md)
-
-# Test Environment
-
-## Unit Tests
-
-Run unit tests of REL library:
-
-```
-bazel test --config=default //rel-lib/test/unittest:RelLibUnitTest
-```
-
-Run all unit tests in the project:
-
-```
-bazel test --config=default ...
-```
-
-
-## Test Data Set
-Folder [test](./test) contains an exemplary set of requirements for a smartphone device. The data set can be used to test the tools and also to get a feeling, how a large project with 1000s of requirements looks like. For the sake of simplicity, only a fraction of the requirements are properly formulated, the rest uses fake text.

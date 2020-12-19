@@ -11,3 +11,18 @@ rel_cli [-r] [-v|-vv] <PATH>
 | -v      | print INFO messages during execution   |
 | -vv     | print DEBUG messages during execution. This option has significant impact on runtime.   |
 | \<PATH\>     | Path to folder, where REL model is located. |
+
+
+# How to build rel_cli
+
+```
+bazel build --config=default  //rel-cli:rel_cli
+``` 
+
+# Test Environment
+
+Process test data set:
+
+```
+bazel-bin/rel-cli/rel_cli -r -v ./test/
+``` 

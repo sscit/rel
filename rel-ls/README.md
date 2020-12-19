@@ -23,3 +23,11 @@ Build language server binary with the following bazel command:
 ```
 bazel build --config=default  //rel-ls:rel_ls
 ``` 
+
+# Test Environment
+
+Unit Tests:
+
+```
+bazel test --config=default //rel-ls/test/unittest:RelLsUnitTest
+``` 
