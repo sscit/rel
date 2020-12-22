@@ -19,7 +19,9 @@ bazel test --config=default //rel-lib/test/unittest:RelLibUnitTest
 # Software Architecture
 
 ## Class Diagram
+![class diagram](./doc/static_class_diagram.png)
 
+[Source](./doc/static_class_diagram.uxf)
 
 ## AST
 
@@ -58,6 +60,4 @@ To get the resulting type instances, containing the actual requirements data, me
 ## External API
 
 In the previous paragraph, the main classes are described in detail. _Logger_, _FileEngine_ and _RelParser_ also act as the external API of rel-lib. Within the python integration, these three classes are exposed to the developer and have to be used, in order to run REL within python.
-
-## Sequence Diagram
 
