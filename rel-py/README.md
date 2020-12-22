@@ -58,3 +58,9 @@ result = relparser.ProcessRelModel()
 To process the model, call `ProcessRelModel()`. If the model was created successfully, the method returns `rel.ParseResult.NoExceptionOccurred`. If there is an error in the model, e.g. syntax error or another violation, execution is stopped, an exception is raised and its evaluation is logged. Additionally, the method returns `rel.ParseResult.ExceptionOccurred`.
 
 ## Traversing the AST
+
+```
+data = relparser.GetDatabase()
+```
+
+The resulting data can be accessed via method _GetDatabase()_. It returns a list of [_RdTypeInstance_](../rel-lib/src/AST.h#L86) objects, which contain the data sets. Depending on your use case, you can then transfer this data into another file format or run custom validations.
