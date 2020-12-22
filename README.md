@@ -70,10 +70,10 @@ The following libraries and tools are part of the REL framework:
 
 The following tools are required to build and run REL:
 
-- Linux OS (REL framework has been tested with Ubuntu 19.03)
+- Linux OS (REL framework has been tested with Ubuntu 20.04)
 - [Bazel](https://bazel.build) build environment (>=3.7)
 - C++ Compiler supporting C++17
-- Python 3.7 (to write custom Python scripts using REL module)
+- Python 3.8 (to write custom Python scripts using REL python module)
 - Visual Studio Code (>=1.50) for IDE support via language server
 
 ## Validate REL framework requirements

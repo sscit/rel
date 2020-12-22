@@ -23,6 +23,6 @@ new_git_repository(
 
 new_local_repository(
     name = "python_linux",
-    path = "/usr/include/python3.7m",
+    path = "/usr/include/python3.8",
     build_file = "external/python3.BUILD",
 )
