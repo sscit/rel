@@ -10,16 +10,16 @@ The REL project provides the so called "REL framework", which enables requiremen
 
 ## Key Features of the REL Framework
 
-- [Domain specific language](../rel-lib/grammar), which allows defining a requirements model with types, links, and enumerations. This model is then filled with requirements data, namely text and necessary meta data. The domain specific language resides in text files, which can be stored on the file system or in a repository, which is the fundament of all well-establised agile working models for software development
+- [Domain Specific Language](../rel-lib/grammar), which allows defining a requirements model with types, links, and enumerations. This model is then filled with requirements data, namely text and necessary meta data. The domain specific language resides in text files, which can be stored on the file system or in a repository, which is the fundament of all well-establised agile working models for software development
 - [Core C++ Library](../rel-lib), implementing a parser for the DSL and fundamental model checking. It is implemented in C++17, without external dependencies to other libraries. The library can be embedded into any environment that is capable of integrating C++ libraries.
-- [Command Line interface](../rel-cli), to validate a requirements model by parsing all files that belong to it. It can be used in CI environment, to do fundamental model checking with every commit.
+- [Command Line Interface](../rel-cli), to validate a requirements model by parsing all files that belong to it. It can be used in CI environment, to do fundamental model checking with every commit.
 - [Language Server Implementation](../rel-ls) and [Visual Studio Code](../vscode-ext) plugin, to support developers with a powerful IDE, while working with the DSL.
 - [Python Integration](../rel-py), so that requirements engineers can write project-specific exporters and data validation scripts.
 
 In a nutshell, the REL framework shall enable requirements engineers to define a requirements model and the corresponding processes, which helps the whole team to focus on the actual work of writing valuable requirements. With the domain specific language as core element, well-known agile processes can be applied. The tooling provided in the framework is focusing on clear usecases, and always provides hooks for project-specific extensions. In an ideal world, requirements engineers use the REL framework to define tooling and processes upfront, so that developers can then focus on the creative work of writing requirements. 
 
 
-## Not in Scope of the REL framework
+## Not in Scope of the REL Framework
 
 - The REL framework does not provide any guidance on **how** to write the actual requirement. English or German, semi-formal, or using HTML within the requirement text - these are project-specific decisions and there are tons of publications and books available, that elaborate on this topic. All tools within the framework can deal with unicode characters and line breaks within the requirements text, and therefore support all kinds of content.
 - The REL framework does not provide any guidance about the processes, that embed requirements engineering into the software project. Processes are highly project-specific and for example tightly coupled to the safety classification of thefinal product. As the data resides in text files, all agile software development processes can be applied and tailored. REL's python integration allows an easy extension with project specific exporter or validation scripts. Integration into CI and automated tests can easily be developed.
@@ -47,7 +47,7 @@ All data is stored in text files. This means that some kind of file and director
 - Requirements specification can be distributed among multiple files or can be kept in a single file. The parser always processes all specification files found within the directory tree first.
 - It makes sense to split the actual requirements data into multiple files, grouped depending on their scope. A "category", if necessary, can either be implied by the file name or another approach would be to define a text field or enumeration, that defines the category.
 
-### Custom Validation and Export formats
+### Custom Validation and Export Formats
 
 Every project has its own needs in terms of custom validation and export formats. Therefore [rel-py](../rel-py) embeds REL into python, so that requirements engineers can write own scripts that operate on the model. For sample code and more explanation about the python integration, refer to the [README of rel-py](../rel-py/README.md).
 
