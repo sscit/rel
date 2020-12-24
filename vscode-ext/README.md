@@ -8,7 +8,7 @@ The extension includes fundamental syntax highlighting and coloring of REL. Addi
 
 ## Setup Language Server for REL
 
-The extension expects the language server binary in folder `~/bin/rel-ls/` within your home directory. To change this path, you have to modify file extension.js.
+The extension expects the language server binary in folder `~/bin/rel-ls/` within your home directory. To change this path, you have to modify file [extension.js](./extension.js#L6].
 
 Description how to build the language server for REL from source code is available on Github: [https://github.com/sscit/rel/tree/main/rel-ls](https://github.com/sscit/rel/tree/main/rel-ls)
 

@@ -1,6 +1,6 @@
 # rel_py - Python3 integration of REL
 
-The REL framework provides a Python3 module, which can be imported into Python3 scripts. It embeds [rel-lib](../rel-lib), which handels parsing and validation a REL model. Afterwards, the requirements data from the model can be accessed within Python3, to export it into different formats (e.g. [HTML](./html_export)) or to run project-specific validators.
+The REL framework provides a Python3 module, which can be imported into Python3 scripts. It embeds [rel_lib](../rel-lib), which handels parsing and validation a REL model. Afterwards, the requirements data from the model can be accessed within Python3, to export it into different formats (e.g. [HTML](./html_export)) or to run project-specific validators.
 
 A rudimentary [HTML export](./html_export) is part of the REL framework and can be used as example, how to use the Python3 module.
 
@@ -21,9 +21,9 @@ After building the Python3 module as described above, a Python3 dynamic library 
 import librel_py as rel
 ```
 
-## Creating REL model
+## Creating Requirements Model
 
-The module exposes three classes. `RelParser` is the main class, it encapsulates the whole REL library and is used to buid up a REL model from specification and data files. In order to create an object of `RelParser`, objects of the following two classes have to be provided:
+The module exposes three classes. `RelParser` is the main class, it encapsulates the whole REL library and is used to build up a requirements model from specification and data files. In order to create an object of `RelParser`, objects of the following two classes have to be provided:
 
 - an object of class `Logger`, which defines the log level of the parser. Additionally, it allows sending the log output to stdout or storing it in a file.
 - an object of class `FileEngine`, which defines the location of the files in the file system
@@ -35,8 +35,8 @@ l = rel.Logger()
 l.SetLogLevel(rel.LogLevel.INFO)
 ```
 
-In this example, an object of class `Logger` is created. Log data is sent to stdout. If log data shall be written into file, filepath can be handed over to the constructor.
-If necessary, custom log level can be set to ERROR, WARNING, INFO, and DEBUG. Default is WARNING. Be aware, that DEBUG produces loads of output, which slows down execution signficiantly.
+In this example, an object of class `Logger` is created. Log data is sent to stdout. If log data shall be written into file, a file path can be handed over to the constructor.
+If necessary, custom log level can be set to ERROR, WARNING, INFO, and DEBUG. Default is WARNING. Be aware, that DEBUG produces loads of output, which slows down execution significiantly.
 
 ### FileEngine
 
@@ -63,4 +63,4 @@ To process the model, call `ProcessRelModel()`. If the model was created success
 data = relparser.GetDatabase()
 ```
 
-The resulting data can be accessed via method _GetDatabase()_. It returns a list of [_RdTypeInstance_](../rel-lib/src/AST.h#L86) objects, which contain the data sets. Depending on your use case, you can then transfer this data into another file format or run custom validations.
+The resulting data can be accessed via method `GetDatabase()`. It returns a list of [`RdTypeInstance`](../rel-lib/src/AST.h#L86) objects, which contain the data sets. Depending on your use case, you can then transfer this data into another file format or run custom validations.

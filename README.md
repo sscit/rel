@@ -1,5 +1,5 @@
-# REL
-Requirements Engineering Language - a domain specific language to handle requirements in large software projects. It is used to create a requirements model, which consists of the specification and the actual requirements data.
+# REL - Requirements Engineering Language
+The REL framework consists of a domain specific language to handle requirements in large software projects. It is used to create a requirements model, which consists of the specification and the actual requirements data.
 
 The *Requirements Specification* (file extension _rs_) contains definitions of types and enumerations, which structure the requirements. For every project, it is necessary to define the requirements specification and adapt it to the project's needs.
 
@@ -54,15 +54,15 @@ Within the data part, the type *Requirement* is instantiated multiple times, eac
 
 The following libraries and tools are part of the REL framework:
 
-- [rel-lib](./rel-lib) - library containing the implementation of REL: Parser and model validation is located there. The library can be embedded into different tool environments.
+- [rel_lib](./rel-lib) - library containing the implementation of REL: Parser and model validation is located there. The library can be embedded into different tool environments.
 
-- [rel-cli](./rel-cli) - command line interface for REL, to parse a requirements model and check its validity.
+- [rel_cli](./rel-cli) - command line interface for REL, to parse a requirements model and check its validity.
 
-- [rel-ls](./rel-ls) - language server implementation for REL, which can be used in IDEs supporting the [Language Server Protocol (LSP)](https://microsoft.github.io/language-server-protocol/), to get syntax highlighting, online validation and more for REL within the IDE.
+- [rel_ls](./rel-ls) - language server implementation for REL, which can be used in IDEs supporting the [Language Server Protocol (LSP)](https://microsoft.github.io/language-server-protocol/), to get syntax highlighting, online validation and more for REL within the IDE.
 
 - [vscode-ext](./vscode-ext) - Extension for [Vidual Studio Code](https://code.visualstudio.com/), using the language server implementation to support REL in this IDE.
 
-- [rel-py](./rel-py) - python3 integration of REL, so that developers can use python language to write project-specific data exporters and validators for their requirements model.
+- [rel_py](./rel-py) - python3 integration of REL, so that developers can use python language to write project-specific data exporters and validators for their requirements model.
 
 # Getting Started
 

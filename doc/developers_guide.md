@@ -22,7 +22,7 @@ In a nutshell, the REL framework shall enable requirements engineers to define a
 ## Not in Scope of the REL Framework
 
 - The REL framework does not provide any guidance on **how** to write the actual requirement. English or German, semi-formal, or using HTML within the requirement text - these are project-specific decisions and there are tons of publications and books available, that elaborate on this topic. All tools within the framework can deal with unicode characters and line breaks within the requirements text, and therefore support all kinds of content.
-- The REL framework does not provide any guidance about the processes, that embed requirements engineering into the software project. Processes are highly project-specific and for example tightly coupled to the safety classification of thefinal product. As the data resides in text files, all agile software development processes can be applied and tailored. REL's python integration allows an easy extension with project specific exporter or validation scripts. Integration into CI and automated tests can easily be developed.
+- The REL framework does not provide any guidance about the processes, that embed requirements engineering into the software project. Processes are highly project-specific and for example tightly coupled to the safety classification of the final product. As the data resides in text files, all agile software development processes can be applied and tailored. REL's python integration allows an easy extension with project specific exporter or validation scripts. Integration into CI and automated tests can easily be developed.
 
 
 ## Getting Started
