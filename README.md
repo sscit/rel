@@ -66,6 +66,10 @@ The following libraries and tools are part of the REL framework:
 
 # Getting Started
 
+## Getting Started Video
+
+[![REL Getting Started](http://img.youtube.com/vi/Utb5rT9Ahug/0.jpg)](http://www.youtube.com/watch?v=Utb5rT9Ahug "REL Getting Started")
+
 ## Prerequisites
 
 The following tools are required to build and run REL:
