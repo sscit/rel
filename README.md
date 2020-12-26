@@ -1,4 +1,4 @@
-# REL - Requirements Engineering Language
+# REL - Requirements Engineering Language 
 The REL framework includes a domain specific language to handle requirements in large software projects. It is used to create a requirements model, which consists of the specification and the actual requirements data.
 
 The *Requirements Specification* (file extension _rs_) contains definitions of types and enumerations, which structure the requirements. For every project, it is necessary to define the requirements specification and adapt it to the project's needs.
@@ -94,4 +94,4 @@ To process [REL framework requirements](./requirements), execute the following s
 
 Additionally, the following projects give an impression of the language on a larger scale:
  - folder [test](./test), which contains an artificial test project, describing the requirements of a smartphone. 
- - Have a look at the [requirements](./requirements) of REL itself, of course they are written in REL, too (eat your own dogfood!).
+ - Have a look at the [requirements](./requirements) of REL itself, of course they are written in REL, too (eat your own dogfood!). test
