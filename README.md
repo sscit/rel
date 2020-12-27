@@ -64,6 +64,14 @@ The following libraries and tools are part of the REL framework:
 
 - [rel_py](./rel-py) - python3 integration of REL, so that developers can use python language to write project-specific data exporters and validators for their requirements model.
 
+## Development Enviroment of REL Framework
+
+The REL project uses [bazel](https://bazel.build) as build environment.
+
+Branch `main` is protected and pushes directly to the branch will be rejected. Create a feature branch and pull request, to get changes into `main`.
+
+Every PR that is supposed to go into `main` is validated in CI via [Github Action](../.github/workflows/main.jml). The action builds all libraries and binaries of the framework, runs the unit tests and validates [REL's requirements](./requirements) with [rel_cli](./rel-cli)
+
 # Getting Started
 
 ## Getting Started Video
