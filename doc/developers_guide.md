@@ -33,6 +33,53 @@ To get more information about compiling and using the individual tools of the RE
 
 Installation instructions of the Visual Studio Code extension can be found [here](../vscode-ext/README.md).
 
+### Domain Specific Language Overview
+
+The grammer of REL's domain specific language is defined [here](../rel-lib/grammar/grammar.g).
+
+#### Requirements Specification
+
+Within the requirements specification (file ending _.rs_), the requirements model is defined. It is possible to define custom types and enumerations.
+
+```
+type TypeName {
+	attribute_name : attribute_type,
+	attribute_name_2 : EnumType,
+	...
+}
+
+enum EnumType {
+	EnumValue1,
+	EnumValue2,
+	....
+}
+```
+
+`attribute_type` can either be an enum type name or one of the following keywords:
+
+| Keyword        | Description  |
+| ------------- |-------------|
+| `id`      | A unique identifier. The parser ensures that the string used as identifier within the data is unique among the whole project.  |
+| `int`      | A signed integer value.      |
+| `string` | A string value, encapsulated in quotation marks.      |
+| `link` | Unique id of the requirement, the link points to. The parser ensures that all identifiers used within the link attribute exist in the model. |
+
+#### Requirements Data
+
+Requirements data files (file extension _.rd_) contain type instances of the `type`s defined in specification.
+
+```
+TypeName {
+	attribute_name : value,
+	attribute_name_2 : value,
+	...
+}
+```
+
+Depending on the `type`'s specification, `value` is either a signed integer, an identifier defining a unique id, a string, encapsulated in quotation marks, or an enum value.
+
+See [REL's requirements](../requirements) or the [test project](../test) for more syntax examples.
+
 ### Designing the Requirements Specification
 
 Designing and writing the requirements specification is the starting point, if the REL framework is used in a software development project. The following design guidelines help requirements engineers to cover all aspects in their project. It is also recommended to study the examples available in the project, namely [REL's own requirements](../requirements) and the [test project](../test).
