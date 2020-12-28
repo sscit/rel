@@ -8,11 +8,20 @@ Requirement
 
 Requirement
 {
-    Identifier : integ2,
+    Identifier : integ_py1,
     Text : "REL parser shall be integrated into python environment, so that
     custom validators and data exporters can be written in python.",
     State : Accepted,
-    ImplementationStatus : Not_Implemented,
+    ImplementationStatus : Implemented,
+}
+
+Requirement
+{
+    Identifier : integ_py2,
+    Text : "Python integration shall allow accessing both requirements specification and
+    requirements data of the model.",
+    State : Accepted,
+    ImplementationStatus : Implemented,
 }
 
 Requirement
