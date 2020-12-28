@@ -60,9 +60,9 @@ The following libraries and tools are part of the REL framework:
 
 - [rel_ls](./rel-ls) - language server implementation for REL, which can be used in IDEs supporting the [Language Server Protocol (LSP)](https://microsoft.github.io/language-server-protocol/), to get syntax highlighting, online validation and more for REL within the IDE.
 
-- [vscode-ext](./vscode-ext) - Extension for [Vidual Studio Code](https://code.visualstudio.com/), using the language server implementation to support REL in this IDE.
+- [vscode-ext](./vscode-ext) - Extension for [Visual Studio Code](https://code.visualstudio.com/), using the language server implementation to support REL in this IDE.
 
-- [rel_py](./rel-py) - python3 integration of REL, so that developers can use python language to write project-specific data exporters and validators for their requirements model.
+- [rel_py](./relpy) - python3 integration of REL, so that developers can use python language to write project-specific data exporters and validators for their requirements model.
 
 ## Development Enviroment of REL Framework
 
@@ -93,8 +93,10 @@ The following tools are required to build and run REL:
 To process [REL framework requirements](./requirements), execute the following steps:
 
 1. Clone this repository from Github
-1. Build [REL command line interface](./rel-cli): `bazel build --config=default //rel-cli:rel_cli`
-1. Run the binary with the following command: `bazel-bin/rel-cli/rel_cli -r -v ./requirements/`
+2. Build [REL command line interface](./rel-cli): 
+    - Linux OS `bazel build --config=default //rel-cli:rel_cli`
+    - mac OS `bazel build --config=macos //rel-cli:rel_cli`
+3. Run the binary with the following command: `bazel-bin/rel-cli/rel_cli -r -v ./requirements/`
 
 # Further Documentation
 

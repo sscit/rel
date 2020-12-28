@@ -22,11 +22,16 @@ ParseResult RelParser::ProcessRelModel()
 {
     l.LOG(LogLevel::INFO, "Starting to read REL model");
     std::vector<FileTokenData> input_files;
+    ParseResult result;
+
     input_files = rel_model.GetListOfFiles();
+    result = ReadAndLexInputFiles(input_files);
 
-    ReadAndLexInputFiles(input_files);
+    if (result == ParseResult::NoExceptionOccurred) {
+        result = ParseFiles(input_files);
+    }
 
-    return ParseFiles(input_files);
+    return result;
 }
 
 std::vector<RdTypeInstance> RelParser::GetDatabase()
@@ -34,12 +39,27 @@ std::vector<RdTypeInstance> RelParser::GetDatabase()
     return rd_parser.GetDatabase();
 }
 
-void RelParser::ReadAndLexInputFiles(std::vector<FileTokenData> &input_files) {
+ParseResult RelParser::ReadAndLexInputFiles(std::vector<FileTokenData> &input_files) {
+    ParseResult result = ParseResult::NoExceptionOccurred;
+
     for(unsigned int i=0; i<input_files.size(); i++) {
-        l.LOG(LogLevel::INFO, "Reading file " + input_files[i].filepath + " and creating tokens");
-        Lexer lex(l);
-        lex.Read(input_files[i]);
+        try {
+            l.LOG(LogLevel::INFO, "Reading file " + input_files[i].filepath + " and creating tokens");
+            Lexer lex(l);
+            lex.Read(input_files[i]);
+        }
+        catch (FileIoException &e) {
+            std::string msg(e.what());
+            std::string log_message = "Error while opening file ";
+            log_message.append(e.GetFilePath());
+            l.LOG(LogLevel::ERROR, log_message);
+            l.LOG(LogLevel::ERROR, e.what());
+
+            result = ParseResult::ExceptionOccurred;
+        }
     }
+
+    return result;
 }
 
 ParseResult RelParser::ParseFiles(std::vector<FileTokenData> &input_files) {

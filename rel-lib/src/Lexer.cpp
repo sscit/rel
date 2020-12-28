@@ -4,7 +4,7 @@
 #include <string>
 #include <cmath>
 #include "Lexer.h"
-
+#include "ParseException.h"
 
 // ############ Implementation of class FileTokenData
 FileTokenData::FileTokenData(DataType d) {
@@ -107,7 +107,7 @@ void Lexer::AddTokenToList(std::string const &s, TokenType const &tt) {
     std::string logmessage = "Token detected and stored: ";
     logmessage.append(Token::TokenTypeToString(tt));
     logmessage.append(" Line: " + std::to_string(t.GetLineNumberOfToken()) + " Pos: " + std::to_string(t.GetPositionInLineOfToken()));
-    l.LOG(LogLevel::DEBUG, logmessage);
+    l.LOG(LogLevel::DBUG, logmessage);
 }
 
 bool Lexer::IsDelimiter(char const c) {
@@ -228,9 +228,7 @@ void Lexer::CheckStringandAddToken(std::string &current_str, const char next_cha
 
 void Lexer::Read(FileTokenData& data) {
     FileReader &file_reader = data.GetFileReader();
-
     file_reader.OpenFile(data.filepath.c_str());
-
     token_list = &data.token_list;
     filename = data.filepath;
     // Line and current position start from 0 index
@@ -282,6 +280,10 @@ void Lexer::Read(FileTokenData& data) {
         }
 
         CheckStringandAddToken(current_str);
+    }
+    else {
+        std::string error_msg(strerror(errno));
+        throw FileIoException(data.filepath, error_msg);
     }
 
     file_reader.Close();

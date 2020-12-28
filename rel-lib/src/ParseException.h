@@ -10,6 +10,20 @@
 #include "AST.h"
 
 
+class FileIoException : public std::exception {
+public:
+    FileIoException(std::string const&, std::string const&);
+    virtual ~FileIoException();
+
+    virtual const char* what() const throw();
+    std::string GetFilePath() const;
+
+protected:
+    std::string const filepath;
+    std::string const error_message;
+};
+
+
 class TypeNotFoundException : public std::exception {
 public:
     TypeNotFoundException();

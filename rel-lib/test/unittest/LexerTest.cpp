@@ -1,21 +1,18 @@
 #include "gtest/gtest.h"
 #include "rel-lib/src/Lexer.h"
 
-class LexerTestFixture : public ::testing::Test, public Lexer
-{
+class LexerTestFixture : public ::testing::Test, public Lexer {
 protected:
-  LexerTestFixture() : Lexer(logger), lexer_test(logger)
-  {
+  LexerTestFixture() : Lexer(logger), lexer_test(logger) {
 
   }
 
   void SetUp() override {
       token_list = new std::vector<Token>();
-      //logger.SetLogLevel(LogLevel::DEBUG);
+      //logger.SetLogLevel(LogLevel::DBUG);
   }
 
-  void TearDown() override
-  {
+  void TearDown() override {
       delete token_list;
   }
 
@@ -37,7 +34,7 @@ TEST_F(LexerTestFixture, AllTokensInString) {
 
 TEST_F(LexerTestFixture, AllTokensInString2) {
     std::string testdata = "\"to \\\"emphasize\\\"\"";
-    logger.LOG(LogLevel::DEBUG, testdata);
+    logger.LOG(LogLevel::DBUG, testdata);
     FileReader r(testdata);
     FileTokenData d(DataType::RequirementsData, r);
     lexer_test.Read(d);
@@ -49,7 +46,7 @@ TEST_F(LexerTestFixture, AllTokensInString2) {
 
 TEST_F(LexerTestFixture, AllTokensInString3) {
     std::string testdata = "\"to\\\"emphasize\\\"\"";
-    logger.LOG(LogLevel::DEBUG, testdata);
+    logger.LOG(LogLevel::DBUG, testdata);
     FileReader r(testdata);
     FileTokenData d(DataType::RequirementsData, r);
     lexer_test.Read(d);

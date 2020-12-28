@@ -9,19 +9,19 @@ Parser::Parser(Logger &logger) : l(logger) { }
 Parser::~Parser() { }
 
 RsRdIdentifier Parser::Identifier(FileTokenData const& tokens, unsigned int const &index) {
-    l.LOG(LogLevel::DEBUG, "Parsing Identifier");
+    l.LOG(LogLevel::DBUG, "Parsing Identifier");
     Token const &identifier = tokens.token_list[index];
 
     RsRdIdentifier data;
     data.name = identifier.GetTokenValue();
 
-    l.LOG(LogLevel::DEBUG, "Identifier " + data.name + " has been created");
+    l.LOG(LogLevel::DBUG, "Identifier " + data.name + " has been created");
 
     return data;
 }
 
 void Parser::LineComment(FileTokenData const& tokens, unsigned int &index) {
-    l.LOG(LogLevel::DEBUG, "Parsing Line Comment");
+    l.LOG(LogLevel::DBUG, "Parsing Line Comment");
 
     while(tokens.token_list[index].GetTokenType() != TokenType::END_OF_LINE
           && index < tokens.token_list.size())
@@ -29,7 +29,7 @@ void Parser::LineComment(FileTokenData const& tokens, unsigned int &index) {
 }
 
 void Parser::MultiLineComment(FileTokenData const& tokens, unsigned int &index) {
-    l.LOG(LogLevel::DEBUG, "Parsing Multi Line Comment");
+    l.LOG(LogLevel::DBUG, "Parsing Multi Line Comment");
     Token const &multi_line_comment_start = tokens.token_list[index];
 
     while(tokens.token_list[index].GetTokenType() != TokenType::COMMENT_BLOCK_END

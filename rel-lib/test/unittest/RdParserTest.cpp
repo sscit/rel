@@ -6,7 +6,7 @@ protected:
   RdParserTestFixture() : RdParser(logger, rs_parser), lexer_test(logger), rs_parser(logger) { }
 
   void SetUp() override { 
-    //logger.SetLogLevel(LogLevel::DEBUG);
+    //logger.SetLogLevel(LogLevel::DBUG);
   }
 
   void TearDown() override { }

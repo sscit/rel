@@ -51,7 +51,7 @@ jobs:
 
       - name: Build rel_py
         run: |
-          "${GITHUB_WORKSPACE}/bin/bazel" build --config=default //rel-py:rel_py
+          "${GITHUB_WORKSPACE}/bin/bazel" build --config=default //relpy:rel_py
 
 
       # Run unittests
@@ -62,6 +62,15 @@ jobs:
       - name: Run rel_ls Unittest
         run: |
           "${GITHUB_WORKSPACE}/bin/bazel" test --config=default //rel-ls/test/unittest:RelLsUnitTest
+
+      - name: Run rel_cli Unittest
+        run: |
+          "${GITHUB_WORKSPACE}/bin/bazel" test --config=default //rel-cli/test/unittest:RelCliUnitTest
+
+      # Run integration tests
+      - name: Integration Test Python Integration
+        run: |
+          "${GITHUB_WORKSPACE}/bin/bazel" test --config=default //relpy/test:integration_test
 
       # Process models
       - name: Validate REL requirements

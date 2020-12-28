@@ -9,7 +9,7 @@ bool ftd_cmp(FileTokenData const &a, FileTokenData const &b) {
         else return false;
 };
 
-FileEngine::FileEngine() {
+FileEngine::FileEngine(Logger &logger) : l(logger) {
     search_recursive = false;
     start_directory = ".";
 }
@@ -28,11 +28,14 @@ void FileEngine::SetStartDirectory(std::string const sd) {
     start_directory = sd;
 }
 
-void FileEngine::CreateFileTokenData(auto const &entry, std::map<std::string, DataType> &filetype_identifier,
+template <typename I>
+void FileEngine::CreateFileTokenData(I const &entry, std::map<std::string, DataType> &filetype_identifier,
                                      std::set<FileTokenData, decltype(ftd_cmp)*> &files_sorted) const {
     if (entry.is_regular_file()) {
         std::string ext = entry.path().extension();
         if(filetype_identifier.count(ext) > 0) {
+            l.LOG(LogLevel::DBUG, "relevant file found: ");
+            l.LOG(LogLevel::DBUG, entry.path());
             FileTokenData d(filetype_identifier[ext]);
             d.filepath = entry.path();
 
