@@ -4,7 +4,7 @@ import librel_py as rel
 l = rel.Logger()
 #l.SetLogLevel(rel.LogLevel.DEBUG)
 
-fe = rel.FileEngine()
+fe = rel.FileEngine(l)
 fe.SetSearchRecursive(True)
 fe.SetStartDirectory("../../requirements")
 

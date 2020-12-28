@@ -14,7 +14,7 @@ The REL project provides the so called "REL framework", which enables requiremen
 - [Core C++ Library](../rel-lib), implementing a parser for the DSL and fundamental model checking. It is implemented in C++17, without external dependencies to other libraries. The library can be embedded into any environment that is capable of integrating C++ libraries.
 - [Command Line Interface](../rel-cli), to validate a requirements model by parsing all files that belong to it. It can be used in CI environment, to do fundamental model checking with every commit.
 - [Language Server Implementation](../rel-ls) and [Visual Studio Code](../vscode-ext) plugin, to support developers with a powerful IDE, while working with the DSL.
-- [Python Integration](../rel-py), so that requirements engineers can write project-specific exporters and data validation scripts.
+- [Python Integration](../relpy), so that requirements engineers can write project-specific exporters and data validation scripts.
 
 In a nutshell, the REL framework shall enable requirements engineers to define a requirements model and the corresponding processes, which helps the whole team to focus on the actual work of writing valuable requirements. With the domain specific language as core element, well-known agile processes can be applied. The tooling provided in the framework is focusing on clear usecases, and always provides hooks for project-specific extensions. In an ideal world, requirements engineers use the REL framework to define tooling and processes upfront, so that developers can then focus on the creative work of writing requirements. 
 

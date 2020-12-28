@@ -15,7 +15,7 @@ bool ftd_cmp(FileTokenData const &a, FileTokenData const &b);
    that shall be read and parsed */
 class FileEngine {
 public:
-    FileEngine();
+    FileEngine(Logger &);
     virtual ~FileEngine();
 
     /* If set to true, the search runs recursive, starting
@@ -35,7 +35,7 @@ protected:
 
     bool search_recursive;
     std::string start_directory;
-
+    Logger &l;
 };
 
 #endif /* FILEENGINE_H_ */
