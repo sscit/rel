@@ -62,3 +62,8 @@ jobs:
       - name: Run rel_ls Unittest
         run: |
           "${GITHUB_WORKSPACE}/bin/bazel" test --config=default //rel-ls/test/unittest:RelLsUnitTest
+
+      # Process models
+      - name: Validate REL requirements
+        run: |
+          "${GITHUB_WORKSPACE}/bazel-bin/rel-cli/rel_cli" -r -v ./requirements

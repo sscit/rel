@@ -19,7 +19,8 @@ PYBIND11_MODULE(librel_py, m) {
         .def("Get", &RsTypeAttribute::Get);
 
     py::class_<RsType>(m, "RsType")
-        .def("Get", &RsType::Get);
+        .def("Get", &RsType::Get)
+        .def_readwrite("attributes", &RsType::attributes);
 
     py::class_<RdString>(m, "RdString")
         .def("Get", &RdString::Get);
