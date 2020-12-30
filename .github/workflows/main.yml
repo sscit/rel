@@ -67,3 +67,7 @@ jobs:
       - name: Validate REL requirements
         run: |
           "${GITHUB_WORKSPACE}/bazel-bin/rel-cli/rel_cli" -r -v ./requirements
+
+      - name: Validate test project
+        run: |
+          "${GITHUB_WORKSPACE}/bazel-bin/rel-cli/rel_cli" -r -v ./test
