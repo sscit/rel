@@ -7,6 +7,17 @@ RelParser::RelParser(Logger &logger, FileEngine const &files)
     : l(logger), rel_model(files), rs_parser(l), rd_parser(l, rs_parser) {}
 RelParser::~RelParser() {}
 
+unsigned int RelParser::ParseResultToInteger(ParseResult const p) {
+    unsigned int ret = 1;
+
+    if (p == ParseResult::ExceptionOccurred)
+        ret = 1;
+    else if (p== ParseResult::NoExceptionOccurred)
+        ret = 0;
+
+    return ret;
+}
+
 ParseResult RelParser::ProcessRelModel()
 {
     l.LOG(LogLevel::INFO, "Starting to read REL model");

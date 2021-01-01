@@ -30,6 +30,8 @@ public:
     // returns all type instances that have been read
     std::vector<RdTypeInstance> GetDatabase();
 
+    static unsigned int ParseResultToInteger(ParseResult const p);
+
 private:
     void ReadAndLexInputFiles(std::vector<FileTokenData>&);
     ParseResult ParseFiles(std::vector<FileTokenData>&);

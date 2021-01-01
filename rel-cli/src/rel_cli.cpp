@@ -34,18 +34,19 @@ void ProcessCommandLine(int const argc, char const * const argv[], FileEngine &f
    parser */
 int main(int argc, char* argv[]) {
     auto t1 = std::chrono::high_resolution_clock::now();
+
     /* Initialize singletons */
     Logger logger_object;
     FileEngine input_file_handler;
     ProcessCommandLine(argc, argv, input_file_handler, logger_object);
 
     RelParser rel(logger_object, input_file_handler);
-    rel.ProcessRelModel();
+    ParseResult res = rel.ProcessRelModel();
 
     auto t2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
     
     logger_object.LOG(LogLevel::INFO, "Execution Time: " + std::to_string(duration) + " microseconds");
 
-    return 0;
+    return RelParser::ParseResultToInteger(res);
 }
