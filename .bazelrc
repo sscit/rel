@@ -1,1 +1,3 @@
 build:default --copt="-std=c++17" --copt="-fconcepts" --copt="-Werror" --copt="-O3"
+
+build:macos --copt="-std=c++17" --copt="-Xclang" --copt="-fconcepts-ts" --copt="-Werror" --copt="-O3"
