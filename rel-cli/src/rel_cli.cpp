@@ -23,7 +23,7 @@ void ProcessCommandLine(int const argc, char const * const argv[], FileEngine &f
             else if(argument.compare("-v") == 0)
                 l.SetLogLevel(LogLevel::INFO);
             else if(argument.compare("-vv") == 0)
-                l.SetLogLevel(LogLevel::DEBUG);
+                l.SetLogLevel(LogLevel::DBUG);
             else
                 f.SetStartDirectory(argument);
         }

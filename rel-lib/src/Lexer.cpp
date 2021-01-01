@@ -107,7 +107,7 @@ void Lexer::AddTokenToList(std::string const &s, TokenType const &tt) {
     std::string logmessage = "Token detected and stored: ";
     logmessage.append(Token::TokenTypeToString(tt));
     logmessage.append(" Line: " + std::to_string(t.GetLineNumberOfToken()) + " Pos: " + std::to_string(t.GetPositionInLineOfToken()));
-    l.LOG(LogLevel::DEBUG, logmessage);
+    l.LOG(LogLevel::DBUG, logmessage);
 }
 
 bool Lexer::IsDelimiter(char const c) {
