@@ -23,7 +23,7 @@ void ProcessCommandLine(int const argc, char const * const argv[], FileEngine &f
             else if(argument.compare("-v") == 0)
                 l.SetLogLevel(LogLevel::INFO);
             else if(argument.compare("-vv") == 0)
-                l.SetLogLevel(LogLevel::DEBUG);
+                l.SetLogLevel(LogLevel::DBUG);
             else
                 f.SetStartDirectory(argument);
         }
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
     /* Initialize singletons */
     Logger logger_object;
-    FileEngine input_file_handler;
+    FileEngine input_file_handler(logger_object);
     ProcessCommandLine(argc, argv, input_file_handler, logger_object);
 
     RelParser rel(logger_object, input_file_handler);

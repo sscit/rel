@@ -3,7 +3,7 @@
 
 #include "Workspace.h"
 
-Workspace::Workspace(Logger& logger) : l(logger), workspace_is_initialized(false), 
+Workspace::Workspace(Logger& logger) : l(logger), workspace_is_initialized(false), file_engine(logger),
                                        rs_parser(logger), rd_parser(logger, rs_parser) { }
 Workspace::~Workspace() { }
 
@@ -35,7 +35,7 @@ void Workspace::ParseAllFilesOnceAtStart()
     file_engine.SetSearchRecursive(true);
     file_engine.SetStartDirectory(root_uri.GetPath());
 
-    l.LOG(LogLevel::DEBUG, "Looking for files starting from " + root_uri.GetPath());
+    l.LOG(LogLevel::DBUG, "Looking for files starting from " + root_uri.GetPath());
     std::vector<FileTokenData> input_files;
     input_files = file_engine.GetListOfFiles();
 

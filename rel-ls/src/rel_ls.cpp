@@ -17,7 +17,7 @@ void ProcessCommandLine(int const argc, char const * const argv[], Logger &l) {
             if(argument.compare("-v") == 0)
                 l.SetLogLevel(LogLevel::INFO);
             else if(argument.compare("-vv") == 0)
-                l.SetLogLevel(LogLevel::DEBUG);
+                l.SetLogLevel(LogLevel::DBUG);
         }
     }
 }
@@ -30,14 +30,14 @@ int main(int argc, char* argv[]) {
     LspEngine lsp(l);
     char c;
 
-    l.LOG(LogLevel::DEBUG, "starting processing");
+    l.LOG(LogLevel::DBUG, "starting processing");
     while (std::cin.get(c)) {
         message.AddChar(c);
         
         if(message.IsMessageReady())
         {
-            l.LOG(LogLevel::DEBUG, "Message received:");
-            l.LOG(LogLevel::DEBUG, message.GetMessage());
+            l.LOG(LogLevel::DBUG, "Message received:");
+            l.LOG(LogLevel::DBUG, message.GetMessage());
 
             lsp.HandleMessage(json::parse(message.GetMessage()));
 
