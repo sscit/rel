@@ -3,6 +3,19 @@
 
 #include "ParseException.h"
 
+FileIoException::FileIoException(std::string const &fp, std::string const &em) : filepath(fp), error_message(em) { }
+
+FileIoException::~FileIoException() { }
+
+const char* FileIoException::what() const throw() {
+    return error_message.c_str();
+}
+
+std::string FileIoException::GetFilePath() const {
+    return filepath;
+}
+
+
 TypeNotFoundException::TypeNotFoundException() { }
 
 TypeNotFoundException::~TypeNotFoundException() { }

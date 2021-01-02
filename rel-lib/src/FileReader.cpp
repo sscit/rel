@@ -20,10 +20,9 @@ FileReader::~FileReader() {
     delete filestream;
 }
 
-
 void FileReader::OpenFile(const char* path) {
     if(data.length() == 0) {
-        filestream->open(path);
+        filestream->open(path, std::fstream::in);
     }
 }
 
