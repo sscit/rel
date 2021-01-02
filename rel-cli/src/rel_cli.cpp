@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
     /* Initialize singletons */
     Logger logger_object;
-    FileEngine input_file_handler;
+    FileEngine input_file_handler(logger_object);
     ProcessCommandLine(argc, argv, input_file_handler, logger_object);
 
     RelParser rel(logger_object, input_file_handler);

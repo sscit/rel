@@ -3,7 +3,7 @@
 
 #include "Workspace.h"
 
-Workspace::Workspace(Logger& logger) : l(logger), workspace_is_initialized(false), 
+Workspace::Workspace(Logger& logger) : l(logger), workspace_is_initialized(false), file_engine(logger),
                                        rs_parser(logger), rd_parser(logger, rs_parser) { }
 Workspace::~Workspace() { }
 

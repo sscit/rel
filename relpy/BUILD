@@ -3,7 +3,7 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 cc_library(
     name = "rel_py",
     srcs = [
-      "src/rel_py.cpp",
+      "//relpy/src:rel_py_main",
       "//rel-lib/src:rel_lib_src",
     ],
     hdrs = [

@@ -57,7 +57,7 @@ PYBIND11_MODULE(librel_py, m) {
              py::arg("loglevel") = LogLevel::WARNING, py::arg("message") = "", py::arg("filename") = "Unset", py::arg("line_number") = -1);
 
     py::class_<FileEngine>(m, "FileEngine")
-        .def(py::init<>())
+        .def(py::init<Logger&>())
         .def("SetSearchRecursive", &FileEngine::SetSearchRecursive)
         .def("GetSearchRecursive", &FileEngine::GetSearchRecursive)
         .def("SetStartDirectory", &FileEngine::SetStartDirectory);

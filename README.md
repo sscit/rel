@@ -62,7 +62,7 @@ The following libraries and tools are part of the REL framework:
 
 - [vscode-ext](./vscode-ext) - Extension for [Vidual Studio Code](https://code.visualstudio.com/), using the language server implementation to support REL in this IDE.
 
-- [rel_py](./rel-py) - python3 integration of REL, so that developers can use python language to write project-specific data exporters and validators for their requirements model.
+- [rel_py](./relpy) - python3 integration of REL, so that developers can use python language to write project-specific data exporters and validators for their requirements model.
 
 ## Development Enviroment of REL Framework
 

@@ -11,6 +11,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cctype>
+#include <cstring>
 
 #include "Token.h"
 #include "SlidingWindow.h"

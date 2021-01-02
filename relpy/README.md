@@ -8,8 +8,14 @@ Python3 integration of REL is using [pybind11](https://github.com/pybind/pybind1
 
 # How to build Python3 module for REL
 ```
-bazel build --config=default  //rel-py:rel_py
+bazel build --config=default  //relpy:rel_py
 ``` 
+
+# Run integration test of rel_py
+```
+bazel test --config=default //relpy/test:integration_test
+```
+
 
 # Getting Started
 
@@ -41,7 +47,7 @@ If necessary, custom log level can be set to ERROR, WARNING, INFO, and DEBUG. De
 ### FileEngine
 
 ```
-fe = rel.FileEngine()
+fe = rel.FileEngine(l)
 fe.SetSearchRecursive(True)
 fe.SetStartDirectory("../../requirements")
 ```
