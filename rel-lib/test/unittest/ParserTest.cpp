@@ -1,11 +1,9 @@
 #include "gtest/gtest.h"
 #include "rel-lib/src/Parser.h"
 
-class ParserTestFixture : public ::testing::Test, public Parser
-{
+class ParserTestFixture : public ::testing::Test, public Parser {
 protected:
-  ParserTestFixture() : Parser(logger)
-  {
+  ParserTestFixture() : Parser(logger) {
 
   }
 
@@ -17,8 +15,7 @@ protected:
       index = 0;
   }
 
-  void TearDown() override
-  {
+  void TearDown() override {
       delete testdata_rs;
       delete testdata_rd;
       delete eol;
@@ -33,8 +30,7 @@ protected:
   Token *random_string;
 };
 
-TEST_F(ParserTestFixture, IsNextTokenCorrectlyIdentified)
-{
+TEST_F(ParserTestFixture, IsNextTokenCorrectlyIdentified) {
     for(int i=0; i<3; i++)
         testdata_rs->token_list.push_back(*eol);
 
@@ -46,8 +42,7 @@ TEST_F(ParserTestFixture, IsNextTokenCorrectlyIdentified)
     EXPECT_FALSE(IsNextToken(*testdata_rs, index, TokenType::ID));
 }
 
-TEST_F(ParserTestFixture, IsNextTokenCorrectlyIdentified2)
-{
+TEST_F(ParserTestFixture, IsNextTokenCorrectlyIdentified2) {
     Token enumx("//", TokenType::ENUM, "", 0, 0);
     testdata_rs->token_list.push_back(enumx);
     EXPECT_TRUE(IsNextToken(*testdata_rs, index, TokenType::ENUM));
@@ -55,8 +50,7 @@ TEST_F(ParserTestFixture, IsNextTokenCorrectlyIdentified2)
     EXPECT_FALSE(IsNextToken(*testdata_rs, index, TokenType::BRACKET_CLOSE));
 }
 
-TEST_F(ParserTestFixture, MultiLineCommentRead)
-{
+TEST_F(ParserTestFixture, MultiLineCommentRead) {
    int tokens_added = 0;
    Token comment_start("/*", TokenType::COMMENT_BLOCK_START, "", 0, 0);
    testdata_rs->token_list.push_back(comment_start);
@@ -83,8 +77,7 @@ TEST_F(ParserTestFixture, MultiLineCommentRead)
     EXPECT_EQ(tokens_added-1, index);
 }
 
-TEST_F(ParserTestFixture, ReadIdentifier)
-{
+TEST_F(ParserTestFixture, ReadIdentifier) {
     Token ident("MyIdentifier", TokenType::IDENTIFIER, "", 0, 0);
     testdata_rs->token_list.push_back(ident);
 
@@ -93,8 +86,7 @@ TEST_F(ParserTestFixture, ReadIdentifier)
     EXPECT_EQ(r.name, ident.GetTokenValue());
 }
 
-TEST_F(ParserTestFixture, LineCommentRead)
-{
+TEST_F(ParserTestFixture, LineCommentRead) {
    int tokens_added = 0;
    Token linecomment("", TokenType::LINE_COMMENT, "", 0, 0);
    testdata_rs->token_list.push_back(linecomment);

@@ -1,11 +1,9 @@
 #include "gtest/gtest.h"
 #include "rel-lib/src/Lexer.h"
 
-class LexerTestFixture : public ::testing::Test, public Lexer
-{
+class LexerTestFixture : public ::testing::Test, public Lexer {
 protected:
-  LexerTestFixture() : Lexer(logger), lexer_test(logger)
-  {
+  LexerTestFixture() : Lexer(logger), lexer_test(logger) {
 
   }
 
@@ -14,8 +12,7 @@ protected:
       //logger.SetLogLevel(LogLevel::DEBUG);
   }
 
-  void TearDown() override
-  {
+  void TearDown() override {
       delete token_list;
   }
 
