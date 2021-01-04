@@ -1,3 +1,5 @@
+![REL Logo](./doc/rel.png)
+
 # REL - Requirements Engineering Language
 The REL framework includes a domain specific language to handle requirements in large software projects. It is used to create a requirements model, which consists of the specification and the actual requirements data.
 

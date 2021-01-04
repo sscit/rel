@@ -21,8 +21,12 @@ bazel build --config=default  //rel-cli:rel_cli
 
 # Test Environment
 
-Process test data set:
+Run unittests:
+```
+bazel test --config=default //rel-cli/test/unittest:RelCliUnitTest
+``` 
 
+Process test data set:
 ```
 bazel-bin/rel-cli/rel_cli -r -v ./test/
 ``` 
