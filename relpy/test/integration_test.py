@@ -22,12 +22,13 @@ def test_rel_py():
     # check that the data structure looks as expected
     counter = 1
     for d in data:
-        assert len(d.attributes) == 3
+        assert len(d.attributes) == 4
         assert d.attributes[0].name.Get() == "unique_id"
-        assert d.attributes[0].string_value.Get() == "firstid" + str(counter)
+        assert d.attributes[0].string_value.Get() == "ReqId" + str(counter)
         assert d.attributes[1].name.Get() == "text"
         assert d.attributes[2].name.Get() == "status"
         assert d.attributes[2].enum_value.Get() == "Accepted"
+        assert len(d.attributes[3].link_value) >= 1
 
         counter = counter + 1
 

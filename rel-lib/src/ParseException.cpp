@@ -90,6 +90,15 @@ const char* RdStringException::what() const throw() {
 }
 
 
+ArrayException::ArrayException(Token const t, std::string const msg) : ParseException(t, msg) { }
+
+ArrayException::~ArrayException() { }
+
+const char* ArrayException::what() const throw() {
+    return custom_message.c_str();
+}
+
+
 RdTypeException::RdTypeException(Token const t, std::string const msg) : ParseException(t, msg) { }
 
 RdTypeException::RdTypeException(RdTypeInstance const t) : ParseException(), rd_type(t) { }

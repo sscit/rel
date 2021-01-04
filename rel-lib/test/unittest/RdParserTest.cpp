@@ -18,6 +18,119 @@ protected:
   RsParser rs_parser;
 };
 
+TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks) {
+    spec = "type Req { Identifier : id, Text : string, Parent : link,}";
+    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : p1,}       \
+            Req { Identifier : p2, Text : \"Parent Req 2\", Parent : [p2,],}    \
+            Req { Identifier : c1, Text : \"Child Req\", Parent : [p1,p2,],}    ";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+
+    ParseTokens(d_data);
+
+    EXPECT_EQ(database.size(), 3);
+    EXPECT_EQ(database[0].attributes.size(), 3);
+    EXPECT_EQ(database[0].attributes[2].link_value.size(), 1);
+    EXPECT_EQ(database[2].attributes[2].link_value.size(), 2);
+}
+
+TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks2) {
+    spec = "type Req { Identifier : id, Text : string, Parent : link,}";
+    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : [p1,p1,p1,p1,p1,p1,],}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+
+    ParseTokens(d_data);
+
+    EXPECT_EQ(database.size(), 1);
+    EXPECT_EQ(database[0].attributes.size(), 3);
+    EXPECT_EQ(database[0].attributes[2].link_value.size(), 6);
+}
+
+TEST_F(RdParserTestFixture, EmptyArrayOfLinks) {
+    spec = "type Req { Identifier : id, Text : string, Parent : link,}";
+    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : [],}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+
+    ASSERT_THROW(ParseTokens(d_data), ArrayException);
+}
+
+TEST_F(RdParserTestFixture, ArrayWithWrongLinks) {
+    spec = "type Req { Identifier : id, Text : string, Parent : link,}";
+    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : [1234],}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+
+    ASSERT_THROW(ParseTokens(d_data), ArrayException);
+}
+
+TEST_F(RdParserTestFixture, ArrayWithWrongLinks2) {
+    spec = "type Req { Identifier : id, Text : string, Parent : link,}";
+    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : [\"id4#udz\"],}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+
+    ASSERT_THROW(ParseTokens(d_data), ArrayException);
+}
+
+TEST_F(RdParserTestFixture, ArrayWithSyntaxError) {
+    spec = "type Req { Identifier : id, Text : string, Parent : link,}";
+    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : [p1],}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+
+    ASSERT_THROW(ParseTokens(d_data), ArrayException);
+}
+
 TEST_F(RdParserTestFixture, UsingReservedKeywords) {
     spec = "type Req { unique_id : id, another_id : id, thirdId : id, fid : id , fifthid : id , sixid : id,}";
     data = "Req { unique_id : typeXX, another_id : enumXX, thirdId : idXX, fid : intXX, fifthid : stringXX, sixid : linkXX,}";
@@ -247,7 +360,43 @@ TEST_F(RdParserTestFixture, TypeInstanceWrong_LinkDoesNotExist) {
     FileTokenData d_data(DataType::RequirementsData, r_data);
 
     lexer_test.Read(d_spec);
-    lexer_test.Read(d_data);   
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+    ParseTokens(d_data);
+
+    ASSERT_THROW(CheckAllLinks(), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceWrong_LinkDoesNotExist2) {
+    spec = "type Req { attr : id, parent : link,}";
+    data = "Req { attr : r1, parent : [r2,],}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+    ParseTokens(d_data);
+
+    ASSERT_THROW(CheckAllLinks(), RdTypeException);
+}
+
+TEST_F(RdParserTestFixture, TypeInstanceWrong_LinkDoesNotExist3) {
+    spec = "type Req { attr : id, parent : link,}";
+    data = "Req { attr : r1, parent : [r1,r3,],}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
     rs_parser.ParseTokens(d_spec);
     ParseTokens(d_data);
 

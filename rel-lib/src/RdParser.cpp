@@ -42,10 +42,12 @@ void RdParser::CheckAllLinks() {
         for(unsigned int j=0; j<instance.attributes.size(); j++) {
             RdTypeInstanceAttribute const &element = instance.attributes[j];
             if(element.name.token_of_attribute.GetTokenType() == TokenType::LINK) {
-                auto const search = unique_ids.find(element.link_value.name);
-                l.LOG(LogLevel::DEBUG, "search for " + element.link_value.name);
-                if(search == unique_ids.end()) {
-                    throw RdTypeException(element.token_of_value, "Link points to id that does not exist");
+                for(auto const &link : element.link_value) {
+                    auto const search = unique_ids.find(link.name);
+                    l.LOG(LogLevel::DEBUG, "search for " + link.name);
+                    if(search == unique_ids.end()) {
+                        throw RdTypeException(element.token_of_value, "Link points to id that does not exist");
+                    }
                 }
             }
         }
@@ -106,6 +108,29 @@ bool RdParser::HasAttributeValueCorrectType(RsTypeAttribute const& type_element,
     return (type_element.token_of_attribute.GetTokenType() == current_token);
 }
 
+void RdParser::ParseArrayOfLinks(FileTokenData const& tokens, unsigned int& index, RdTypeInstanceAttribute& type_instance_attribute)
+{
+    l.LOG(LogLevel::DEBUG, "Parsing Array of links");
+    Token const &array_start = tokens.token_list[index];
+
+    index++;
+    while( (tokens.token_list.at(index).GetTokenType() != TokenType::ARRAY_END) && (index < tokens.token_list.size()) ) {
+        EnsureToken(tokens, index, TokenType::IDENTIFIER, ArrayException(tokens.token_list.at(index), "Wrong token, expected identifier"));
+        type_instance_attribute.link_value.push_back(Identifier(tokens, index));
+        index++;
+
+        EnsureToken(tokens, index, TokenType::COMMA, ArrayException(tokens.token_list.at(index), "Wrong token, expected ,"));
+        index++;
+    }
+
+    if(index == tokens.token_list.size()) {
+        throw ArrayException(array_start, "Array not finished, missing ]");
+    }
+    if(type_instance_attribute.link_value.size() == 0) {
+        throw ArrayException(array_start, "Array empty");
+    }
+}
+
 RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int& index) {
     Token const &type_token = tokens.token_list.at(index);
     RdTypeInstance type_instance;
@@ -136,16 +161,16 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
         }
         l.LOG(LogLevel::DEBUG, "Parsing data attribute named " + attribute.name);
 
-        RdTypeInstanceAttribute type_instance_element;
-        type_instance_element.name = type_definition.attributes[number_of_elements];
+        RdTypeInstanceAttribute type_instance_attribute;
+        type_instance_attribute.name = type_definition.attributes[number_of_elements];
         index++;
 
         EnsureToken(tokens, index, TokenType::COLON, RdTypeException(tokens.token_list.at(index), "Wrong token, expected :"));
         index++;
-        type_instance_element.token_of_value = tokens.token_list.at(index);
+        type_instance_attribute.token_of_value = tokens.token_list.at(index);
         if(tokens.token_list.at(index).GetTokenType() == TokenType::STRING_VALUE) {
-            if(HasAttributeValueCorrectType(type_instance_element.name, TokenType::STRING)) {
-                type_instance_element.string_value.value = tokens.token_list.at(index).GetTokenValue();
+            if(HasAttributeValueCorrectType(type_instance_attribute.name, TokenType::STRING)) {
+                type_instance_attribute.string_value.value = tokens.token_list.at(index).GetTokenValue();
                 l.LOG(LogLevel::DEBUG, "attribute value of type string parsed");
             }
             else {
@@ -153,8 +178,8 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
             }
         }
         else if(tokens.token_list.at(index).GetTokenType() == TokenType::QUOTATION_MARK) {
-            if(HasAttributeValueCorrectType(type_instance_element.name, TokenType::STRING)) {
-                type_instance_element.string_value = ReadString(tokens, index);
+            if(HasAttributeValueCorrectType(type_instance_attribute.name, TokenType::STRING)) {
+                type_instance_attribute.string_value = ReadString(tokens, index);
                 l.LOG(LogLevel::DEBUG, "attribute value of type string parsed");
             }
             else {
@@ -162,32 +187,43 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
             }
         }
         else if(tokens.token_list.at(index).GetTokenType() == TokenType::INTEGER_VALUE) {
-            if(HasAttributeValueCorrectType(type_instance_element.name, TokenType::INT)) {
-                type_instance_element.integer_value = Integer(tokens, index);
+            if(HasAttributeValueCorrectType(type_instance_attribute.name, TokenType::INT)) {
+                type_instance_attribute.integer_value = Integer(tokens, index);
                 l.LOG(LogLevel::DEBUG, "attribute value of type integer parsed");
             }
             else {
                 throw RdTypeException(tokens.token_list.at(index), "Attribute value has wrong type, expected integer value");
             }
         }
+        else if(tokens.token_list.at(index).GetTokenType() == TokenType::ARRAY_BEGIN) {
+            /* An array is used. Ensure that the attribute is of type link. Only in this case,
+               an array can be used */
+            if(type_instance_attribute.name.token_of_attribute.GetTokenType() == TokenType::LINK) {
+                l.LOG(LogLevel::DEBUG, "an array of links to unique ids has been identified");
+                ParseArrayOfLinks(tokens, index, type_instance_attribute);
+            }
+            else {
+                throw RdTypeException(tokens.token_list.at(index), "Unexpected token");
+            }
+        }
         else if(tokens.token_list.at(index).GetTokenType() == TokenType::IDENTIFIER) {
             l.LOG(LogLevel::DEBUG, "attribute value of type identifier identified");
-            if(type_instance_element.name.token_of_attribute.GetTokenType() == TokenType::ENUM) {
+            if(type_instance_attribute.name.token_of_attribute.GetTokenType() == TokenType::ENUM) {
                 // Check that the enum value used exists
-                type_instance_element.enum_value.name = tokens.token_list.at(index).GetTokenValue();
-                if(!EnumValueExists(type_instance_element.name.enum_definition.enum_elements, type_instance_element.enum_value)) {
-                    throw RdTypeException(tokens.token_list.at(index), "Enum value " + type_instance_element.enum_value.name + \
+                type_instance_attribute.enum_value.name = tokens.token_list.at(index).GetTokenValue();
+                if(!EnumValueExists(type_instance_attribute.name.enum_definition.enum_elements, type_instance_attribute.enum_value)) {
+                    throw RdTypeException(tokens.token_list.at(index), "Enum value " + type_instance_attribute.enum_value.name + \
                                           " not found in specification of enum type " + \
-                                          type_instance_element.name.enum_definition.name.name);
+                                          type_instance_attribute.name.enum_definition.name.name);
                 }
-                l.LOG(LogLevel::DEBUG, "attribute has enum value " + type_instance_element.enum_value.name + ", enum value exists");
+                l.LOG(LogLevel::DEBUG, "attribute has enum value " + type_instance_attribute.enum_value.name + ", enum value exists");
             }
-            else if(type_instance_element.name.token_of_attribute.GetTokenType() == TokenType::LINK) {
-                type_instance_element.link_value = Identifier(tokens, index);
-                l.LOG(LogLevel::DEBUG, "attribute of type link parsed");
+            else if(type_instance_attribute.name.token_of_attribute.GetTokenType() == TokenType::LINK) {
+                type_instance_attribute.link_value.push_back(Identifier(tokens, index));
+                l.LOG(LogLevel::DEBUG, "attribute of type link parsed. One link has been set.");
             }
-            else if(type_instance_element.name.token_of_attribute.GetTokenType() == TokenType::ID) {
-                type_instance_element.string_value.value = tokens.token_list.at(index).GetTokenValue();
+            else if(type_instance_attribute.name.token_of_attribute.GetTokenType() == TokenType::ID) {
+                type_instance_attribute.string_value.value = tokens.token_list.at(index).GetTokenValue();
                 l.LOG(LogLevel::DEBUG, "attribute of type id parsed");
             }
             else
@@ -195,8 +231,8 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
         }
         else if(tokens.token_list.at(index).GetTokenType() == TokenType::ID) {
             l.LOG(LogLevel::DEBUG, "attribute value of type id identified");
-            if(HasAttributeValueCorrectType(type_instance_element.name, TokenType::ID)) {
-                type_instance_element.string_value.value = tokens.token_list.at(index).GetTokenValue();
+            if(HasAttributeValueCorrectType(type_instance_attribute.name, TokenType::ID)) {
+                type_instance_attribute.string_value.value = tokens.token_list.at(index).GetTokenValue();
                 l.LOG(LogLevel::DEBUG, "attribute value of type id parsed");
             }
             else {
@@ -209,15 +245,15 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, unsigned int&
 
         // check for unique id, if this attribute defined an id
         if(type_definition.attributes[number_of_elements].token_of_attribute.GetTokenType() == TokenType::ID) {
-            if(unique_ids.find(type_instance_element.string_value.value) != unique_ids.end()) {
+            if(unique_ids.find(type_instance_attribute.string_value.value) != unique_ids.end()) {
                 throw RdTypeException(tokens.token_list.at(index), "ID already used");
             }
             else {
-                AddUniqueIdToDatabase(type_instance_element.string_value, tokens.filepath);
+                AddUniqueIdToDatabase(type_instance_attribute.string_value, tokens.filepath);
             }
         }
 
-        type_instance.attributes.push_back(type_instance_element);
+        type_instance.attributes.push_back(type_instance_attribute);
         index++;
         EnsureToken(tokens, index, TokenType::COMMA, RdTypeException(tokens.token_list.at(index), "Wrong token, expected ,"));
         index++;

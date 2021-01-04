@@ -16,11 +16,6 @@ enum class TokenType {
     STRING,
     LINK,
 
-    // two digit symbols
-    LINE_COMMENT,
-    COMMENT_BLOCK_START,
-    COMMENT_BLOCK_END,
-
     // symbols and operators
     BRACKET_OPEN,
     BRACKET_CLOSE,
@@ -28,7 +23,14 @@ enum class TokenType {
     COMMA,
     END_OF_LINE,
     QUOTATION_MARK,
+    ARRAY_BEGIN,
+    ARRAY_END,
+
+    // two digit symbols
     QUOTATION_MARK_MASKED,
+    LINE_COMMENT,
+    COMMENT_BLOCK_START,
+    COMMENT_BLOCK_END,
 
     // strings or integer values
     IDENTIFIER,
