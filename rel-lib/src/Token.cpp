@@ -104,6 +104,15 @@ std::string Token::TokenTypeToString(TokenType const &tt) {
         output = "quotation mark masked";
         break;
 
+    case TokenType::ARRAY_BEGIN:
+        output = "start of array [";
+        break;
+
+    case TokenType::ARRAY_END:
+        output = "end of array ]";
+        break;
+
+
     case TokenType::IDENTIFIER:
         output = "identifier";
         break;

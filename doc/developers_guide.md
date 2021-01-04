@@ -55,14 +55,14 @@ enum EnumType {
 }
 ```
 
-`attribute_type` can either be an enum type name or one of the following keywords:
+`attribute_type` can either be an enum type name or one of the following data types:
 
-| Keyword        | Description  |
+| Data Type        | Description  |
 | ------------- |-------------|
 | `id`      | A unique identifier. The parser ensures that the string used as identifier within the data is unique among the whole project.  |
 | `int`      | A signed integer value.      |
 | `string` | A string value, encapsulated in quotation marks.      |
-| `link` | Unique id of the requirement, the link points to. The parser ensures that all identifiers used within the link attribute exist in the model. |
+| `link` | Unique id(s) of the requirement(s), the link points to. The parser ensures that all identifiers used within the link attribute exist in the model. |
 
 #### Requirements Data
 
@@ -76,7 +76,17 @@ TypeName {
 }
 ```
 
-Depending on the `type`'s specification, `value` is either a signed integer, an identifier defining a unique id, a string, encapsulated in quotation marks, or an enum value.
+Depending on the attribute's data type within `type`'s specification, `value` is one of the following:
+
+- `id`: an identifier defining a unique id
+- `int`: a signed integer
+- `string`: a string, encapsulated in quotation marks
+- `link`: an identifier, that is equal to an unique id. An attribute of type `link` can contain one or more id references. If there are more links, an array notation with squared brackets `[` and `]` has to be used.
+  - Example:
+    - Link to single unique id: `parent_req : UniqueId1,`
+	- link to multiple unique ids: `parent_req : [UID1, UID2,],`
+
+If the attribute's data type is an enum type, `value` has to be an enum value, that exists in the enum type. Otherwise, the parser complains about non-existing enum value.
 
 See [REL's requirements](../requirements) or the [test project](../test) for more syntax examples.
 

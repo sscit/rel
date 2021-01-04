@@ -93,6 +93,14 @@ public:
     virtual const char* what() const throw();
 };
 
+class ArrayException : public ParseException {
+public:
+    ArrayException(Token const, std::string const msg = "");
+    ~ArrayException();
+
+    virtual const char* what() const throw();
+};
+
 class RdTypeException : public ParseException {
 public:
     RdTypeException(RdTypeInstance const);

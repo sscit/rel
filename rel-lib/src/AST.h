@@ -77,7 +77,7 @@ public:
     // attribute's value
     RdString string_value;
     RdInteger integer_value;
-    RsRdIdentifier link_value;
+    std::vector<RsRdIdentifier> link_value;
     RsRdIdentifier enum_value;
     // copy of the token, that contains the attribute's value
     Token token_of_value;

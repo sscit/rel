@@ -46,6 +46,8 @@ Lexer::Lexer(Logger &logger) : l(logger)  {
     token_table["\\\""] = TokenType::QUOTATION_MARK_MASKED;
     token_table["\n"] = TokenType::END_OF_LINE;
     token_table["\r\n"] = TokenType::END_OF_LINE;
+    token_table["["] = TokenType::ARRAY_BEGIN;
+    token_table["]"] = TokenType::ARRAY_END;
 
     current_line = 0;
     current_position_in_line = 0;

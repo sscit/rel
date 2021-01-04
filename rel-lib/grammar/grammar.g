@@ -17,7 +17,7 @@ CMT_END    */          end of multi-line comment
 CMT_LINE   //          inline commment
            {           begin of type or enum block
            }           end of type or enum
-EOL        [\n|\r\n]   end of line
+EOL        \n or \r\n  end of line
 */
 
 multi_line_comment ::= CMT_START [.]* CMT_END
@@ -47,9 +47,11 @@ CMT_END                 */          end of multi-line comment
 CMT_LINE                //          inline commment
                         {           begin of type instance
                         }           end of type instance
-EOL                     [\n|\r\n]   end of line
+EOL                     \n or \r\n  end of line
 QUOTATION_MARK          "           quotation mark, indicating begin and end of string
 QUOTATION_MARK_MASKED   \"          quotation mark, masked, to use it within strings
+ARRAY_BEGIN             [           begin of an array of links
+ARRAY_END               ]           end of an array of links
 
 multi_line_comment ::= CMT_START [.]* CMT_END
 line_comment ::= CMT_LINE [.]* EOL
@@ -59,6 +61,7 @@ type_instance ::= identifier {
 }
 
 link ::= identifier
+link ::= ARRAY_BEGIN [identifier,]+ ARRAY_END
 
 integer ::= [0-9]+
 

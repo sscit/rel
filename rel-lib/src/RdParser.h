@@ -42,6 +42,7 @@ protected:
     RdInteger Integer(FileTokenData const&, unsigned int&);
     RdString ReadString(FileTokenData const&, unsigned int&);
     RdTypeInstance TypeInstance(FileTokenData const&, unsigned int&);
+    void ParseArrayOfLinks(FileTokenData const&, unsigned int&, RdTypeInstanceAttribute&);
 
     void CleanupUniqueIdDatabase(std::string const&);
     void CleanupDatabase(std::string const&);
