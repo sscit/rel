@@ -5,7 +5,7 @@ C++ library, that implements REL and is used in different contexts, e.g. for the
 # How to Build rel_lib
 
 ```
-bazel build --config=default  //rel-lib:rel_lib
+bazel build //rel-lib:rel_lib
 ``` 
 
 # Test Environment
@@ -13,7 +13,7 @@ bazel build --config=default  //rel-lib:rel_lib
 Unit Tests:
 
 ```
-bazel test --config=default //rel-lib/test/unittest:RelLibUnitTest
+bazel test //rel-lib/test/unittest:RelLibUnitTest
 ```
 
 # Software Architecture
