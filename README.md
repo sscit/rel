@@ -93,7 +93,7 @@ The following tools are required to build and run REL:
 To process [REL framework requirements](./requirements), execute the following steps:
 
 1. Clone this repository from Github
-1. Build [REL command line interface](./rel-cli): `bazel build --config=default //rel-cli:rel_cli`
+1. Build [REL command line interface](./rel-cli): `bazel build //rel-cli:rel_cli`
 1. Run the binary with the following command: `bazel-bin/rel-cli/rel_cli -r -v ./requirements/`
 
 # Further Documentation

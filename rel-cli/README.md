@@ -16,14 +16,14 @@ rel_cli [-r] [-v|-vv] <PATH>
 # How to build rel_cli
 
 ```
-bazel build --config=default  //rel-cli:rel_cli
+bazel build //rel-cli:rel_cli
 ``` 
 
 # Test Environment
 
 Run unittests:
 ```
-bazel test --config=default //rel-cli/test/unittest:RelCliUnitTest
+bazel test //rel-cli/test/unittest:RelCliUnitTest
 ``` 
 
 Process test data set:

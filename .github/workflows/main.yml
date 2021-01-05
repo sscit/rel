@@ -39,38 +39,38 @@ jobs:
 
       - name: Build rel_lib
         run: |
-          "${GITHUB_WORKSPACE}/bin/bazel" build --config=default //rel-lib:rel_lib
+          "${GITHUB_WORKSPACE}/bin/bazel" build //rel-lib:rel_lib
       
       - name: Build rel_cli
         run: |
-          "${GITHUB_WORKSPACE}/bin/bazel" build --config=default //rel-cli:rel_cli
+          "${GITHUB_WORKSPACE}/bin/bazel" build //rel-cli:rel_cli
 
       - name: Build rel_ls
         run: |
-          "${GITHUB_WORKSPACE}/bin/bazel" build --config=default //rel-ls:rel_ls
+          "${GITHUB_WORKSPACE}/bin/bazel" build //rel-ls:rel_ls
 
       - name: Build rel_py
         run: |
-          "${GITHUB_WORKSPACE}/bin/bazel" build --config=default //relpy:rel_py
+          "${GITHUB_WORKSPACE}/bin/bazel" build //relpy:rel_py
 
 
       # Run unittests
       - name: Run rel_lib Unittest
         run: |
-          "${GITHUB_WORKSPACE}/bin/bazel" test --config=default //rel-lib/test/unittest:RelLibUnitTest
+          "${GITHUB_WORKSPACE}/bin/bazel" test //rel-lib/test/unittest:RelLibUnitTest
 
       - name: Run rel_ls Unittest
         run: |
-          "${GITHUB_WORKSPACE}/bin/bazel" test --config=default //rel-ls/test/unittest:RelLsUnitTest
+          "${GITHUB_WORKSPACE}/bin/bazel" test //rel-ls/test/unittest:RelLsUnitTest
 
       - name: Run rel_cli Unittest
         run: |
-          "${GITHUB_WORKSPACE}/bin/bazel" test --config=default //rel-cli/test/unittest:RelCliUnitTest
+          "${GITHUB_WORKSPACE}/bin/bazel" test //rel-cli/test/unittest:RelCliUnitTest
 
       # Run integration tests
       - name: Integration Test Python Integration
         run: |
-          "${GITHUB_WORKSPACE}/bin/bazel" test --config=default //relpy/test:integration_test
+          "${GITHUB_WORKSPACE}/bin/bazel" test //relpy/test:integration_test
 
       # Process models
       - name: Validate REL requirements

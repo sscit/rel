@@ -28,7 +28,8 @@ void FileEngine::SetStartDirectory(std::string const sd) {
     start_directory = sd;
 }
 
-void FileEngine::CreateFileTokenData(auto const &entry, std::map<std::string, DataType> &filetype_identifier,
+template<typename T>
+void FileEngine::CreateFileTokenData(T const &entry, std::map<std::string, DataType> &filetype_identifier,
                                      std::set<FileTokenData, decltype(ftd_cmp)*> &files_sorted) const {
     if (entry.is_regular_file()) {
         std::string ext = entry.path().extension();
