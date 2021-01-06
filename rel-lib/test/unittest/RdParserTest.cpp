@@ -211,7 +211,6 @@ TEST_F(RdParserTestFixture, DatasetWithMaskedQuotationMark) {
     EXPECT_EQ(database[0].attributes.size(), 1);
 }
 
-/*
 TEST_F(RdParserTestFixture, DatasetWithEnum) {
     spec = "type Req { Color : Color,} enum Color {red, blue,}";
     data = "Req { Color : red,}";
@@ -225,10 +224,11 @@ TEST_F(RdParserTestFixture, DatasetWithEnum) {
     lexer_test.Read(d_spec);
     lexer_test.Read(d_data);   
     rs_parser.ParseTokens(d_spec);
-    RdParser rd_parser(logger, rs_parser);
+    rs_parser.CheckAllEnumTypes();
 
-    (rd_parser.ParseTokens(d_data));
-}*/
+    RdParser rd_parser(logger, rs_parser);
+    rd_parser.ParseTokens(d_data);
+}
 
 TEST_F(RdParserTestFixture, ParseErrorWrongToken) {
     spec = "type Req { unique_id : id, Text : string,}";
