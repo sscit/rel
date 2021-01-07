@@ -3,24 +3,32 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 py_test(
     name = "integration_test",
     srcs = ["integration_test.py"],
-    deps=[":rel_py_tmp"],
-    data=[":test_model"],
+    deps = [":rel_py_tmp"],
+    data = ["//test:small_test_model"],
     visibility = ["//visibility:public"],
 )
 
-filegroup(
-    name = "test_model",
-    srcs = [
-        "spec.rs",
-        "data.rd",
-        ],
-    visibility = ["//visibility:private"],
+py_test(
+    name = "integration_test_big",
+    srcs = ["integration_test_big.py"],
+    deps = [":rel_py_tmp"],
+    data = ["//test:big_test_model"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "integration_test_huge",
+    srcs = ["integration_test_huge.py"],
+    deps = [":rel_py_tmp"],
+    data = ["//test:huge_test_model"],
+    timeout = "long",
+    visibility = ["//visibility:public"],
 )
 
 py_library(
     name = "rel_py_tmp",
-    data=[":rel_py"],
-    imports=["."],
+    data = [":rel_py"],
+    imports = ["."],
     visibility = ["//visibility:private"],
 )
 

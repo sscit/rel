@@ -14,12 +14,13 @@ Requirement
     parent_req : [ReqId1,],
 }
 
-
+/* An instance of the requirement */
 Requirement
 {
     unique_id : ReqId3,
     text : "Subsystem Requirement",
     status : Accepted,
+    // Requirement is derived from two other requirements
     parent_req : [ReqId1,ReqId2,],
 }
 
