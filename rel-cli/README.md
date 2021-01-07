@@ -26,7 +26,7 @@ Run unittests:
 bazel test //rel-cli/test/unittest:RelCliUnitTest
 ``` 
 
-Process test data set:
+Process big test data set:
 ```
-bazel-bin/rel-cli/rel_cli -r -v ./test/
+bazel-bin/rel-cli/rel_cli -r -v ./test/big
 ``` 

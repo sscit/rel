@@ -15,12 +15,18 @@ PYBIND11_MODULE(librel_py, m) {
     py::class_<RsRdIdentifier>(m, "RsRdIdentifier")
         .def("Get", &RsRdIdentifier::Get);
 
+    py::class_<RsEnum>(m, "RsEnum")
+        .def("Get", &RsEnum::Get)
+        .def_readwrite("enum_elements", &RsEnum::enum_elements);
+
     py::class_<RsTypeAttribute>(m, "RsTypeAttribute")
-        .def("Get", &RsTypeAttribute::Get);
+        .def("Get", &RsTypeAttribute::Get)
+        .def_readwrite("enum_definition", &RsTypeAttribute::enum_definition);
 
     py::class_<RsType>(m, "RsType")
         .def("Get", &RsType::Get)
         .def_readwrite("attributes", &RsType::attributes);
+
 
     py::class_<RdString>(m, "RdString")
         .def("Get", &RdString::Get);
@@ -40,8 +46,8 @@ PYBIND11_MODULE(librel_py, m) {
         .def_readwrite("type", &RdTypeInstance::type)
         .def_readwrite("file_origin", &RdTypeInstance::file_origin)
         .def_readwrite("attributes", &RdTypeInstance::attributes);
-    
-    // Data types used in Logger Class
+
+
     py::enum_<LogLevel>(m, "LogLevel")
         .value("ERROR", LogLevel::ERROR)
         .value("WARNING", LogLevel::WARNING)
@@ -56,11 +62,13 @@ PYBIND11_MODULE(librel_py, m) {
         .def("LogMessage", &Logger::LogMessage, 
              py::arg("loglevel") = LogLevel::WARNING, py::arg("message") = "", py::arg("filename") = "Unset", py::arg("line_number") = -1);
 
+
     py::class_<FileEngine>(m, "FileEngine")
         .def(py::init<Logger&>())
         .def("SetSearchRecursive", &FileEngine::SetSearchRecursive)
         .def("GetSearchRecursive", &FileEngine::GetSearchRecursive)
         .def("SetStartDirectory", &FileEngine::SetStartDirectory);
+
 
     py::enum_<ParseResult>(m, "ParseResult")
         .value("NoExceptionOccurred", ParseResult::NoExceptionOccurred)
@@ -71,5 +79,5 @@ PYBIND11_MODULE(librel_py, m) {
         .def("ProcessRelModel", &RelParser::ProcessRelModel)
         .def("GetDatabase", &RelParser::GetDatabase);
 
-    m.doc() = "REL - python integration"; // optional module docstring
+    m.doc() = "REL - Python integration"; // optional module docstring
 }

@@ -37,6 +37,7 @@ jobs:
           mv bazelisk-linux-amd64 "${GITHUB_WORKSPACE}/bin/bazel"
           chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
 
+
       - name: Build rel_lib
         run: |
           "${GITHUB_WORKSPACE}/bin/bazel" build //rel-lib:rel_lib
@@ -67,16 +68,30 @@ jobs:
         run: |
           "${GITHUB_WORKSPACE}/bin/bazel" test //rel-cli/test/unittest:RelCliUnitTest
 
+
       # Run integration tests
       - name: Integration Test Python Integration
         run: |
           "${GITHUB_WORKSPACE}/bin/bazel" test //relpy/test:integration_test
 
+      - name: Integration Test Big Project
+        run: |
+          "${GITHUB_WORKSPACE}/bin/bazel" test //relpy/test:integration_test_big
+
+      - name: Integration Test Huge Project
+        run: |
+          "${GITHUB_WORKSPACE}/bin/bazel" test //relpy/test:integration_test_huge
+
+
       # Process models
-      - name: Validate REL requirements
+      - name: Validate REL Requirements on Command Line
         run: |
           "${GITHUB_WORKSPACE}/bazel-bin/rel-cli/rel_cli" -r -v ./requirements
 
-      - name: Validate test project
+      - name: Validate Big Test Project on Command Line
         run: |
-          "${GITHUB_WORKSPACE}/bazel-bin/rel-cli/rel_cli" -r -v ./test
+          "${GITHUB_WORKSPACE}/bazel-bin/rel-cli/rel_cli" -r -v ./test/big
+          
+      - name: Validate Huge Test Project on Command Line
+        run: |
+          "${GITHUB_WORKSPACE}/bazel-bin/rel-cli/rel_cli" -r -v ./test/huge

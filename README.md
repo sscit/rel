@@ -101,5 +101,5 @@ To process [REL framework requirements](./requirements), execute the following s
 - [Developers Guide](./doc/developers_guide.md): Describes typical use cases and how to make the most out of REL for software projects.
 
 Additionally, the following projects give an impression of the language on a larger scale:
- - folder [test](./test), which contains an artificial test project, describing the requirements of a smartphone. 
+ - folder [test](./test) contains a couple of test models, which are used in integrations tests
  - Have a look at the [requirements](./requirements) of REL itself, of course they are written in REL, too (eat your own dogfood!).
