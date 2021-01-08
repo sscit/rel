@@ -136,7 +136,7 @@ TEST_F(LexerTestFixture, LineComment)
     EXPECT_EQ(d.token_list.size(), 5);
 }
 
-TEST_F(LexerTestFixture, IsOperator)
+TEST_F(LexerTestFixture, IsOperatorOrKeyword)
 {
     SlidingWindow v;
 
@@ -154,13 +154,18 @@ TEST_F(LexerTestFixture, IsOperator)
     v.push_back('\"');
     EXPECT_TRUE( IsOperator(v) );
 
-    EXPECT_TRUE( IsOperator("//") );
-    EXPECT_TRUE( IsOperator("/*") );
-    EXPECT_TRUE( IsOperator("\"") );
-    EXPECT_TRUE( IsOperator("\\\"") );
+    EXPECT_TRUE( IsOperatorOrKeyword("//") );
+    EXPECT_TRUE( IsOperatorOrKeyword("/*") );
+    EXPECT_TRUE( IsOperatorOrKeyword("\"") );
+    EXPECT_TRUE( IsOperatorOrKeyword("\\\"") );
+    EXPECT_TRUE( IsOperatorOrKeyword("string") );
+    EXPECT_TRUE( IsOperatorOrKeyword("int") );
+    EXPECT_TRUE( IsOperatorOrKeyword("enum") );
 
-    EXPECT_FALSE( IsOperator("xx") );
-    EXPECT_FALSE( IsOperator("1hd") );
+    EXPECT_FALSE( IsOperatorOrKeyword("xx") );
+    EXPECT_FALSE( IsOperatorOrKeyword("1hd") );
+    EXPECT_FALSE( IsOperatorOrKeyword("int2") );
+    EXPECT_FALSE( IsOperatorOrKeyword("dahsdjhaskjdhkas") );
 }
 
 TEST_F(LexerTestFixture, IsWhitespaceOrDelimiter)
