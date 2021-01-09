@@ -14,13 +14,17 @@ public:
     virtual ~Parser();
 
 protected:
-    void MultiLineComment(FileTokenData const&, unsigned int&);
-    void LineComment(FileTokenData const&, unsigned int&);
-    RsRdIdentifier Identifier(FileTokenData const&, unsigned int const&);
+    void MultiLineComment(FileTokenData const&, std::list<Token>::const_iterator&);
+    void LineComment(FileTokenData const&, std::list<Token>::const_iterator&);
+    RsRdIdentifier Identifier(FileTokenData const&, std::list<Token>::const_iterator&);
     /* Returns true if the next token is of type provided, false otherwise.
      * EOLs are skipped, if there are some in between.
      */
-    bool IsNextToken(FileTokenData const&, unsigned int&, TokenType const&);
+    bool IsNextToken(FileTokenData const&, std::list<Token>::const_iterator&, TokenType const&);
+    /* This method ensures that dereferencing of the iterator provided only takes place
+       if the iterator is not at end() of the token list provided. If this is the case,
+       then an empty token is returned */
+    static Token SafeDeref(FileTokenData const&, std::list<Token>::const_iterator&);
 
     Logger &l;
 };

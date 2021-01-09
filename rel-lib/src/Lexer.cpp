@@ -27,40 +27,30 @@ FileReader& FileTokenData::GetFileReader() {
 // ############ Implementation of class Lexer
 Lexer::Lexer(Logger &logger) : l(logger)  {
     // setup the map with known tokens
-    token_table["type"] = TokenType::TYPE;
-    token_table["enum"] = TokenType::ENUM;
-    token_table["id"] = TokenType::ID;
-    token_table["int"] = TokenType::INT;
-    token_table["string"] = TokenType::STRING;
-    token_table["link"] = TokenType::LINK;
+    keyword_table["type"] = TokenType::TYPE;
+    keyword_table["enum"] = TokenType::ENUM;
+    keyword_table["id"] = TokenType::ID;
+    keyword_table["int"] = TokenType::INT;
+    keyword_table["string"] = TokenType::STRING;
+    keyword_table["link"] = TokenType::LINK;
 
-    token_table["//"] = TokenType::LINE_COMMENT;
-    token_table["/*"] = TokenType::COMMENT_BLOCK_START;
-    token_table["*/"] = TokenType::COMMENT_BLOCK_END;
+    operator_table["//"] = TokenType::LINE_COMMENT;
+    operator_table["/*"] = TokenType::COMMENT_BLOCK_START;
+    operator_table["*/"] = TokenType::COMMENT_BLOCK_END;
 
-    token_table["{"] = TokenType::BRACKET_OPEN;
-    token_table["}"] = TokenType::BRACKET_CLOSE;
-    token_table[":"] = TokenType::COLON;
-    token_table[","] = TokenType::COMMA;
-    token_table["\""] = TokenType::QUOTATION_MARK;
-    token_table["\\\""] = TokenType::QUOTATION_MARK_MASKED;
-    token_table["\n"] = TokenType::END_OF_LINE;
-    token_table["\r\n"] = TokenType::END_OF_LINE;
-    token_table["["] = TokenType::ARRAY_BEGIN;
-    token_table["]"] = TokenType::ARRAY_END;
+    operator_table["{"] = TokenType::BRACKET_OPEN;
+    operator_table["}"] = TokenType::BRACKET_CLOSE;
+    operator_table[":"] = TokenType::COLON;
+    operator_table[","] = TokenType::COMMA;
+    operator_table["\""] = TokenType::QUOTATION_MARK;
+    operator_table["\\\""] = TokenType::QUOTATION_MARK_MASKED;
+    operator_table["\n"] = TokenType::END_OF_LINE;
+    operator_table["\r\n"] = TokenType::END_OF_LINE;
+    operator_table["["] = TokenType::ARRAY_BEGIN;
+    operator_table["]"] = TokenType::ARRAY_END;
 
     current_line = 0;
     current_position_in_line = 0;
-}
-
-void Lexer::PrintTokenList(FileTokenData& d) {
-    std::cout << "Nr of Tokens: " << d.token_list.size() << std::endl;
-
-    for(unsigned int i=0; i<d.token_list.size(); ++i) {
-        Token const &x = d.token_list[i];
-
-        std::cout << "Token Type: " << x.GetTokenType() << ",\t string value: " << x.GetTokenValue() << std::endl;
-    }
 }
 
 bool Lexer::IsInteger(std::string const &s) {
@@ -119,10 +109,28 @@ bool Lexer::IsDelimiter(char const c) {
     else return false;
 }
 
-bool Lexer::IsOperator(std::string const& s) const {
-    if(token_table.count(s) == 1)
-        return true;
-    else return false;
+bool Lexer::IsOperatorOrKeyword(std::string const& s) const {
+    bool ret = false;
+
+    // First check for keywords, then the operators
+    // the longest keyword is "string" with 6 chars. do not compare longer strings
+    if(s.size() <= 6 && keyword_table.count(s) == 1)
+        ret = true;
+    else if(s.size() <= 2 && operator_table.count(s) == 1)
+        ret = true;
+
+    return ret;
+}
+
+TokenType Lexer::GetTokenTypeOfOperatorOrKeyword(std::string const& s) {
+    TokenType ret = TokenType::TYPE;
+
+    if(keyword_table.count(s) == 1)
+        ret = keyword_table[s];
+    else if(operator_table.count(s) == 1)
+        ret = operator_table[s];
+
+    return ret;
 }
 
 bool Lexer::IsOperator(SlidingWindow const& l) const {
@@ -166,47 +174,47 @@ bool Lexer::IsLinebreak(const std::string& s) {
 }
 
 void Lexer::CheckStringandAddToken(std::string &current_str, const char next_char) {
-    if(token_table.count(current_str) == 1) {
+    if( IsOperatorOrKeyword(current_str) ) {
         /* to avoid that a keyword is falsely identified a the beginning
          * of a string or identifier, e.g. *id*entifier, check the next character, too */
         if(current_str.compare( Token::TokenTypeToString(TokenType::ENUM).c_str() ) == 0) {
             if(!std::isalnum(next_char)) {
-                AddTokenToList(current_str, token_table[current_str]);
+                AddTokenToList(current_str, TokenType::ENUM);
                 current_str.clear();
             }
         }
         else if(current_str.compare( Token::TokenTypeToString(TokenType::ID).c_str() ) == 0) {
             if(!std::isalnum(next_char)) {
-                AddTokenToList(current_str, token_table[current_str]);
+                AddTokenToList(current_str, TokenType::ID);
                 current_str.clear();
             }
         }
         else if(current_str.compare( Token::TokenTypeToString(TokenType::INT).c_str() ) == 0) {
             if(!std::isalnum(next_char)) {
-                AddTokenToList(current_str, token_table[current_str]);
+                AddTokenToList(current_str, TokenType::INT);
                 current_str.clear();
             }
         }
         else if(current_str.compare( Token::TokenTypeToString(TokenType::STRING).c_str() ) == 0) {
             if(!std::isalnum(next_char)) {
-                AddTokenToList(current_str, token_table[current_str]);
+                AddTokenToList(current_str, TokenType::STRING);
                 current_str.clear();
             }
         }
         else if(current_str.compare( Token::TokenTypeToString(TokenType::LINK).c_str() ) == 0) {
             if(!std::isalnum(next_char)) {
-                AddTokenToList(current_str, token_table[current_str]);
+                AddTokenToList(current_str, TokenType::LINK);
                 current_str.clear();
             }
         }
         else if(current_str.compare( Token::TokenTypeToString(TokenType::TYPE).c_str() ) == 0) {
             if(!std::isalnum(next_char)) {
-                AddTokenToList(current_str, token_table[current_str]);
+                AddTokenToList(current_str, TokenType::TYPE);
                 current_str.clear();
             }
         }
         else {
-            AddTokenToList(current_str, token_table[current_str]);
+            AddTokenToList(current_str, GetTokenTypeOfOperatorOrKeyword(current_str));
             current_str.clear();
         }
     }
@@ -266,12 +274,12 @@ void Lexer::Read(FileTokenData& data) {
             if(IsLinebreak(current_str)) {
                 current_line++;
                 current_position_in_line=1;
-                AddTokenToList(current_str, token_table[current_str]);
+                AddTokenToList(current_str, operator_table[current_str]);
                 current_str.clear();
             }
             else if(IsDelimiter(sliding_window.front()) ||
                     IsOperator(sliding_window) ||
-                    IsOperator(current_str)) {
+                    IsOperatorOrKeyword(current_str)) {
                 CheckStringandAddToken(current_str, sliding_window.front());
             }
 

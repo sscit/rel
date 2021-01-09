@@ -38,7 +38,7 @@ public:
     FileReader &GetFileReader();
 
     std::string filepath;
-    std::vector<Token> token_list;
+    std::list<Token> token_list;
 
 private:
     DataType data_type;
@@ -53,7 +53,6 @@ public:
     virtual ~Lexer();
 
     void Read(FileTokenData&);
-    static void PrintTokenList(FileTokenData&);
 
 protected:
     // returns true if string represents a signed integer, false otherwise
@@ -67,16 +66,20 @@ protected:
     static bool IsDelimiter(char const c);
     // returns true, if string represents line break
     static bool IsLinebreak(std::string const&);
-    // returns true, if the characters in the data structure form an operator
+    /* returns true, if the characters in the data structure or string provided
+       form an operator or a keyword */
     bool IsOperator(SlidingWindow const &) const;
-    bool IsOperator(std::string const&) const;
+    bool IsOperatorOrKeyword(std::string const&) const;
+    // Returns the token type of an operator or keyword
+    TokenType GetTokenTypeOfOperatorOrKeyword(std::string const&);
     // returns true, if character is a whitespace
     static bool IsWhitespace(char const);
     // check string whether it contains a token
     void CheckStringandAddToken(std::string&, const char next_char = 0);
 
-    std::map<std::string, TokenType> token_table;
-    std::vector<Token> *token_list;
+    std::map<std::string, TokenType> operator_table;
+    std::map<std::string, TokenType> keyword_table;
+    std::list<Token> *token_list;
     Logger &l;
 
     std::string filename;

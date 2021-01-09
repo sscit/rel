@@ -39,9 +39,9 @@ public:
 
 protected:
     // Parse enum definition out of AST
-    RsEnum EnumDefinition(FileTokenData const&, unsigned int &);
+    RsEnum EnumDefinition(FileTokenData const&, std::list<Token>::const_iterator &);
     // Parse type definition out of AST
-    RsType TypeDefinition(FileTokenData const&, unsigned int &);
+    RsType TypeDefinition(FileTokenData const&, std::list<Token>::const_iterator &);
 
     /* Remove type definitions read previously from a file from
        the internal data structures */
@@ -67,7 +67,7 @@ protected:
      * some.
      */
     template<class T>
-    void EnsureToken(FileTokenData const&, unsigned int&, TokenType const&, T const);
+    void EnsureToken(FileTokenData const&, std::list<Token>::const_iterator&, TokenType const&, T const);
 
     // Key: Name of enum, Value: Enum AST node
     std::map<std::string, RsEnum> all_enums;

@@ -8,9 +8,9 @@ Parser::Parser(Logger &logger) : l(logger) { }
 
 Parser::~Parser() { }
 
-RsRdIdentifier Parser::Identifier(FileTokenData const& tokens, unsigned int const &index) {
+RsRdIdentifier Parser::Identifier(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
     l.LOG(LogLevel::DEBUG, "Parsing Identifier");
-    Token const &identifier = tokens.token_list[index];
+    Token const &identifier = *iter;
 
     RsRdIdentifier data;
     data.name = identifier.GetTokenValue();
@@ -20,32 +20,43 @@ RsRdIdentifier Parser::Identifier(FileTokenData const& tokens, unsigned int cons
     return data;
 }
 
-void Parser::LineComment(FileTokenData const& tokens, unsigned int &index) {
+void Parser::LineComment(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
     l.LOG(LogLevel::DEBUG, "Parsing Line Comment");
 
-    while(tokens.token_list[index].GetTokenType() != TokenType::END_OF_LINE
-          && index < tokens.token_list.size())
-        index++;
+    while(iter != tokens.token_list.end() &&
+          iter->GetTokenType() != TokenType::END_OF_LINE)
+        iter++;
+
+    l.LOG(LogLevel::DEBUG, "Parsing Line Comment Finished");
 }
 
-void Parser::MultiLineComment(FileTokenData const& tokens, unsigned int &index) {
+void Parser::MultiLineComment(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
     l.LOG(LogLevel::DEBUG, "Parsing Multi Line Comment");
-    Token const &multi_line_comment_start = tokens.token_list[index];
+    Token const &multi_line_comment_start = *iter;
 
-    while(tokens.token_list[index].GetTokenType() != TokenType::COMMENT_BLOCK_END
-          && index < tokens.token_list.size())
-        index++;
+    while(iter->GetTokenType() != TokenType::COMMENT_BLOCK_END
+          && iter != tokens.token_list.end())
+        iter++;
 
-    if(index == tokens.token_list.size()) {
+    if(iter == tokens.token_list.end()) {
         throw CommentException(multi_line_comment_start, "End token for Multi Line Comment not found");
     }
 }
 
-bool Parser::IsNextToken(FileTokenData const& tokens, unsigned int& index, TokenType const& tt) {
-    while(tokens.token_list[index].GetTokenType() == TokenType::END_OF_LINE)
-        index++;
+bool Parser::IsNextToken(FileTokenData const& tokens, std::list<Token>::const_iterator& iter, TokenType const& tt) {
+    while(iter->GetTokenType() == TokenType::END_OF_LINE)
+        iter++;
 
-    if(tokens.token_list[index].GetTokenType() == tt)
+    if(iter->GetTokenType() == tt)
         return true;
     else return false;
+}
+
+Token Parser::SafeDeref(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
+    Token ret;
+
+    if(iter != tokens.token_list.end())
+        return *iter;
+
+    return ret;
 }

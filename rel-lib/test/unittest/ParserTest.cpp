@@ -12,7 +12,6 @@ protected:
       testdata_rs = new FileTokenData(DataType::RequirementsSpecification);
       eol = new Token("\n", TokenType::END_OF_LINE, "", 0, 0);
       random_string = new Token("dhasjhdkas_dasdsa", TokenType::STRING_VALUE, "", 0, 0);
-      index = 0;
   }
 
   void TearDown() override {
@@ -21,11 +20,9 @@ protected:
       delete eol;
   }
 
-  unsigned int index;
   Logger logger;
   FileTokenData *testdata_rs;
   FileTokenData *testdata_rd;
-
   Token *eol;
   Token *random_string;
 };
@@ -37,17 +34,20 @@ TEST_F(ParserTestFixture, IsNextTokenCorrectlyIdentified) {
     Token colon("", TokenType::COLON, "", 0, 0);
     testdata_rs->token_list.push_back(colon);
 
-    EXPECT_TRUE(IsNextToken(*testdata_rs, index, TokenType::COLON));
-    index = 0;
-    EXPECT_FALSE(IsNextToken(*testdata_rs, index, TokenType::ID));
+    std::list<Token>::const_iterator iter = testdata_rs->token_list.begin();
+    EXPECT_TRUE(IsNextToken(*testdata_rs, iter, TokenType::COLON));
+    iter = testdata_rs->token_list.begin();
+    EXPECT_FALSE(IsNextToken(*testdata_rs, iter, TokenType::ID));
 }
 
 TEST_F(ParserTestFixture, IsNextTokenCorrectlyIdentified2) {
     Token enumx("//", TokenType::ENUM, "", 0, 0);
     testdata_rs->token_list.push_back(enumx);
-    EXPECT_TRUE(IsNextToken(*testdata_rs, index, TokenType::ENUM));
-    index = 0;
-    EXPECT_FALSE(IsNextToken(*testdata_rs, index, TokenType::BRACKET_CLOSE));
+
+    std::list<Token>::const_iterator iter = testdata_rs->token_list.begin();
+    EXPECT_TRUE(IsNextToken(*testdata_rs, iter, TokenType::ENUM));
+    iter = testdata_rs->token_list.begin();
+    EXPECT_FALSE(IsNextToken(*testdata_rs, iter, TokenType::BRACKET_CLOSE));
 }
 
 TEST_F(ParserTestFixture, MultiLineCommentRead) {
@@ -68,20 +68,21 @@ TEST_F(ParserTestFixture, MultiLineCommentRead) {
     Token comment_end("*/", TokenType::COMMENT_BLOCK_END, "", 0, 0);
     testdata_rs->token_list.push_back(comment_end);
     tokens_added++;
-
-    for(int i=0;i<5; i++)
+    for(int i=0;i<1; i++)
       testdata_rs->token_list.push_back(*random_string);
 
-    MultiLineComment(*testdata_rs, index);
-
-    EXPECT_EQ(tokens_added-1, index);
+    std::list<Token>::const_iterator iter = testdata_rs->token_list.begin();
+    MultiLineComment(*testdata_rs, iter);
+    iter++; iter++;
+    EXPECT_EQ(testdata_rs->token_list.end(), iter);
 }
 
 TEST_F(ParserTestFixture, ReadIdentifier) {
     Token ident("MyIdentifier", TokenType::IDENTIFIER, "", 0, 0);
     testdata_rs->token_list.push_back(ident);
 
-    RsRdIdentifier r = Identifier(*testdata_rs, index);
+    std::list<Token>::const_iterator iter = testdata_rs->token_list.begin();
+    RsRdIdentifier r = Identifier(*testdata_rs, iter);
 
     EXPECT_EQ(r.name, ident.GetTokenValue());
 }
@@ -96,10 +97,11 @@ TEST_F(ParserTestFixture, LineCommentRead) {
 
     testdata_rs->token_list.push_back(*eol);
     tokens_added++;
-    for(int i=0;i<5; i++)
+    for(int i=0;i<1; i++)
       testdata_rs->token_list.push_back(*random_string);
 
-    LineComment(*testdata_rs, index);
-
-    EXPECT_EQ(tokens_added-1, index);
+    std::list<Token>::const_iterator iter = testdata_rs->token_list.begin();
+    LineComment(*testdata_rs, iter);
+    iter++; iter++;
+    EXPECT_EQ(testdata_rs->token_list.end(), iter);
 }

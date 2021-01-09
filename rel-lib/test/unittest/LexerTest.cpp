@@ -8,7 +8,7 @@ protected:
   }
 
   void SetUp() override {
-      token_list = new std::vector<Token>();
+      token_list = new std::list<Token>();
       //logger.SetLogLevel(LogLevel::DEBUG);
   }
 
@@ -29,7 +29,7 @@ TEST_F(LexerTestFixture, AllTokensInString) {
     lexer_test.Read(d);
 
     EXPECT_EQ(d.token_list.size(), 7);
-    EXPECT_EQ(d.token_list[0].GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(d.token_list.front().GetTokenType(), TokenType::QUOTATION_MARK);
 }
 
 TEST_F(LexerTestFixture, AllTokensInString2) {
@@ -40,8 +40,8 @@ TEST_F(LexerTestFixture, AllTokensInString2) {
     lexer_test.Read(d);
 
     EXPECT_EQ(d.token_list.size(), 6);
-    EXPECT_EQ(d.token_list[0].GetTokenType(), TokenType::QUOTATION_MARK);
-    EXPECT_EQ(d.token_list[2].GetTokenType(), TokenType::QUOTATION_MARK_MASKED);
+    EXPECT_EQ(d.token_list.front().GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(std::next(d.token_list.begin(), 2)->GetTokenType(), TokenType::QUOTATION_MARK_MASKED);
 }
 
 TEST_F(LexerTestFixture, AllTokensInString3) {
@@ -52,8 +52,8 @@ TEST_F(LexerTestFixture, AllTokensInString3) {
     lexer_test.Read(d);
 
     EXPECT_EQ(d.token_list.size(), 6);
-    EXPECT_EQ(d.token_list[0].GetTokenType(), TokenType::QUOTATION_MARK);
-    EXPECT_EQ(d.token_list[2].GetTokenType(), TokenType::QUOTATION_MARK_MASKED);
+    EXPECT_EQ(d.token_list.front().GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(std::next(d.token_list.begin(), 2)->GetTokenType(), TokenType::QUOTATION_MARK_MASKED);
 }
 
 TEST_F(LexerTestFixture, AllTokensInString4) {
@@ -64,10 +64,10 @@ TEST_F(LexerTestFixture, AllTokensInString4) {
     lexer_test.Read(d);
 
     EXPECT_EQ(d.token_list.size(), 3);
-    EXPECT_EQ(d.token_list[0].GetTokenType(), TokenType::QUOTATION_MARK);
-    EXPECT_EQ(d.token_list[1].GetTokenType(), TokenType::STRING_VALUE);
-    EXPECT_EQ(d.token_list[1].GetTokenValue().size(), 5);
-    EXPECT_EQ(d.token_list[2].GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(d.token_list.front().GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(std::next(d.token_list.begin(), 1)->GetTokenType(), TokenType::STRING_VALUE);
+    EXPECT_EQ(std::next(d.token_list.begin(), 1)->GetTokenValue().size(), 5);
+    EXPECT_EQ(std::next(d.token_list.begin(), 2)->GetTokenType(), TokenType::QUOTATION_MARK);
 }
 
 TEST_F(LexerTestFixture, AllTokensInString5) {
@@ -78,8 +78,8 @@ TEST_F(LexerTestFixture, AllTokensInString5) {
     lexer_test.Read(d);
 
     EXPECT_EQ(d.token_list.size(), 9);
-    EXPECT_EQ(d.token_list[0].GetTokenType(), TokenType::QUOTATION_MARK);
-    EXPECT_EQ(d.token_list[8].GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(d.token_list.front().GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(std::next(d.token_list.begin(), 8)->GetTokenType(), TokenType::QUOTATION_MARK);
 }
 
 TEST_F(LexerTestFixture, AllTokensInString6) {
@@ -136,7 +136,7 @@ TEST_F(LexerTestFixture, LineComment)
     EXPECT_EQ(d.token_list.size(), 5);
 }
 
-TEST_F(LexerTestFixture, IsOperator)
+TEST_F(LexerTestFixture, IsOperatorOrKeyword)
 {
     SlidingWindow v;
 
@@ -154,13 +154,18 @@ TEST_F(LexerTestFixture, IsOperator)
     v.push_back('\"');
     EXPECT_TRUE( IsOperator(v) );
 
-    EXPECT_TRUE( IsOperator("//") );
-    EXPECT_TRUE( IsOperator("/*") );
-    EXPECT_TRUE( IsOperator("\"") );
-    EXPECT_TRUE( IsOperator("\\\"") );
+    EXPECT_TRUE( IsOperatorOrKeyword("//") );
+    EXPECT_TRUE( IsOperatorOrKeyword("/*") );
+    EXPECT_TRUE( IsOperatorOrKeyword("\"") );
+    EXPECT_TRUE( IsOperatorOrKeyword("\\\"") );
+    EXPECT_TRUE( IsOperatorOrKeyword("string") );
+    EXPECT_TRUE( IsOperatorOrKeyword("int") );
+    EXPECT_TRUE( IsOperatorOrKeyword("enum") );
 
-    EXPECT_FALSE( IsOperator("xx") );
-    EXPECT_FALSE( IsOperator("1hd") );
+    EXPECT_FALSE( IsOperatorOrKeyword("xx") );
+    EXPECT_FALSE( IsOperatorOrKeyword("1hd") );
+    EXPECT_FALSE( IsOperatorOrKeyword("int2") );
+    EXPECT_FALSE( IsOperatorOrKeyword("dahsdjhaskjdhkas") );
 }
 
 TEST_F(LexerTestFixture, IsWhitespaceOrDelimiter)
@@ -267,7 +272,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString1) {
     CheckStringandAddToken(xx, ',');
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::STRING);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::STRING);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString2) {
@@ -275,7 +280,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString2) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::IDENTIFIER);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString3) {
@@ -283,7 +288,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString3) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::IDENTIFIER);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString4) {
@@ -291,7 +296,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString4) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::INTEGER_VALUE);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::INTEGER_VALUE);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString5) {
@@ -299,7 +304,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString5) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::STRING_VALUE);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::STRING_VALUE);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString6) {
@@ -307,7 +312,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString6) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COLON);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::COLON);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString7) {
@@ -315,7 +320,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString7) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::LINE_COMMENT);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::LINE_COMMENT);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString8) {
@@ -323,7 +328,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString8) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COMMENT_BLOCK_START);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::COMMENT_BLOCK_START);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString9) {
@@ -331,7 +336,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString9) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COMMENT_BLOCK_END);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::COMMENT_BLOCK_END);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString10) {
@@ -339,7 +344,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString10) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::COMMA);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::COMMA);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString11) {
@@ -347,7 +352,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString11) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::BRACKET_OPEN);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::BRACKET_OPEN);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString12) {
@@ -355,7 +360,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString12) {
     CheckStringandAddToken(xx, ',');
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::LINK);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::LINK);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString13) {
@@ -363,7 +368,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString13) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::IDENTIFIER);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString14) {
@@ -371,7 +376,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString14) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::BRACKET_CLOSE);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::BRACKET_CLOSE);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString15) {
@@ -379,7 +384,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString15) {
     CheckStringandAddToken(xx, ',');
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::ID);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::ID);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString16) {
@@ -387,7 +392,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString16) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::IDENTIFIER);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString17) {
@@ -395,7 +400,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString17) {
     CheckStringandAddToken(xx, '{');
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::TYPE);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::TYPE);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString18) {
@@ -403,7 +408,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString18) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::IDENTIFIER);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString19) {
@@ -411,7 +416,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString19) {
     CheckStringandAddToken(xx, '{');
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::ENUM);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::ENUM);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString20) {
@@ -419,5 +424,5 @@ TEST_F(LexerTestFixture, IdentifyTokenInString20) {
     CheckStringandAddToken(xx);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ((*token_list)[0].GetTokenType(), TokenType::IDENTIFIER);
+    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::IDENTIFIER);
 }
