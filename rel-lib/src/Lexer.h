@@ -38,7 +38,7 @@ public:
     FileReader &GetFileReader();
 
     std::string filepath;
-    std::vector<Token> token_list;
+    std::list<Token> token_list;
 
 private:
     DataType data_type;
@@ -53,7 +53,6 @@ public:
     virtual ~Lexer();
 
     void Read(FileTokenData&);
-    static void PrintTokenList(FileTokenData&);
 
 protected:
     // returns true if string represents a signed integer, false otherwise
@@ -76,7 +75,7 @@ protected:
     void CheckStringandAddToken(std::string&, const char next_char = 0);
 
     std::map<std::string, TokenType> token_table;
-    std::vector<Token> *token_list;
+    std::list<Token> *token_list;
     Logger &l;
 
     std::string filename;

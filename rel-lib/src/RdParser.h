@@ -39,10 +39,10 @@ public:
     std::vector<RdTypeInstance> GetDatabase();
 
 protected:
-    RdInteger Integer(FileTokenData const&, unsigned int&);
-    RdString ReadString(FileTokenData const&, unsigned int&);
-    RdTypeInstance TypeInstance(FileTokenData const&, unsigned int&);
-    void ParseArrayOfLinks(FileTokenData const&, unsigned int&, RdTypeInstanceAttribute&);
+    RdInteger Integer(FileTokenData const&, std::list<Token>::const_iterator&);
+    RdString ReadString(FileTokenData const&, std::list<Token>::const_iterator&);
+    RdTypeInstance TypeInstance(FileTokenData const&, std::list<Token>::const_iterator&);
+    void ParseArrayOfLinks(FileTokenData const&, std::list<Token>::const_iterator&, RdTypeInstanceAttribute&);
 
     void CleanupUniqueIdDatabase(std::string const&);
     void CleanupDatabase(std::string const&);
@@ -58,7 +58,7 @@ protected:
      * some.
      */
     template<class T>
-    void EnsureToken(FileTokenData const&, unsigned int&, TokenType const&, T const);
+    void EnsureToken(FileTokenData const&, std::list<Token>::const_iterator&, TokenType const&, T const);
 
     RsParser const &specification;
     // Contains the actual data out of all .rd files

@@ -53,16 +53,6 @@ Lexer::Lexer(Logger &logger) : l(logger)  {
     current_position_in_line = 0;
 }
 
-void Lexer::PrintTokenList(FileTokenData& d) {
-    std::cout << "Nr of Tokens: " << d.token_list.size() << std::endl;
-
-    for(unsigned int i=0; i<d.token_list.size(); ++i) {
-        Token const &x = d.token_list[i];
-
-        std::cout << "Token Type: " << x.GetTokenType() << ",\t string value: " << x.GetTokenValue() << std::endl;
-    }
-}
-
 bool Lexer::IsInteger(std::string const &s) {
     int offset = 0;
 
