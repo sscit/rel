@@ -96,10 +96,12 @@ void Lexer::AddTokenToList(std::string const &s, TokenType const &tt) {
     Token t(s, tt, filename, current_line, current_position);
     token_list->push_back(t); 
 
-    std::string logmessage = "Token detected and stored: ";
-    logmessage.append(Token::TokenTypeToString(tt));
-    logmessage.append(" Line: " + std::to_string(t.GetLineNumberOfToken()) + " Pos: " + std::to_string(t.GetPositionInLineOfToken()));
-    l.LOG(LogLevel::DEBUG, logmessage);
+    if(l.GetCurrentLogLevel() == LogLevel::DEBUG) {
+        std::string logmessage = "Token detected and stored: ";
+        logmessage.append(Token::TokenTypeToString(tt));
+        logmessage.append(" Line: " + std::to_string(t.GetLineNumberOfToken()) + " Pos: " + std::to_string(t.GetPositionInLineOfToken()));
+        l.LOG(LogLevel::DEBUG, logmessage);
+    }
 }
 
 bool Lexer::IsDelimiter(char const c) {
