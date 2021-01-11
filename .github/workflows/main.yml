@@ -86,12 +86,12 @@ jobs:
       # Process models
       - name: Validate REL Requirements on Command Line
         run: |
-          "${GITHUB_WORKSPACE}/bazel-bin/rel-cli/rel_cli" -r -v ./requirements
+          "${GITHUB_WORKSPACE}/bin/bazel" run //requirements:validate_rel_requirements
 
       - name: Validate Big Test Project on Command Line
         run: |
-          "${GITHUB_WORKSPACE}/bazel-bin/rel-cli/rel_cli" -r -v ./test/big
+          "${GITHUB_WORKSPACE}/bin/bazel" run //test:validate_big_testmodel
           
       - name: Validate Huge Test Project on Command Line
         run: |
-          "${GITHUB_WORKSPACE}/bazel-bin/rel-cli/rel_cli" -r -v ./test/huge
+          "${GITHUB_WORKSPACE}/bin/bazel" run //test:validate_huge_testmodel

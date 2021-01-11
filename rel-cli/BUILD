@@ -6,4 +6,11 @@ cc_binary(
     deps = [
             "//rel-cli/src:rel_cli_lib",
     ],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "rel_cli_script",
+    srcs = ["rel_cli.sh"],
+    visibility = ["//visibility:public"],
 )
