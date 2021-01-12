@@ -88,6 +88,10 @@ jobs:
         run: |
           "${GITHUB_WORKSPACE}/bin/bazel" run //requirements:validate_rel_requirements
 
+      - name: Create HTML Export of REL requirements
+        run: |
+          "${GITHUB_WORKSPACE}/bin/bazel" run //relpy/html_export:html
+
       - name: Validate Big Test Project on Command Line
         run: |
           "${GITHUB_WORKSPACE}/bin/bazel" run //test:validate_big_testmodel

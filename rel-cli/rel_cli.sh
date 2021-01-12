@@ -1,2 +1,2 @@
 #!/bin/bash
-./rel-cli/rel_cli "$@"
+find . -executable -name rel_cli -exec {} "$@" \;
