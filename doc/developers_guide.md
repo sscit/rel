@@ -106,7 +106,7 @@ All data is stored in text files. This means that some kind of file and director
 
 ### Custom Validation and Export Formats
 
-Every project has its own needs in terms of custom validation and export formats. Therefore [rel-py](../rel-py) embeds REL into python, so that requirements engineers can write own scripts that operate on the model. For sample code and more explanation about the python integration, refer to the [README of rel-py](../rel-py/README.md).
+Every project has its own needs in terms of custom validation and export formats. Therefore [relpy](../relpy) embeds REL into python, so that requirements engineers can write own scripts that operate on the model. For sample code and more explanation about the python integration, refer to the [README of relpy](../relpy/README.md).
 
 For example, a custom valiator could check that a set of attributes is set consistently, or that special metrics applied to the requirement text (e.g. contains valid semi-formal formulas) are fulfilled. The REL parser itself already ensures the following:
 - syntax of the language in all files is valid
@@ -122,6 +122,60 @@ The same applies for export formats: Excel, HTML, CSV, PDF, ... depending on the
 
 ### CI Integration
 
-[rel-cli](../rel-cli) can be used to parse the model on command line. It checks syntax and compliance of the data to the specification. If rel-cli is integrated into CI, it can check every pull request, to ensure that the model is always consistent.
+[rel_cli](../rel-cli) can be used to parse the model on command line. It checks syntax and compliance of the data to the specification. If rel-cli is integrated into CI, it can check every pull request, to ensure that the model is always consistent.
 
-To validate the requirements in more detail, custom validators can be written in python, by using [rel-py](../rel-py). The resulting scripts can then be executed as part of the pull request validation, too.
+To validate the requirements in more detail, custom validators can be written in python, by using [relpy](../relpy). The resulting scripts can then be executed as part of the pull request validation, too.
+
+## Setup Dependency to REL Framework in Bazel
+
+The REL project is available on Github and uses Bazel as build system. All build steps and the fundamental run options of the framework are available via Bazel.
+
+If you create an own repository for your requirements project, consider using Bazel as build system for it. A build system for requirements? Yes, this makes totally sense, because lots of operations that are normally used for programming, can be applied to requirements projects that use REL, too. For example, validating the current model. Or run the HTML export. In the following paragraphs, we will describe how to setup a Bazel build environment for you requirements project and model the dependency towards REL's repository, to benefit from its Bazel integration.
+
+If you are not familiar with Bazel so far, and for more information about it, please refer to its documentation on the web: [bazel.build](https://bazel.build)
+
+
+### Setting up Dependency to REL Repository in WORKSPACE file
+
+Within your Bazel WORKSPACE file, located in the root of your repository, add REL's Git repository as a new entry:
+
+```
+git_repository(
+    name = "rel",
+    remote = "https://github.com/sscit/rel",
+    tag = "v0.6.0",
+)
+```
+
+Check the [REL Release Page](https://github.com/sscit/rel/releases) on Github to find out about the latest release of REL and the corresponding tags.
+
+### Defining Bazel Validation Rule for Requirements Project
+
+In the previous chapter, setting up the initial requirements specification and the relationship towards requirements data has been described. We now assume that you defined a basic model in folder "requirements" within your repo, consisting of a requirements specification `spec.rs` and one data file `data.rd`. To make them available via Bazel, create a BUILD file with one file group in folder "requirements":
+```
+filegroup(
+    name = "my_requirements",
+    srcs = glob(["*.rd"]) + ["spec.rs"],
+    visibility = ["//visibility:public"],
+)
+
+```
+
+Additionally, create a `sh_binary` in the same BUILD file, which can be executed with `bazel run`. The rule pulls all required tools from the REL repository, builds them if necessary and executes them on the command line, together with your model as input data.
+
+```
+sh_binary(
+    name = "validate_my_requirements",
+    srcs = ["@rel//rel-cli:rel_cli_script"],
+    args = ["-r", "-v", "./requirements"],
+    data = [":my_requirements", "@rel//rel-cli:rel_cli"],
+    visibility = ["//visibility:public"],
+)
+```
+
+Run validation via bazel:
+```
+bazel run //requirements:validate_my_requirements
+```
+
+Note that bazel run incorporates building rel_cli from source. Therefore C++17 compiler has to be available. You may have to add file [.bazelrc](./../.bazelrc) into your workspace root folder or extend it with the necessary compiler options.

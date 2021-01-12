@@ -20,6 +20,10 @@ Description how to build the language server for REL from source code is availab
 
 ## Release Notes
 
+### v0.6.0
+
+v0.6 of REL framework does not contain any changes on the Visual Studio Code Extension for REL. VSIX package of 0.5.0 can still be used.
+
 ### 0.5.0
 
 Initial release of Visual Studio Code Extension for REL.
