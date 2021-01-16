@@ -10,10 +10,10 @@ TypeOrigin::TypeOrigin(std::string const& u) : uri(u) { }
 
 RsParser::RsParser(Logger &logger) : Parser(logger) { }
 
-RsType RsParser::GetType(RsRdIdentifier &type_ident) const {
+RsType const * RsParser::GetType(RsRdIdentifier &type_ident) const {
     auto search_result = all_types.find(type_ident.name);
     if (search_result != all_types.end()) {
-        return search_result->second;
+        return &(search_result->second);
     }
     else {
         throw TypeNotFoundException();
@@ -42,7 +42,6 @@ void RsParser::CheckAllEnumTypes() {
 
 template<class T>
 void RsParser::EnsureToken(FileTokenData const& tokens, std::list<Token>::const_iterator& iter, TokenType const& tt, T const e) {
-    l.LOG(LogLevel::DEBUG, "hier4");
     while( iter != tokens.token_list.end() && (
           iter->GetTokenType() == TokenType::END_OF_LINE ||
           iter->GetTokenType() == TokenType::LINE_COMMENT ||
@@ -216,7 +215,7 @@ RsType RsParser::TypeDefinition(FileTokenData const& tokens, std::list<Token>::c
                  * Keep its details and check later, that it exists
                  */
                 Token const &tmp = *iter;
-                Token enum_token(tmp.GetTokenValue(), TokenType::ENUM, tmp.GetFilename(), tmp.GetLineNumberOfToken(), tmp.GetPositionInLineOfToken());
+                Token enum_token(*tmp.GetTokenValue(), TokenType::ENUM, *tmp.GetFilename(), tmp.GetLineNumberOfToken(), tmp.GetPositionInLineOfToken());
                 type_attribute.token_of_attribute = enum_token;
                 RsRdIdentifier enum_name = Identifier(tokens, iter);
                 iter++;

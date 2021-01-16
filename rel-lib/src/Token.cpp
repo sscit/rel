@@ -129,19 +129,19 @@ std::string Token::TokenTypeToString(TokenType const &tt) {
     return output;
 }
 
-std::string Token::GetTokenValue() const {
-    return token_value;
+std::string const * Token::GetTokenValue() const {
+    return &token_value;
 }
 
-std::string Token::GetFilename() const {
-    return filename;
+std::string const * Token::GetFilename() const {
+    return &filename;
 }
 
-int Token::GetLineNumberOfToken() const {
+unsigned int Token::GetLineNumberOfToken() const {
     return line_number;
 }
 
-int Token::GetPositionInLineOfToken() const {
+unsigned short Token::GetPositionInLineOfToken() const {
     return position_in_line;
 }
 

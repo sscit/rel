@@ -35,7 +35,7 @@ public:
     void ParseTokens(FileTokenData const& tokens);
     void CheckAllEnumTypes();
 
-    RsType GetType(RsRdIdentifier &type_ident) const;
+    RsType const * GetType(RsRdIdentifier &type_ident) const;
 
 protected:
     // Parse enum definition out of AST

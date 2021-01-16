@@ -33,8 +33,9 @@ public:
     static unsigned int ParseResultToInteger(ParseResult const p);
 
 private:
-    ParseResult ReadAndLexInputFiles(std::vector<FileTokenData>&);
-    ParseResult ParseFiles(std::vector<FileTokenData>&);
+    void ReadAndParseDataFiles(std::vector<FileTokenData> &);
+    void ReadAndParseSpecFiles(std::vector<FileTokenData> &);
+    void LexFile(FileTokenData&);
 
     Logger &l;
     FileEngine const &rel_model;
