@@ -9,7 +9,7 @@ protected:
 
   void SetUp() override {
       token_list = new std::list<Token>();
-      //logger.SetLogLevel(LogLevel::DEBUG);
+      logger.SetLogLevel(LogLevel::DEBUG);
   }
 
   void TearDown() override {
@@ -66,7 +66,7 @@ TEST_F(LexerTestFixture, AllTokensInString4) {
     EXPECT_EQ(d.token_list.size(), 3);
     EXPECT_EQ(d.token_list.front().GetTokenType(), TokenType::QUOTATION_MARK);
     EXPECT_EQ(std::next(d.token_list.begin(), 1)->GetTokenType(), TokenType::STRING_VALUE);
-    EXPECT_EQ(std::next(d.token_list.begin(), 1)->GetTokenValue().size(), 5);
+    EXPECT_EQ(std::next(d.token_list.begin(), 1)->GetTokenValue()->size(), 5);
     EXPECT_EQ(std::next(d.token_list.begin(), 2)->GetTokenType(), TokenType::QUOTATION_MARK);
 }
 

@@ -7,7 +7,7 @@
 #include <string>
 #include <iostream>
 
-enum class TokenType {
+enum class TokenType : unsigned char {
     // reserved keywords
     TYPE,
     ENUM,
@@ -44,24 +44,23 @@ class Token {
 public:
     Token();
     Token(std::string const&, TokenType const&, std::string const&, unsigned int const, unsigned int const);
+    ~Token();
+
     bool Compare(std::string const input);
-    virtual ~Token();
-    
     TokenType GetTokenType() const;
-    std::string GetTokenValue() const;
-    std::string GetFilename() const;
-    int GetLineNumberOfToken() const;
-    int GetPositionInLineOfToken() const;
+    std::string const * GetTokenValue() const;
+    std::string const * GetFilename() const;
+    unsigned int GetLineNumberOfToken() const;
+    unsigned short GetPositionInLineOfToken() const;
 
     static std::string TokenTypeToString(TokenType const&);
 
 private:
     std::string token_value;
-    TokenType token_type;
-
     std::string filename;
     unsigned int line_number;
-    unsigned int position_in_line;
+    unsigned short position_in_line;
+    TokenType token_type;
 };
 
 #endif /* TOKEN_H_ */

@@ -72,8 +72,8 @@ private:
 // represents one attribute of the type instance
 class RdTypeInstanceAttribute {
 public:
-    // copy of the definition of the attribute from type definition
-    RsTypeAttribute name;
+    // pointer to the definition of the attribute from type definition
+    RsTypeAttribute const * name;
     // attribute's value
     RdString string_value;
     RdInteger integer_value;
@@ -85,8 +85,9 @@ public:
 
 class RdTypeInstance {
 public:
-    // copy of the type specification
-    RsType type;
+    RdTypeInstance() : type(nullptr) { }
+    // pointer to the type specification
+    RsType const * type;
     // path to the file, where this type instance originates from
     std::string file_origin;
     std::vector<RdTypeInstanceAttribute> attributes;

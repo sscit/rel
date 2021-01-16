@@ -13,7 +13,7 @@ RsRdIdentifier Parser::Identifier(FileTokenData const& tokens, std::list<Token>:
     Token const &identifier = *iter;
 
     RsRdIdentifier data;
-    data.name = identifier.GetTokenValue();
+    data.name = *identifier.GetTokenValue();
 
     l.LOG(LogLevel::DEBUG, "Identifier " + data.name + " has been created");
 

@@ -41,7 +41,7 @@ void RdParser::CheckAllLinks() {
 
         for(unsigned int j=0; j<instance.attributes.size(); j++) {
             RdTypeInstanceAttribute const &element = instance.attributes[j];
-            if(element.name.token_of_attribute.GetTokenType() == TokenType::LINK) {
+            if(element.name->token_of_attribute.GetTokenType() == TokenType::LINK) {
                 for(auto const &link : element.link_value) {
                     auto const search = unique_ids.find(link.name);
                     l.LOG(LogLevel::DEBUG, "search for " + link.name);
@@ -70,7 +70,7 @@ RdString RdParser::ReadString(FileTokenData const& tokens, std::list<Token>::con
             suffix_has_been_added = true;
         }
 
-        result.value.append(iter->GetTokenValue() + suffix);
+        result.value.append(*(iter->GetTokenValue)() + suffix);
         iter++;
     }
 
@@ -85,7 +85,7 @@ RdString RdParser::ReadString(FileTokenData const& tokens, std::list<Token>::con
 }
 
 RdInteger RdParser::Integer(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
-    RdInteger integer_value(std::stoi(iter->GetTokenValue()));
+    RdInteger integer_value(std::stoi(*(iter->GetTokenValue())));
 
     return integer_value;
 }
@@ -136,7 +136,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
     RdTypeInstance type_instance;
     RsRdIdentifier type_name = Identifier(tokens, iter);
     iter++;
-    RsType type_definition;
+    RsType const * type_definition;
     l.LOG(LogLevel::DEBUG, "Parsing Type Instance of type " + type_name.name);
 
     try {
@@ -156,22 +156,22 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
         l.LOG(LogLevel::DEBUG, "Starting to parse new data attribute");
         EnsureToken(tokens, iter, TokenType::IDENTIFIER, RdTypeException(SafeDeref(tokens,iter), "Wrong token, expected attribute"));
         RsRdIdentifier attribute = Identifier(tokens, iter);
-        if( number_of_elements >= type_definition.attributes.size() ||
-            attribute.name.compare(type_definition.attributes[number_of_elements].name.name) != 0) {
+        if( number_of_elements >= type_definition->attributes.size() ||
+            attribute.name.compare(type_definition->attributes[number_of_elements].name.name) != 0) {
             throw RdTypeException(SafeDeref(tokens,iter), "Attribute not defined in type specification");
         }
         l.LOG(LogLevel::DEBUG, "Parsing data attribute named " + attribute.name);
 
         RdTypeInstanceAttribute type_instance_attribute;
-        type_instance_attribute.name = type_definition.attributes[number_of_elements];
+        type_instance_attribute.name = &type_definition->attributes[number_of_elements];
         iter++;
 
         EnsureToken(tokens, iter, TokenType::COLON, RdTypeException(SafeDeref(tokens,iter), "Wrong token, expected :"));
         iter++;
         type_instance_attribute.token_of_value = *iter;
         if(iter->GetTokenType() == TokenType::STRING_VALUE) {
-            if(HasAttributeValueCorrectType(type_instance_attribute.name, TokenType::STRING)) {
-                type_instance_attribute.string_value.value = iter->GetTokenValue();
+            if(HasAttributeValueCorrectType(*type_instance_attribute.name, TokenType::STRING)) {
+                type_instance_attribute.string_value.value = *(iter->GetTokenValue());
                 l.LOG(LogLevel::DEBUG, "attribute value of type string parsed");
             }
             else {
@@ -179,7 +179,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
             }
         }
         else if(iter->GetTokenType() == TokenType::QUOTATION_MARK) {
-            if(HasAttributeValueCorrectType(type_instance_attribute.name, TokenType::STRING)) {
+            if(HasAttributeValueCorrectType(*type_instance_attribute.name, TokenType::STRING)) {
                 type_instance_attribute.string_value = ReadString(tokens, iter);
                 l.LOG(LogLevel::DEBUG, "attribute value of type string parsed");
             }
@@ -188,7 +188,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
             }
         }
         else if(iter->GetTokenType() == TokenType::INTEGER_VALUE) {
-            if(HasAttributeValueCorrectType(type_instance_attribute.name, TokenType::INT)) {
+            if(HasAttributeValueCorrectType(*type_instance_attribute.name, TokenType::INT)) {
                 type_instance_attribute.integer_value = Integer(tokens, iter);
                 l.LOG(LogLevel::DEBUG, "attribute value of type integer parsed");
             }
@@ -199,7 +199,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
         else if(iter->GetTokenType() == TokenType::ARRAY_BEGIN) {
             /* An array is used. Ensure that the attribute is of type link. Only in this case,
                an array can be used */
-            if(type_instance_attribute.name.token_of_attribute.GetTokenType() == TokenType::LINK) {
+            if(type_instance_attribute.name->token_of_attribute.GetTokenType() == TokenType::LINK) {
                 l.LOG(LogLevel::DEBUG, "an array of links to unique ids has been identified");
                 ParseArrayOfLinks(tokens, iter, type_instance_attribute);
             }
@@ -209,22 +209,22 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
         }
         else if(iter->GetTokenType() == TokenType::IDENTIFIER) {
             l.LOG(LogLevel::DEBUG, "attribute value of type identifier identified");
-            if(type_instance_attribute.name.token_of_attribute.GetTokenType() == TokenType::ENUM) {
+            if(type_instance_attribute.name->token_of_attribute.GetTokenType() == TokenType::ENUM) {
                 // Check that the enum value used exists
-                type_instance_attribute.enum_value.name = iter->GetTokenValue();
-                if(!EnumValueExists(type_instance_attribute.name.enum_definition.enum_elements, type_instance_attribute.enum_value)) {
+                type_instance_attribute.enum_value.name = *(iter->GetTokenValue());
+                if(!EnumValueExists(type_instance_attribute.name->enum_definition.enum_elements, type_instance_attribute.enum_value)) {
                     throw RdTypeException(SafeDeref(tokens,iter), "Enum value " + type_instance_attribute.enum_value.name + \
                                           " not found in specification of enum type " + \
-                                          type_instance_attribute.name.enum_definition.name.name);
+                                          type_instance_attribute.name->enum_definition.name.name);
                 }
                 l.LOG(LogLevel::DEBUG, "attribute has enum value " + type_instance_attribute.enum_value.name + ", enum value exists");
             }
-            else if(type_instance_attribute.name.token_of_attribute.GetTokenType() == TokenType::LINK) {
+            else if(type_instance_attribute.name->token_of_attribute.GetTokenType() == TokenType::LINK) {
                 type_instance_attribute.link_value.push_back(Identifier(tokens, iter));
                 l.LOG(LogLevel::DEBUG, "attribute of type link parsed. One link has been set.");
             }
-            else if(type_instance_attribute.name.token_of_attribute.GetTokenType() == TokenType::ID) {
-                type_instance_attribute.string_value.value = iter->GetTokenValue();
+            else if(type_instance_attribute.name->token_of_attribute.GetTokenType() == TokenType::ID) {
+                type_instance_attribute.string_value.value = *(iter->GetTokenValue());
                 l.LOG(LogLevel::DEBUG, "attribute of type id parsed");
             }
             else
@@ -232,8 +232,8 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
         }
         else if(iter->GetTokenType() == TokenType::ID) {
             l.LOG(LogLevel::DEBUG, "attribute value of type id identified");
-            if(HasAttributeValueCorrectType(type_instance_attribute.name, TokenType::ID)) {
-                type_instance_attribute.string_value.value = iter->GetTokenValue();
+            if(HasAttributeValueCorrectType(*type_instance_attribute.name, TokenType::ID)) {
+                type_instance_attribute.string_value.value = *(iter->GetTokenValue());
                 l.LOG(LogLevel::DEBUG, "attribute value of type id parsed");
             }
             else {
@@ -245,7 +245,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
         }
 
         // check for unique id, if this attribute defined an id
-        if(type_definition.attributes[number_of_elements].token_of_attribute.GetTokenType() == TokenType::ID) {
+        if(type_definition->attributes[number_of_elements].token_of_attribute.GetTokenType() == TokenType::ID) {
             if(unique_ids.find(type_instance_attribute.string_value.value) != unique_ids.end()) {
                 throw RdTypeException(SafeDeref(tokens,iter), "ID already used");
             }
@@ -265,10 +265,10 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
     if(type_instance.attributes.size() == 0)
         throw RdTypeException(SafeDeref(tokens,iter), "No attributes defined in type instance");
 
-    if(type_instance.attributes.size() < type_instance.type.attributes.size())
+    if(type_instance.attributes.size() < type_instance.type->attributes.size())
         throw RdTypeException(SafeDeref(tokens,iter), "Type instance does not match to type definition, missing attributes.");
 
-    l.LOG(LogLevel::DEBUG, "Dataset " + type_instance.type.name.name + " (" + std::to_string(type_instance.attributes.size()) + " elements) has been created.");
+    l.LOG(LogLevel::DEBUG, "Dataset " + type_instance.type->name.name + " (" + std::to_string(type_instance.attributes.size()) + " elements) has been created.");
 
     return type_instance;
 }
