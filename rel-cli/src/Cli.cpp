@@ -20,7 +20,7 @@ void Cli::ProcessCommandLine(int const argc, char const * const argv[], FileEngi
             else if(argument.compare("-vv") == 0)
                 l.SetLogLevel(LogLevel::DEBUG);
             else
-                f.SetStartDirectory(argument);
+                f.SetDirectory(argument);
         }
     }
 }

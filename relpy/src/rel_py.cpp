@@ -67,7 +67,7 @@ PYBIND11_MODULE(librel_py, m) {
         .def(py::init<Logger&>())
         .def("SetSearchRecursive", &FileEngine::SetSearchRecursive)
         .def("GetSearchRecursive", &FileEngine::GetSearchRecursive)
-        .def("SetStartDirectory", &FileEngine::SetStartDirectory);
+        .def("SetDirectory", &FileEngine::SetDirectory);
 
 
     py::enum_<ParseResult>(m, "ParseResult")

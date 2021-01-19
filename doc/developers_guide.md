@@ -92,7 +92,7 @@ See [REL's requirements](../requirements) or the [test project](../test) for mor
 
 ### Designing the Requirements Specification
 
-Designing and writing the requirements specification is the starting point, if the REL framework is used in a software development project. The following design guidelines help requirements engineers to cover all aspects in their project. It is also recommended to study the examples available in the project, namely [REL's own requirements](../requirements) and the [test project](../test).
+Designing and writing the requirements specification is the starting point, if the REL framework is used in a software development project. The following design guidelines help requirements engineers to cover all aspects in their project. It is also recommended to study the examples available in the project, namely [REL's own requirements](../requirements) and [all test projects](../test).
 
 At the beginning, the main type definitions are specified, which cover the majority of requirements data within the project. Requirements engineers should always think about the necessary attributes, which are required and make sense to support the processes. The more attributes, the more effort developers have to spend while creating type instances and filling them with data. Additionally, more attributes most likely lead to more efforts in terms of custom validations, that are executed in CI and are not covered by REL's basic validation (which only takes care about syntax and validity of type instances and their specification).
 
@@ -101,7 +101,7 @@ At the beginning, the main type definitions are specified, which cover the major
 All data is stored in text files. This means that some kind of file and directory structure has to be defined, so that developers know where to put their content. It is important to define a suitable structure at the beginning, so that people can start working. Some aspects to consider:
 
 - the REL parser processes all files in an alphabetical order. This behavior is important to know, because on the one hand, it ensures deterministic execution. On the other hand, sequence of files located in the repository has an impact, e.g. on data export. The sequence files and the data inside is parsed is reflected within the output artefacts, e.g. within a generated HTML file. This behavior is intended, because requirements are always categorized (at least by their files) or are maybe accompanied with explanatory paragraphs, which only make sense if the order is preserved.
-- Requirements specification can be distributed among multiple files or can be kept in a single file. The parser always processes all specification files found within the directory tree first.
+- Requirements specification can be distributed among multiple files or can be kept in a single file. The parser always processes all specification files found within the directory trees first.
 - It makes sense to split the actual requirements data into multiple files, grouped depending on their scope. A "category", if necessary, can either be implied by the file name or another approach would be to define a text field or enumeration, that defines the category.
 
 ### Custom Validation and Export Formats

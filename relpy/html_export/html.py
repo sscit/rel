@@ -6,7 +6,7 @@ l = rel.Logger()
 
 fe = rel.FileEngine(l)
 fe.SetSearchRecursive(True)
-fe.SetStartDirectory("./requirements")
+fe.SetDirectory("./requirements")
 
 relparser = rel.RelParser(l, fe)
 if relparser.ProcessRelModel() == rel.ParseResult.NoExceptionOccurred:

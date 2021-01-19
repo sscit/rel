@@ -11,7 +11,6 @@ bool ftd_cmp(FileTokenData const &a, FileTokenData const &b) {
 
 FileEngine::FileEngine(Logger &logger) : l(logger) {
     search_recursive = false;
-    start_directory = ".";
 }
 
 FileEngine::~FileEngine() { }
@@ -24,8 +23,8 @@ bool FileEngine::GetSearchRecursive() const {
     return search_recursive;
 }
 
-void FileEngine::SetStartDirectory(std::string const sd) {
-    start_directory = sd;
+void FileEngine::SetDirectory(std::string const sd) {
+    directories.push_back(sd);
 }
 
 template<typename T>
@@ -52,16 +51,21 @@ std::vector<FileTokenData> FileEngine::GetListOfFiles() const {
     filetype_identifier[".rs"] = DataType::RequirementsSpecification;
     filetype_identifier[".rd"] = DataType::RequirementsData;
 
-    if(GetSearchRecursive()) {
-        for(const auto& entry: std::filesystem::recursive_directory_iterator(start_directory)) {
-            CreateFileTokenData(entry, filetype_identifier, files_sorted);
+    std::for_each (directories.begin(), directories.end(), [&](std::string const& dir){
+        if(GetSearchRecursive()) {
+            for(const auto& entry: std::filesystem::recursive_directory_iterator(dir)) {
+                CreateFileTokenData(entry, filetype_identifier, files_sorted);
+            }
         }
-    }
-    else {
-        for(const auto& entry: std::filesystem::directory_iterator(start_directory)) {
-            CreateFileTokenData(entry, filetype_identifier, files_sorted);
+        else {
+            for(const auto& entry: std::filesystem::directory_iterator(dir)) {
+                CreateFileTokenData(entry, filetype_identifier, files_sorted);
+            }
         }
-    }
+    });
+
+    if(directories.size() == 0)
+        l.LOG(LogLevel::WARNING, "No input path specified.");
 
     // now transfer from set into a vector
     std::vector<FileTokenData> result;

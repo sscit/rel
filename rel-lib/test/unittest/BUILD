@@ -7,4 +7,8 @@ cc_test(
         "//rel-lib:rel_lib",
         "@googletest//:gtest_main",
     ],
+    size = "small",
+    data = [
+        "//test:small_test_model",
+        "//test:big_test_model"],
 )

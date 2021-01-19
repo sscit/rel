@@ -1,4 +1,4 @@
-Requirement
+ReqDef
 {
     unique_id : ReqId1,
     text : "System Requirement",
@@ -6,7 +6,7 @@ Requirement
     parent_req : ReqId1,
 }
 
-Requirement
+ReqDef
 {
     unique_id : ReqId2,
     text : "System Requirement",
@@ -15,7 +15,7 @@ Requirement
 }
 
 /* An instance of the requirement */
-Requirement
+ReqDef
 {
     unique_id : ReqId3,
     text : "Subsystem Requirement",
@@ -24,7 +24,7 @@ Requirement
     parent_req : [ReqId1,ReqId2,],
 }
 
-Requirement
+ReqDef
 {
     unique_id : ReqId4,
     text : "SubSubsystem Requirement",

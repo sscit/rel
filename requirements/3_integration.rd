@@ -8,6 +8,24 @@ Requirement
 
 Requirement
 {
+    Identifier : integ2,
+    Text : "REL parser shall be able to parse all relevant files (requirements specification
+            and requirements data) in a directory and its subdirectories.",
+    State : Accepted,
+    ImplementationStatus : Implemented,
+}
+
+Requirement
+{
+    Identifier : integ22,
+    Text : "It shall be possible to provide multiple directory paths to the parser, which are then used
+            as starting point to parse all relevant files in the corresponding directory tree.",
+    State : Accepted,
+    ImplementationStatus : Implemented,
+}
+
+Requirement
+{
     Identifier : integ_py1,
     Text : "REL parser shall be integrated into python environment, so that
     custom validators and data exporters can be written in python.",

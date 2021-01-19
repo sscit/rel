@@ -33,7 +33,7 @@ void Workspace::ParseAllFilesOnceAtStart()
 {
     // Parse relevant files in workspace at startup, to create the data structures
     file_engine.SetSearchRecursive(true);
-    file_engine.SetStartDirectory(root_uri.GetPath());
+    file_engine.SetDirectory(root_uri.GetPath());
 
     l.LOG(LogLevel::DEBUG, "Looking for files starting from " + root_uri.GetPath());
     std::vector<FileTokenData> input_files;

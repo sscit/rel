@@ -9,6 +9,14 @@ py_test(
 )
 
 py_test(
+    name = "integration_test_small_big",
+    srcs = ["integration_test_small_big.py"],
+    deps = [":rel_py_tmp"],
+    data = ["//test:big_test_model", "//test:small_test_model"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
     name = "integration_test_big",
     srcs = ["integration_test_big.py"],
     deps = [":rel_py_tmp"],
