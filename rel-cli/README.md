@@ -3,14 +3,14 @@
 ## Command Line Options
 
 ```
-rel_cli [-r] [-v|-vv] <PATH>
+rel_cli [-r] [-v|-vv] [<PATH>]+
 ```
 | Option        | Description   |
 | ------------- |-------------|
 | -r      | if specified, folder provided is processed recursively, to find all underlying specification or data files. |
 | -v      | print INFO messages during execution   |
 | -vv     | print DEBUG messages during execution. This option has significant impact on runtime.   |
-| \<PATH\>     | Path to folder, where REL model is located. |
+| \[\<PATH\>\]+     | Paths to folders, separated by spaces, where relevant files are located, that contain the REL model's data. |
 
 
 # How to build rel_cli

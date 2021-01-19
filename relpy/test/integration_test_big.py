@@ -9,7 +9,7 @@ def test_big_project():
 
     fe = rel.FileEngine(l)
     fe.SetSearchRecursive(True)
-    fe.SetStartDirectory(os.getcwd() + "/test/big")
+    fe.SetDirectory(os.getcwd() + "/test/big")
 
     relparser = rel.RelParser(l, fe)
     ret = relparser.ProcessRelModel()

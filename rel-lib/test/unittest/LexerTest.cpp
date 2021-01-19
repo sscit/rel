@@ -9,7 +9,7 @@ protected:
 
   void SetUp() override {
       token_list = new std::list<Token>();
-      logger.SetLogLevel(LogLevel::DEBUG);
+      //logger.SetLogLevel(LogLevel::DEBUG);
   }
 
   void TearDown() override {

@@ -11,7 +11,7 @@
 
 bool ftd_cmp(FileTokenData const &a, FileTokenData const &b);
 
-/* Class searches all files within a directory provided
+/* Class searches for all relevant files within all directories provided,
    that shall be read and parsed */
 class FileEngine {
 public:
@@ -21,9 +21,9 @@ public:
     /* If set to true, the search runs recursive, starting
        from the directory provided */
     void SetSearchRecursive(bool const);
-    /* Set the start directory, where the FileEngine shall
-       start searching for relevant files */
-    void SetStartDirectory(std::string const);
+    /* Set a directory, where the FileEngine shall
+       search for relevant files */
+    void SetDirectory(std::string const);
     /* Returns a vector of FileTokenData, each element containing
        a path to a relevant file, that shall be parsed */
     std::vector<FileTokenData> GetListOfFiles() const;
@@ -35,7 +35,7 @@ protected:
                              std::set<FileTokenData, decltype(ftd_cmp)*>&) const;
 
     bool search_recursive;
-    std::string start_directory;
+    std::vector<std::string> directories;
     Logger &l;
 };
 

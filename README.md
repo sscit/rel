@@ -66,11 +66,11 @@ The following libraries and tools are part of the REL framework:
 
 ## Development Enviroment of REL Framework
 
-The REL project uses [bazel](https://bazel.build) as build environment.
+The REL project uses [Bazel](https://bazel.build) as build environment.
 
 Branch `main` is protected and pushes directly to the branch will be rejected. Create a feature branch and pull request, to get changes into `main`.
 
-Every PR that is supposed to go into `main` is validated in CI via [Github Action](../.github/workflows/main.jml). The action builds all libraries and binaries of the framework, runs the unit tests and validates [REL's requirements](./requirements) with [rel_cli](./rel-cli)
+Every PR that is supposed to go into `main` is validated in CI via [Github Action](../.github/workflows/main.jml). The action builds all libraries and binaries of the framework, runs all test cases and validates [REL's requirements](./requirements) with [rel_cli](./rel-cli)
 
 # Getting Started
 

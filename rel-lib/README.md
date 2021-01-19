@@ -40,7 +40,7 @@ A message is then logged by calling [`LogMessage()`](./src/Logger.h#29). For bre
 
 ### Class FileEngine
 
-[`FileEngine`](./src/FileEngine.h#L16) scans the directory provided and extracts the paths to all REL files, namely _.rs_ and _.rd_ files. It uses C++17 `\<filesystem\>` operations. After object creation, properties are set via [`SetStartDirectory()`](./src/FileEngine.h#L26) and [`SetSearchRecursive()`](./src/FileEngine.h#L23). The first method expects an absolute or relative path to the directly, where the REL model files are located. With the latter, the developer can control whether all subdirectores shall be traversed or not.
+[`FileEngine`](./src/FileEngine.h#L16) scans the directories provided and extracts the paths to all REL files, namely _.rs_ and _.rd_ files. It uses C++17 `\<filesystem\>` operations. After object creation, properties are set via [`SetDirectory()`](./src/FileEngine.h#L26) and [`SetSearchRecursive()`](./src/FileEngine.h#L23). The first method can be called multiple times and expects an absolute or relative path to a directory, where REL model files are located. With the latter, the developer can control whether all subdirectores shall be traversed or not.
   
 By calling [`GetListOfFiles()`](), the actual file system operations are pursued. It returns a vector of `FileTokenData`, which contains an entry for every file identified. `FileTokenData` does not only contain the path to the file - it is also used to store all tokens extracted out of the file.
 
@@ -59,5 +59,4 @@ To get the resulting type instances, containing the actual requirements data, me
 
 ## External API
 
-In the previous paragraph, the main classes are described in detail. `Logger`, `FileEngine` and `RelParser` also act as the external API of rel_lib. Within the python integration, these three classes are exposed to the developer and have to be used, in order to run REL within python.
-
+In the previous paragraph, the main classes are described in detail. `Logger`, `FileEngine` and `RelParser` also act as the external API of rel_lib. Within the Python integration, these three classes are exposed to the developer and have to be used, in order to run REL within Python.

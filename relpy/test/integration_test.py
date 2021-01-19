@@ -9,7 +9,7 @@ def test_rel_py():
 
     fe = rel.FileEngine(l)
     fe.SetSearchRecursive(True)
-    fe.SetStartDirectory(os.getcwd() + "/test/small")
+    fe.SetDirectory(os.getcwd() + "/test/small")
 
     relparser = rel.RelParser(l, fe)
     ret = relparser.ProcessRelModel()
