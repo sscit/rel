@@ -34,7 +34,7 @@ All classes that form the AST are defined in [AST.h](./src/AST.h). They are main
 
 [`Logger`](./src/Logger.h#L20) is a helper class, which enables access to log statements produced by rel_lib. Per default, log statements are sent to stdout, but at construction time, a path to a file can be provided as well. In this case, all log statements are written into the file.
 
-Method [`SetLogLevel()`](./src/Logger.h#L26) can be used to set the [log level](./src/Logger.h#L13). Per default, it is set to WARNING. For debugging purposes, developers can also set it to DEBUG, to get log messages for all relevant steps rel_lib is pursuing. Be aware, that setting the highest log level has significant negative impact on performance of the library. Therefore this setting should not be deployed in production environment.
+Method [`SetLogLevel()`](./src/Logger.h#L26) can be used to set the [log level](./src/Logger.h#L13). Per default, it is set to WARNING. For debugging purposes, developers can also set it to DBUG, to get log messages for all relevant steps rel_lib is pursuing. Be aware, that setting the highest log level has significant negative impact on performance of the library. Therefore this setting should not be deployed in production environment.
 
 A message is then logged by calling [`LogMessage()`](./src/Logger.h#29). For brevity, macro [LOG()](./src/Logger.h#11) sets the first two parameters to the compiler defines for current file and line.
 

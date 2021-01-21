@@ -33,8 +33,8 @@ void FileEngine::CreateFileTokenData(T const &entry, std::map<std::string, DataT
     if (entry.is_regular_file()) {
         std::string ext = entry.path().extension();
         if(filetype_identifier.count(ext) > 0) {
-            l.LOG(LogLevel::DEBUG, "relevant file found: ");
-            l.LOG(LogLevel::DEBUG, entry.path());
+            l.LOG(LogLevel::DBUG, "relevant file found: ");
+            l.LOG(LogLevel::DBUG, entry.path());
             FileTokenData d(filetype_identifier[ext]);
             d.filepath = entry.path();
 

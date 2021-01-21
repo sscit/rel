@@ -4,7 +4,7 @@
 class RsParserTestFixture : public ::testing::Test, public RsParser {
 protected:
   RsParserTestFixture() : RsParser(logger), lexer_test(logger) {
-    //logger.SetLogLevel(LogLevel::DEBUG);
+    //logger.SetLogLevel(LogLevel::DBUG);
   }
 
   void SetUp() override {

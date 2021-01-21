@@ -25,8 +25,8 @@ LogLevel Logger::GetCurrentLogLevel() const {
 std::string Logger::LogLevelToString(LogLevel const l) const {
     std::string result;
     switch(l) {
-        case LogLevel::DEBUG:
-            result="DEBUG";
+        case LogLevel::DBUG:
+            result="DBUG";
             break;
         case LogLevel::INFO:
             result="INFO";

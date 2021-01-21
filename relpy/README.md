@@ -42,7 +42,7 @@ l.SetLogLevel(rel.LogLevel.INFO)
 ```
 
 In this example, an object of class `Logger` is created. Log data is sent to stdout. If log data shall be written into file, a file path can be handed over to the constructor.
-If necessary, custom log level can be set to ERROR, WARNING, INFO, and DEBUG. Default is WARNING. Be aware, that DEBUG produces loads of output, which slows down execution significiantly.
+If necessary, custom log level can be set to ERROR, WARNING, INFO, and DBUG. Default is WARNING. Be aware, that DBUG produces loads of output, which slows down execution significiantly.
 
 ### FileEngine
 

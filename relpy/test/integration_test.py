@@ -5,7 +5,7 @@ import os
 
 def test_rel_py():
     l = rel.Logger()
-    #l.SetLogLevel(rel.LogLevel.DEBUG)
+    #l.SetLogLevel(rel.LogLevel.DBUG)
 
     fe = rel.FileEngine(l)
     fe.SetSearchRecursive(True)

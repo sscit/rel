@@ -14,11 +14,36 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-20.04
+  # a job that checks execution of rel_cli on macos
+  mac_execution_test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
 
+      - name: Mount bazel cache
+        uses: actions/cache@v1
+        with:
+          path: "/home/runner/.cache/bazel"
+          key: bazel
+
+      - name: Install bazelisk
+        run: |
+          curl -LO "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-darwin-amd64"
+          mkdir -p "${GITHUB_WORKSPACE}/bin/"
+          mv bazelisk-darwin-amd64 "${GITHUB_WORKSPACE}/bin/bazel"
+          chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
+
+      - name: Build rel_cli
+        run: |
+          "${GITHUB_WORKSPACE}/bin/bazel" build //rel-cli:rel_cli
+
+      - name: Validate REL Requirements on Command Line
+        run: |
+          ./bazel-bin/rel-cli/rel_cli -r -v ./requirements
+
+  # Main job, that builds everything and runs all tests in Ubuntu
+  build_and_test_rel:
+    runs-on: ubuntu-20.04
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -37,7 +62,7 @@ jobs:
           mv bazelisk-linux-amd64 "${GITHUB_WORKSPACE}/bin/bazel"
           chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
 
-
+      # build all parts
       - name: Build rel_lib
         run: |
           "${GITHUB_WORKSPACE}/bin/bazel" build //rel-lib:rel_lib
@@ -53,7 +78,6 @@ jobs:
       - name: Build rel_py
         run: |
           "${GITHUB_WORKSPACE}/bin/bazel" build //relpy:rel_py
-
 
       # Run unittests
       - name: Run rel_lib Unittest
