@@ -9,29 +9,29 @@ Parser::Parser(Logger &logger) : l(logger) { }
 Parser::~Parser() { }
 
 RsRdIdentifier Parser::Identifier(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
-    l.LOG(LogLevel::DEBUG, "Parsing Identifier");
+    l.LOG(LogLevel::DBUG, "Parsing Identifier");
     Token const &identifier = *iter;
 
     RsRdIdentifier data;
     data.name = *identifier.GetTokenValue();
 
-    l.LOG(LogLevel::DEBUG, "Identifier " + data.name + " has been created");
+    l.LOG(LogLevel::DBUG, "Identifier " + data.name + " has been created");
 
     return data;
 }
 
 void Parser::LineComment(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
-    l.LOG(LogLevel::DEBUG, "Parsing Line Comment");
+    l.LOG(LogLevel::DBUG, "Parsing Line Comment");
 
     while(iter != tokens.token_list.end() &&
           iter->GetTokenType() != TokenType::END_OF_LINE)
         iter++;
 
-    l.LOG(LogLevel::DEBUG, "Parsing Line Comment Finished");
+    l.LOG(LogLevel::DBUG, "Parsing Line Comment Finished");
 }
 
 void Parser::MultiLineComment(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
-    l.LOG(LogLevel::DEBUG, "Parsing Multi Line Comment");
+    l.LOG(LogLevel::DBUG, "Parsing Multi Line Comment");
     Token const &multi_line_comment_start = *iter;
 
     while(iter->GetTokenType() != TokenType::COMMENT_BLOCK_END

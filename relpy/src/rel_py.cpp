@@ -52,7 +52,7 @@ PYBIND11_MODULE(librel_py, m) {
         .value("ERROR", LogLevel::ERROR)
         .value("WARNING", LogLevel::WARNING)
         .value("INFO", LogLevel::INFO)
-        .value("DEBUG", LogLevel::DEBUG);
+        .value("DBUG", LogLevel::DBUG);
 
     py::class_<Logger>(m, "Logger")
         .def(py::init<>())

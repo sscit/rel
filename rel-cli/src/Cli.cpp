@@ -18,7 +18,7 @@ void Cli::ProcessCommandLine(int const argc, char const * const argv[], FileEngi
             else if(argument.compare("-v") == 0)
                 l.SetLogLevel(LogLevel::INFO);
             else if(argument.compare("-vv") == 0)
-                l.SetLogLevel(LogLevel::DEBUG);
+                l.SetLogLevel(LogLevel::DBUG);
             else
                 f.SetDirectory(argument);
         }

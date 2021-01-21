@@ -22,7 +22,7 @@ RsType const * RsParser::GetType(RsRdIdentifier &type_ident) const {
 
 void RsParser::CheckAllEnumTypes() {
     std::map<std::string, RsType>::iterator it;
-    l.LOG(LogLevel::DEBUG, "Checking that all enum types used are defined");
+    l.LOG(LogLevel::DBUG, "Checking that all enum types used are defined");
     for(it = all_types.begin(); it != all_types.end(); it++) {
         RsType &t = it->second;
         for(unsigned int j=0; j<t.attributes.size(); j++) {
@@ -104,7 +104,7 @@ void RsParser::ParseTokens(FileTokenData const& tokens) {
                 AddToDatabase(e, tokens.filepath, all_enums, enum_origin);
             }
             catch(std::out_of_range &e) {
-                l.LOG(LogLevel::DEBUG, "Enumeration not ready to be parsed completely, hit Array out of bounds.");
+                l.LOG(LogLevel::DBUG, "Enumeration not ready to be parsed completely, hit Array out of bounds.");
                 throw RsEnumException(current_token, "Enum definition incomplete");
             }
         }
@@ -114,7 +114,7 @@ void RsParser::ParseTokens(FileTokenData const& tokens) {
                 AddToDatabase(t, tokens.filepath, all_types, type_origin);
             }
             catch(std::out_of_range &e) {
-                l.LOG(LogLevel::DEBUG, "Type definition not ready to be parsed completely, hit Array out of bounds.");
+                l.LOG(LogLevel::DBUG, "Type definition not ready to be parsed completely, hit Array out of bounds.");
                 throw RsTypeException(current_token, "Type definition incomplete");
             }
         }
@@ -143,7 +143,7 @@ bool RsParser::IsEnumValueUnique(RsEnum const& enum_type, RsRdIdentifier const& 
 }
 
 RsEnum RsParser::EnumDefinition(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
-    l.LOG(LogLevel::DEBUG, "Parsing Enumeration");
+    l.LOG(LogLevel::DBUG, "Parsing Enumeration");
     Token const &enum_token = *iter;
     RsEnum enumeration;
 
@@ -178,13 +178,13 @@ RsEnum RsParser::EnumDefinition(FileTokenData const& tokens, std::list<Token>::c
         throw RsEnumException(enum_token, "Wrong token, expected identifier");
     }
 
-    l.LOG(LogLevel::DEBUG, "Enumeration " + enumeration.Get() + " (" + std::to_string(enumeration.enum_elements.size()) + " elements) has been created.");
+    l.LOG(LogLevel::DBUG, "Enumeration " + enumeration.Get() + " (" + std::to_string(enumeration.enum_elements.size()) + " elements) has been created.");
 
     return enumeration;
 }
 
 RsType RsParser::TypeDefinition(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
-    l.LOG(LogLevel::DEBUG, "Parsing Type");
+    l.LOG(LogLevel::DBUG, "Parsing Type");
     Token const &type_token = *iter;
     RsType type;
 
@@ -241,7 +241,7 @@ RsType RsParser::TypeDefinition(FileTokenData const& tokens, std::list<Token>::c
         throw RsTypeException(type_token, "Wrong token, expected identifier");
     }
 
-    l.LOG(LogLevel::DEBUG, "Type " + type.Get() + " (" + std::to_string(type.attributes.size()) + " elements) has been created.");
+    l.LOG(LogLevel::DBUG, "Type " + type.Get() + " (" + std::to_string(type.attributes.size()) + " elements) has been created.");
 
     return type;
 }

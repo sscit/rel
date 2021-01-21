@@ -8,7 +8,7 @@ protected:
   }
 
   void SetUp() override {
-      //logger.SetLogLevel(LogLevel::DEBUG);
+      //logger.SetLogLevel(LogLevel::DBUG);
   }
 
   void TearDown() override {

@@ -8,8 +8,8 @@ rel_cli [-r] [-v|-vv] [<PATH>]+
 | Option        | Description   |
 | ------------- |-------------|
 | -r      | if specified, folder provided is processed recursively, to find all underlying specification or data files. |
-| -v      | print INFO messages during execution   |
-| -vv     | print DEBUG messages during execution. This option has significant impact on runtime.   |
+| -v      | print LogLevel::INFO messages during execution   |
+| -vv     | print LogLevel::DBUG messages during execution. This option has significant impact on runtime.   |
 | \[\<PATH\>\]+     | Paths to folders, separated by spaces, where relevant files are located, that contain the REL model's data. |
 
 

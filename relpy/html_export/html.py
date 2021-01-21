@@ -2,7 +2,7 @@
 import librel_py as rel
 
 l = rel.Logger()
-#l.SetLogLevel(rel.LogLevel.DEBUG)
+#l.SetLogLevel(rel.LogLevel.DBUG)
 
 fe = rel.FileEngine(l)
 fe.SetSearchRecursive(True)

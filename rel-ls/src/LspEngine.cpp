@@ -22,7 +22,7 @@ DataType LspEngine::DetermineDataType(Uri const& uri)
 
 void LspEngine::HandleMessage(json const input_message) {
     if(input_message["method"] == "initialize") {
-        l.LOG(LogLevel::DEBUG, "Initialize Message received");
+        l.LOG(LogLevel::DBUG, "Initialize Message received");
 
         Uri root_uri( input_message["params"]["rootUri"] );
         // TODO what if root uri is Null?
@@ -30,7 +30,7 @@ void LspEngine::HandleMessage(json const input_message) {
         RespondToInitialize(input_message);
     }
     else if (input_message["method"] == "initialized") {
-        l.LOG(LogLevel::DEBUG, "Initialized Message received");
+        l.LOG(LogLevel::DBUG, "Initialized Message received");
     }
     else if (input_message["method"] == "textDocument/didOpen" ||
              input_message["method"] == "textDocument/didChange") {
@@ -45,7 +45,7 @@ void LspEngine::HandleMessage(json const input_message) {
         }
 
         ws.UpdateFile(uri, text);
-        l.LOG(LogLevel::DEBUG, "REL document " + uri.GetPath() + " has been opened or changed");
+        l.LOG(LogLevel::DBUG, "REL document " + uri.GetPath() + " has been opened or changed");
 
         ParseDocument(uri, text);
     }
@@ -68,7 +68,7 @@ void LspEngine::ParseDocument(Uri const& uri, std::string const& text)
     try {
         ws.ParseTokens(data);
 
-        l.LOG(LogLevel::DEBUG, "REL file has been parsed, no errors");
+        l.LOG(LogLevel::DBUG, "REL file has been parsed, no errors");
         diag = json::array();
     }
     catch(EnumUsedButNotDefinedException &e) {
@@ -76,14 +76,14 @@ void LspEngine::ParseDocument(Uri const& uri, std::string const& text)
         uri_of_file = Uri::CreateFileUriFromPath(*t.GetFilename());
         l.LOG(LogLevel::ERROR, *t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
         l.LOG(LogLevel::ERROR, e.what());
-        l.LOG(LogLevel::DEBUG, "Preparing JSON diagnostic message");
+        l.LOG(LogLevel::DBUG, "Preparing JSON diagnostic message");
         diag = CreateDiagnosticsFromException(e);
     }
     catch(ParseException &e) {
         Token const t  = e.GetToken();
         l.LOG(LogLevel::ERROR, *t.GetFilename() + ": Line " + std::to_string(t.GetLineNumberOfToken()) + ", Pos " + std::to_string(t.GetPositionInLineOfToken()) + ":");
         l.LOG(LogLevel::ERROR, e.what());
-        l.LOG(LogLevel::DEBUG, "Preparing JSON diagnostic message");
+        l.LOG(LogLevel::DBUG, "Preparing JSON diagnostic message");
         diag = CreateDiagnosticsFromException(e);
     }
 
@@ -169,5 +169,5 @@ void LspEngine::SendMessageToClient(json const& message_body)
     std::cout << header << full_message.dump(4);
     std::cout << std::flush;
 
-    l.LOG(LogLevel::DEBUG, "Message sent: " + header + full_message.dump(4));
+    l.LOG(LogLevel::DBUG, "Message sent: " + header + full_message.dump(4));
 }

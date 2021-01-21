@@ -37,7 +37,7 @@ std::string MsgBuffer::GetMessage() const {
 void MsgBuffer::ParseHeader() { 
     if(current_str == "\r\n") {
         header_finished = true;
-        l.LOG(LogLevel::DEBUG, "Header has been parsed");
+        l.LOG(LogLevel::DBUG, "Header has been parsed");
     }
     else
     {
@@ -49,8 +49,8 @@ void MsgBuffer::ParseHeader() {
                 std::string key = tuple.substr(0, delim_pos);
                 std::string value = tuple.substr(delim_pos + 1);
                 headers[key] = value;
-                l.LOG(LogLevel::DEBUG, "Header key: " + key);
-                l.LOG(LogLevel::DEBUG, "Header value: " + value);
+                l.LOG(LogLevel::DBUG, "Header key: " + key);
+                l.LOG(LogLevel::DBUG, "Header value: " + value);
             }
             current_str.clear();
             ExtractDataFromHeader();

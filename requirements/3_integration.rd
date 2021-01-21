@@ -8,6 +8,14 @@ Requirement
 
 Requirement
 {
+    Identifier : integ11,
+    Text : "REL parser shall be executed in MacOS environment.",
+    State : Accepted,
+    ImplementationStatus : Implemented,
+}
+
+Requirement
+{
     Identifier : integ2,
     Text : "REL parser shall be able to parse all relevant files (requirements specification
             and requirements data) in a directory and its subdirectories.",

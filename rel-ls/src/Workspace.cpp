@@ -35,7 +35,7 @@ void Workspace::ParseAllFilesOnceAtStart()
     file_engine.SetSearchRecursive(true);
     file_engine.SetDirectory(root_uri.GetPath());
 
-    l.LOG(LogLevel::DEBUG, "Looking for files starting from " + root_uri.GetPath());
+    l.LOG(LogLevel::DBUG, "Looking for files starting from " + root_uri.GetPath());
     std::vector<FileTokenData> input_files;
     input_files = file_engine.GetListOfFiles();
 
