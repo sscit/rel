@@ -52,36 +52,55 @@ public:
     Lexer(Logger &);
     virtual ~Lexer();
 
+    // Req: dsl1, dsl2, dsl3, dsl4, dsl5, dsl6, dsl7, dsl8, dsl9
     void Read(FileTokenData&);
 
 protected:
-    // returns true if string represents a signed integer, false otherwise
+    /* returns true if string represents a signed integer, false otherwise
+     * Req: dsl9
+     */
     bool IsInteger(std::string const&);
-    // returns true if string represents an identifier, false otherwise
+    /* returns true if string represents an identifier, false otherwise
+     * Req: dsl2, dsl3, dsl4
+     */
     bool IsIdentifier(std::string const&);
-    // returns true if it is a string without end of line or other special chars
+    /* returns true if it is a string without end of line or other special chars
+     * Req: dsl6, dsl7
+     */
     bool IsString(std::string const&);
     void AddTokenToList(std::string const &s, TokenType const &tt);
-    // returns true, if character is considered as delimiter
+    /* returns true, if character is considered as delimiter
+     * Req: dsl6
+     */
     static bool IsDelimiter(char const c);
-    // returns true, if string represents line break
+    /* returns true, if string represents line break
+     * Req: dsl6
+     */
     static bool IsLinebreak(std::string const&);
     /* returns true, if the characters in the data structure or string provided
-       form an operator or a keyword */
+     * form an operator or a keyword
+     * Req: dsl1, dsl2, dsl3, dsl4, dsl5, dsl6, dsl7, dsl8, dsl9
+     */
     bool IsOperator(SlidingWindow const &) const;
+    // Req: dsl1, dsl2, dsl3, dsl4, dsl5, dsl6, dsl7, dsl8, dsl9
     bool IsOperatorOrKeyword(std::string const&) const;
-    // Returns the token type of an operator or keyword
+    /* Returns the token type of an operator or keyword
+     * Req: dsl1, dsl2, dsl3, dsl4, dsl5, dsl6, dsl7, dsl8, dsl9
+     */
     TokenType GetTokenTypeOfOperatorOrKeyword(std::string const&);
-    // returns true, if character is a whitespace
+    /* returns true, if character is a whitespace
+     * Req: dsl6
+     */
     static bool IsWhitespace(char const);
-    // check string whether it contains a token
+    /* check string whether it contains a token
+     * Req: dsl1, dsl2, dsl3, dsl4, dsl5, dsl6, dsl7, dsl8, dsl9
+     */
     void CheckStringandAddToken(std::string&, const char next_char = 0);
 
     std::map<std::string, TokenType> operator_table;
     std::map<std::string, TokenType> keyword_table;
     std::list<Token> *token_list;
     Logger &l;
-
     std::string filename;
     unsigned int current_line;
     unsigned int current_position_in_line;
