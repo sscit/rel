@@ -15,7 +15,9 @@ public:
     FileIoException(std::string const&, std::string const&);
     virtual ~FileIoException();
 
+    /* Req: parser1 */
     virtual const char* what() const throw();
+    /* Req: parser1 */
     std::string GetFilePath() const;
 
 protected:
@@ -29,6 +31,7 @@ public:
     TypeNotFoundException();
     virtual ~TypeNotFoundException();
 
+    /* Req: parser1 */
     virtual const char* what() const throw();
 };
 
@@ -38,6 +41,7 @@ public:
     ParseException(Token const, std::string const);
     virtual ~ParseException();
 
+    /* Req: parser1 */
     Token GetToken() const;
 
 protected:
@@ -50,6 +54,7 @@ public:
     WrongTokenException(Token const, std::string const msg = "");
     ~WrongTokenException();
 
+    /* Req: parser1 */
     virtual const char* what() const throw();
 };
 
@@ -58,6 +63,7 @@ public:
     CommentException(Token const, std::string const msg = "");
     ~CommentException();
 
+    /* Req: parser1 */
     virtual const char* what() const throw();
 };
 
@@ -66,6 +72,7 @@ public:
     RsEnumException(Token const, std::string const msg = "");
     ~RsEnumException();
 
+    /* Req: parser1 */
     virtual const char* what() const throw();
 };
 
@@ -74,6 +81,7 @@ public:
     RsTypeException(Token const, std::string const msg = "");
     ~RsTypeException();
 
+    /* Req: parser1 */
     virtual const char* what() const throw();
 };
 
@@ -82,6 +90,7 @@ public:
     EnumUsedButNotDefinedException(Token const, std::string const msg = "");
     ~EnumUsedButNotDefinedException();
 
+    /* Req: parser1 */
     virtual const char* what() const throw();
 };
 
@@ -90,6 +99,7 @@ public:
     RdStringException(Token const, std::string const msg = "");
     ~RdStringException();
 
+    /* Req: parser1 */
     virtual const char* what() const throw();
 };
 
@@ -98,6 +108,7 @@ public:
     ArrayException(Token const, std::string const msg = "");
     ~ArrayException();
 
+    /* Req: parser1 */
     virtual const char* what() const throw();
 };
 
@@ -107,6 +118,7 @@ public:
     RdTypeException(Token const, std::string const msg = "");
     ~RdTypeException();
 
+    /* Req: parser1 */
     virtual const char* what() const throw();
 
 private:

@@ -10,7 +10,7 @@ TypeOrigin::TypeOrigin(std::string const& u) : uri(u) { }
 
 RsParser::RsParser(Logger &logger) : Parser(logger) { }
 
-RsType const * RsParser::GetType(RsRdIdentifier &type_ident) const {
+RsType const * RsParser::GetTypeDefinition(RsRdIdentifier &type_ident) const {
     auto search_result = all_types.find(type_ident.name);
     if (search_result != all_types.end()) {
         return &(search_result->second);

@@ -25,21 +25,27 @@ public:
     RelParser(Logger &l, FileEngine const &files);
     virtual ~RelParser();
 
+    /* Req: integ_py1, integ1, integ11, integ_py1 */
     ParseResult ProcessRelModel();
 
-    // returns all type instances that have been read
+    /* returns all type instances that have been read
+     * Req: integ_py1
+     */
     std::vector<RdTypeInstance> GetDatabase();
 
+    /* Req: integ_py1, integ1, integ11, integ_py1 */
     static unsigned int ParseResultToInteger(ParseResult const p);
 
 private:
+    /* Req: integ_py1, integ1, integ11, integ_py1 */
     void ReadAndParseDataFiles(std::vector<FileTokenData> &);
+    /* Req: integ_py1, integ1, integ11, integ_py1 */
     void ReadAndParseSpecFiles(std::vector<FileTokenData> &);
+    /* Req: integ_py1, integ1, integ11, integ_py1 */
     void LexFile(FileTokenData&);
 
     Logger &l;
     FileEngine const &rel_model;
-
     RsParser rs_parser;
     RdParser rd_parser;
 };

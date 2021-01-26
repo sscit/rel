@@ -23,13 +23,17 @@ public:
     Logger(std::string const);
     virtual ~Logger();
 
+    /* Req: parser4 */
     void SetLogLevel(LogLevel const l);
+    /* Req: parser4 */
     LogLevel GetCurrentLogLevel() const;
-
+    /* Req: parser1 */
     void LogMessage(LogLevel const, std::string const, std::string const, int const);
 
 private:
+    /* Req: parser1 */
     std::string LogLevelToString(LogLevel const l) const;
+
     std::ofstream file_access;
     LogLevel current_loglevel;
 };

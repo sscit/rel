@@ -18,10 +18,13 @@ public:
     FileReader(FileReader const &f);
     ~FileReader();
 
+    /* Req: integ1, integ11 */
     void OpenFile(const char*);
+    /* Req: integ1, integ11 */
     bool IsFileOpen() const;
+    /* Req: integ1, integ11 */
     void Close();
-
+    /* Req: integ1, integ11 */
     bool GetChar(char &);
 
 private:

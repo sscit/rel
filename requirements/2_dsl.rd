@@ -63,3 +63,11 @@ Requirement
     State : Accepted,
     ImplementationStatus : Implemented,
 }
+
+Requirement
+{
+    Identifier : dsl9,
+    Text : "The REL language shall support attributes of type integer and the corresponding integer data.",
+    State : Accepted,
+    ImplementationStatus : Implemented,
+}

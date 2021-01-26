@@ -32,39 +32,54 @@ public:
     RsParser(Logger&);
     virtual ~RsParser();
 
+    // Req: dsl1, dsl2, dsl3, dsl4, dsl5, dsl6, dsl7, dsl8
     void ParseTokens(FileTokenData const& tokens);
+    // Req: dsl3
     void CheckAllEnumTypes();
 
-    RsType const * GetType(RsRdIdentifier &type_ident) const;
+    /* Returns the type definition of the type name provided
+     * Req: dsl2
+     */
+    RsType const * GetTypeDefinition(RsRdIdentifier &type_ident) const;
 
 protected:
-    // Parse enum definition out of AST
+    /* Parse enum definition out of AST
+     * Req: dsl3
+     */
     RsEnum EnumDefinition(FileTokenData const&, std::list<Token>::const_iterator &);
-    // Parse type definition out of AST
+    /* Parse type definition out of AST
+     * Req: dsl2
+     */
     RsType TypeDefinition(FileTokenData const&, std::list<Token>::const_iterator &);
-
     /* Remove type definitions read previously from a file from
-       the internal data structures */
+     * the internal data structures
+     * Req: integ3
+     */
     template<class T>
     void CleanupDatabase(std::string const&,
                        std::map<std::string, T>&,
                        std::list<TypeOrigin>&);
-    /* Add type definitions to internal data structures */
+    /* Add type definitions to internal data structures
+     * Req: integ3
+     */
     template<class T>
     void AddToDatabase(T const&, std::string const&,
                        std::map<std::string, T>&,
                        std::list<TypeOrigin>&);
 
     /* Returns true, if the enum value provided hasn't been defined already
-       within the enum type, false otherwise */
+     * within the enum type, false otherwise
+     * Req: dsl3
+     */
     bool IsEnumValueUnique(RsEnum const&, RsRdIdentifier const&);
-
-    /* Returns the filename, where a type has been defined */
+    /* Returns the filename, where a type has been defined
+     * Req: integ3
+     */
     std::string FindUriOfType(RsType const&);
-
     /* Verifies, that the token at dedicated index is of a specific type.
      * If not, throw the exception provided. EOLs are skipped, if there are
      * some.
+     * Req: dsl1, dsl2, dsl3, dsl4, dsl5, dsl6, dsl7, dsl8
      */
     template<class T>
     void EnsureToken(FileTokenData const&, std::list<Token>::const_iterator&, TokenType const&, T const);

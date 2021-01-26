@@ -140,7 +140,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
     l.LOG(LogLevel::DBUG, "Parsing Type Instance of type " + type_name.name);
 
     try {
-        type_definition = specification.GetType(type_name);
+        type_definition = specification.GetTypeDefinition(type_name);
     }
     catch(TypeNotFoundException &e) {
         throw RdTypeException(type_token, "Type " + type_name.name + " not found in specification");

@@ -58,7 +58,9 @@ class RdInteger {
 public:
     RdInteger() : value(0), is_valid(false) { }
     RdInteger(int const v) : value(v), is_valid(true) { }
-    // returns the integer value
+    /* returns the integer value
+     * Req: dsl9
+     */
     int Get() const { return value; }
     // returns true, if class contains valid data
     bool IsValid() const { return is_valid;}
