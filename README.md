@@ -1,3 +1,5 @@
+![CI Validation](https://github.com/sscit/rel/workflows/CI%20Validation/badge.svg?branch=main)
+
 # REL - Requirements Engineering Language
 The REL framework includes a domain specific language to handle requirements in large software projects. It is used to create a requirements model, which consists of the specification and the actual requirements data.
 
