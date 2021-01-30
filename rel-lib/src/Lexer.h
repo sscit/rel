@@ -36,6 +36,8 @@ public:
 
     DataType GetDataTypeOfTokenList() const;
     FileReader &GetFileReader();
+    // replace file reader of this input file handler
+    void SetFileReader(FileReader&);
 
     std::string filepath;
     std::list<Token> token_list;

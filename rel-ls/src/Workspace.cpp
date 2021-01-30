@@ -18,6 +18,23 @@ void Workspace::ParseTokens(FileTokenData const& tokens) {
     }
 }
 
+FileTokenData& Workspace::GetFileHandler(Uri const &uri) {
+    for(auto &f : input_files) {
+        if(uri.GetPath().compare(f.filepath) == 0) {
+            return f;
+        }
+    }
+
+    /* File was not found, probably is was added after initial
+       scan. Therefore add a new entry to workspace */
+
+    FileTokenData new_file(uri.GetDataType());
+    new_file.filepath = uri.GetPath();
+    input_files.push_back(new_file);
+
+    return input_files.back();
+}
+
 bool Workspace::IsWorkspaceInitialized() const {
     return workspace_is_initialized;
 }
@@ -36,56 +53,57 @@ void Workspace::ParseAllFilesOnceAtStart()
     file_engine.SetDirectory(root_uri.GetPath());
 
     l.LOG(LogLevel::DBUG, "Looking for files starting from " + root_uri.GetPath());
-    std::vector<FileTokenData> input_files;
     input_files = file_engine.GetListOfFiles();
 
-    for(unsigned int i=0; i<input_files.size(); i++) {
-        l.LOG(LogLevel::INFO, "Reading file " + input_files[i].filepath + " and creating tokens");
-        Lexer lex(l);
-        lex.Read(input_files[i]);
+    try {
+        ReadAndParseSpecFiles();
+        ReadAndParseDataFiles();
+    }
+    catch (FileIoException &e) {
+        /* do not handle errors at this time*/
+    }
+    catch(ParseException &e) {
+        /* do not handle errors at this time*/
+    }
+}
+
+void Workspace::LexFile(FileTokenData& file) {
+    l.LOG(LogLevel::INFO, "Reading file " + file.filepath + " and creating tokens");
+    Lexer lex(l);
+    lex.Read(file);
+}
+
+void Workspace::ReadAndParseDataFiles() {
+    std::vector<FileTokenData>::iterator iter = input_files.begin();
+    while( (iter = std::find_if(iter, input_files.end(), [](FileTokenData &d){return (d.GetDataTypeOfTokenList() == DataType::RequirementsData);})) != input_files.end() ) {
+        LexFile(*iter);
+
+        l.LOG(LogLevel::INFO, "Parsing of tokens from " + iter->filepath);
+        rd_parser.ParseTokens(*iter);
+        // delete the tokens, they are not needed anymore
+        iter->token_list.clear();
+        iter++;
     }
 
-    // Parse the specifications and build up the data structures
+    // check all links
+    rd_parser.CheckAllLinks();
+}
+
+void Workspace::ReadAndParseSpecFiles() {
+    /* Lex and parse the specification files, to build up the spec */
     std::vector<FileTokenData>::iterator iter = input_files.begin();
     while( (iter = std::find_if(iter, input_files.end(), [](FileTokenData &d){return (d.GetDataTypeOfTokenList() == DataType::RequirementsSpecification);})) != input_files.end() ) {
+        LexFile(*iter);
+
         l.LOG(LogLevel::INFO, "Parsing tokens from " + iter->filepath);
-        try {
-            rs_parser.ParseTokens(*iter);
-        }
-        catch(const std::exception& e) {
-            /* do not handle errors at this point, just continue
-               with the next file */
-        }
+        rs_parser.ParseTokens(*iter);
+        // delete the tokens, they are not needed anymore
+        iter->token_list.clear();
         iter++;
     }
 
-    try {
-        rs_parser.CheckAllEnumTypes();
-    }
-    catch(const std::exception& e) {
-            /* do not handle errors at this point, just continue
-               with the next file */
-    }
-
-    // Now parse the data and build up data structures
-    iter = input_files.begin();
-    while( (iter = std::find_if(iter, input_files.end(), [](FileTokenData &d){return (d.GetDataTypeOfTokenList() == DataType::RequirementsData);})) != input_files.end() ) {
-        l.LOG(LogLevel::INFO, "Parsing of tokens from " + iter->filepath);
-        try {
-            rd_parser.ParseTokens(*iter);
-        }
-        catch(const std::exception& e) {
-            /* do not handle errors at this point, just continue
-               with the next file */
-        }
-        iter++;
-    }
+    // Ensure, that all enum types used exist
+    rs_parser.CheckAllEnumTypes();
 }
 
-void Workspace::UpdateFile(Uri const& uri, std::string const& file_content) {
-    files[uri.GetPath()] = file_content;
-}
 
-std::string& Workspace::GetFileContent(Uri const& uri) {
-    return files[uri.GetPath()];
-}

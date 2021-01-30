@@ -23,6 +23,10 @@ FileReader& FileTokenData::GetFileReader() {
     return file_access;
 }
 
+void FileTokenData::SetFileReader(FileReader& fr) {
+    file_access = fr;
+}
+
 
 // ############ Implementation of class Lexer
 Lexer::Lexer(Logger &logger) : l(logger)  {
