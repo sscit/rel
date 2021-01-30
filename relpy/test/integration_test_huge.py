@@ -17,8 +17,11 @@ def test_huge_project():
     assert ret == rel.ParseResult.NoExceptionOccurred
 
     data = relparser.GetDatabase()
-    assert len(data) == 474629
+    nr_of_type_instances = 0
+    for files in data:
+        nr_of_type_instances = nr_of_type_instances + len(files.type_instances)
+
+    assert nr_of_type_instances == 474629
         
 # main
-# library needs more speed improvement, until this test can be enabled
-#test_huge_project()
+test_huge_project()

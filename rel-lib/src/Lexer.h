@@ -103,7 +103,7 @@ protected:
     std::map<std::string, TokenType> keyword_table;
     std::list<Token> *token_list;
     Logger &l;
-    std::string filename;
+    std::string const * filename;
     unsigned int current_line;
     unsigned int current_position_in_line;
 };

@@ -41,7 +41,7 @@ public:
     /* returns all type instances that have been read
      * Req: integ_py1
      */
-    std::vector<RdTypeInstance> GetDatabase();
+    std::vector<RdFile> GetDatabase();
 
 protected:
     // Req: dsl9
@@ -77,7 +77,7 @@ protected:
 
     RsParser const &specification;
     // Contains the actual data out of all .rd files
-    std::vector<RdTypeInstance> database;
+    std::vector<RdFile> database;
     // Map contains all unique ids, to quickly check if an id has been used before
     std::map<std::string, RdString> unique_ids;
     std::list<TypeOrigin> unique_id_origin;

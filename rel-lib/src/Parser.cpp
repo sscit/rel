@@ -53,10 +53,7 @@ bool Parser::IsNextToken(FileTokenData const& tokens, std::list<Token>::const_it
 }
 
 Token Parser::SafeDeref(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
-    Token ret;
-
     if(iter != tokens.token_list.end())
         return *iter;
-
-    return ret;
+    else return tokens.token_list.back();
 }

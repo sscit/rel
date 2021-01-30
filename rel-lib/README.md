@@ -55,7 +55,7 @@ If an object of `RelParser` is created, a `Logger` object and a `FileEngine` obj
 
 After creation, method `ProcessRelModel()` is used to trigger the REL model generation. This method triggers the whole workflow of lexing, and parsing.
 
-To get the resulting type instances, containing the actual requirements data, method `GetDatabase()` can be called, which returns an vector of `RdTypeInstance`.
+To get the resulting type instances, containing the actual requirements data, method `GetDatabase()` can be called, which returns an vector of `RdFile`.
 
 ## External API
 

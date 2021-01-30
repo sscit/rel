@@ -11,12 +11,13 @@ std::ostream &operator<<( std::ostream &output, const TokenType& t ) {
     return output;
 }
 
-Token::Token() { }
+Token::Token() : filename(nullptr) { }
 
-Token::Token(std::string const &tv, TokenType const &t, std::string const &fname, unsigned int const current_line, unsigned int const current_pos_in_line) {
+Token::Token(std::string const &tv, TokenType const &t, std::string const &fname,
+             unsigned int const current_line, unsigned int const current_pos_in_line) {
     token_type = t;
     token_value = tv;
-    filename = fname;
+    filename = &fname;
     line_number = current_line;
     position_in_line = current_pos_in_line;
 }
@@ -134,7 +135,7 @@ std::string const * Token::GetTokenValue() const {
 }
 
 std::string const * Token::GetFilename() const {
-    return &filename;
+    return filename;
 }
 
 unsigned int Token::GetLineNumberOfToken() const {

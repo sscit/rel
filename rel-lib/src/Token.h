@@ -57,7 +57,7 @@ public:
 
 private:
     std::string token_value;
-    std::string filename;
+    std::string const * filename;
     unsigned int line_number;
     unsigned short position_in_line;
     TokenType token_type;

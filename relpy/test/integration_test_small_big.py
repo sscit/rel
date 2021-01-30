@@ -18,7 +18,11 @@ def test_small_and_big_project():
     assert ret == rel.ParseResult.NoExceptionOccurred
 
     data = relparser.GetDatabase()
-    assert len(data) == 4045
+    type_inst = 0
+    for files in data:
+        type_inst = type_inst + len(files.type_instances)
+
+    assert type_inst == 4045
 
 # main
 test_small_and_big_project()
