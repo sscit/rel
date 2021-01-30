@@ -93,7 +93,7 @@ void RelParser::ReadAndParseSpecFiles(std::vector<FileTokenData> &input_files) {
     rs_parser.CheckAllEnumTypes();
 }
 
-std::vector<RdTypeInstance> RelParser::GetDatabase()
+std::vector<RdFile> RelParser::GetDatabase()
 {
     return rd_parser.GetDatabase();
 }

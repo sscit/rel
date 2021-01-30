@@ -44,8 +44,11 @@ PYBIND11_MODULE(librel_py, m) {
 
     py::class_<RdTypeInstance>(m, "RdTypeInstance")
         .def_readwrite("type", &RdTypeInstance::type)
-        .def_readwrite("file_origin", &RdTypeInstance::file_origin)
         .def_readwrite("attributes", &RdTypeInstance::attributes);
+
+    py::class_<RdFile>(m, "RdFile")
+        .def_readwrite("filename", &RdFile::filename)
+        .def_readwrite("type_instances", &RdFile::type_instances);
 
 
     py::enum_<LogLevel>(m, "LogLevel")

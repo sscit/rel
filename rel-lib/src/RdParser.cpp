@@ -9,8 +9,7 @@ ParsingStatistic RdParser::GetParsingStatistics() const {
     return statistic;
 }
 
-std::vector<RdTypeInstance> RdParser::GetDatabase()
-{
+std::vector<RdFile> RdParser::GetDatabase() {
     return database;
 }
 
@@ -36,17 +35,17 @@ void RdParser::EnsureToken(FileTokenData const& tokens, std::list<Token>::const_
 void RdParser::CheckAllLinks() {
     l.LOG(LogLevel::DBUG, "Checking that all links defined exist and point to valid ids");
 
-    for(unsigned int i=0; i<database.size(); i++) {
-        RdTypeInstance const &instance = database[i];
-
-        for(unsigned int j=0; j<instance.attributes.size(); j++) {
-            RdTypeInstanceAttribute const &element = instance.attributes[j];
-            if(element.name->token_of_attribute.GetTokenType() == TokenType::LINK) {
-                for(auto const &link : element.link_value) {
-                    auto const search = unique_ids.find(link.name);
-                    l.LOG(LogLevel::DBUG, "search for " + link.name);
-                    if(search == unique_ids.end()) {
-                        throw RdTypeException(element.token_of_value, "Link points to id that does not exist");
+    for(auto const& files : database) {
+        for(auto const& instance : files.type_instances) {
+            for(unsigned int j=0; j<instance.attributes.size(); j++) {
+                RdTypeInstanceAttribute const &element = instance.attributes[j];
+                if(element.name->token_of_attribute.GetTokenType() == TokenType::LINK) {
+                    for(auto const &link : element.link_value) {
+                        auto const search = unique_ids.find(link.name);
+                        l.LOG(LogLevel::DBUG, "search for " + link.name);
+                        if(search == unique_ids.end()) {
+                            throw RdTypeException(element.token_of_value, "Link points to id that does not exist");
+                        }
                     }
                 }
             }
@@ -146,7 +145,6 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
         throw RdTypeException(type_token, "Type " + type_name.name + " not found in specification");
     }
     type_instance.type = type_definition;
-    type_instance.file_origin = tokens.filepath;
 
     EnsureToken(tokens, iter, TokenType::BRACKET_OPEN, RdTypeException(SafeDeref(tokens,iter), "Wrong token, expected {"));
     iter++;
@@ -299,8 +297,8 @@ void RdParser::AddUniqueIdToDatabase(RdString const& unique_id, std::string cons
 void RdParser::CleanupDatabase(std::string const& path) {
     // Clear old database entries originating from this file
     database.erase( std::remove_if(database.begin(), database.end(),
-        [&](RdTypeInstance &ti){
-            return (ti.file_origin.compare(path) == 0);
+        [&](RdFile &f){
+            return (f.filename.compare(path) == 0);
         }
     ), database.end() );
 }
@@ -309,6 +307,9 @@ void RdParser::ParseTokens(FileTokenData const& tokens) {
     statistic.number_of_files++;
     CleanupUniqueIdDatabase(tokens.filepath);
     CleanupDatabase(tokens.filepath);
+
+    RdFile new_types;
+    new_types.filename = tokens.filepath;
 
     std::list<Token>::const_iterator iter = tokens.token_list.begin();
     while(iter != tokens.token_list.end()) {
@@ -323,7 +324,7 @@ void RdParser::ParseTokens(FileTokenData const& tokens) {
         else if(current_token.GetTokenType() == TokenType::IDENTIFIER) {
             try {
                 RdTypeInstance t = TypeInstance(tokens, iter);
-                database.push_back(t);
+                new_types.type_instances.push_back(t);
                 statistic.number_of_type_instances++;
             }
             catch(std::out_of_range &e) {
@@ -339,6 +340,8 @@ void RdParser::ParseTokens(FileTokenData const& tokens) {
         if(iter != tokens.token_list.end())
             iter++;
     }
+
+    database.push_back(new_types);
 }
 
 RdParser::~RdParser() { }

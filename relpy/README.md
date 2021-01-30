@@ -69,4 +69,6 @@ To process the model, call `ProcessRelModel()`. If the model was created success
 data = relparser.GetDatabase()
 ```
 
-The resulting data can be accessed via method `GetDatabase()`. It returns a list of [`RdTypeInstance`](../rel-lib/src/AST.h#L86) objects, which contain the data sets. Depending on your use case, you can then transfer this data into another file format or run custom validations.
+The resulting data can be accessed via method `GetDatabase()`. It returns a list of [`RdFile`](../rel-lib/src/AST.h#L97) objects, which contain the data sets. Every object represents one file, consisting of another list of type instances.
+
+Depending on your use case, you can then transfer this data into another file format or run custom validations.

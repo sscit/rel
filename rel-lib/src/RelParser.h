@@ -31,7 +31,7 @@ public:
     /* returns all type instances that have been read
      * Req: integ_py1
      */
-    std::vector<RdTypeInstance> GetDatabase();
+    std::vector<RdFile> GetDatabase();
 
     /* Req: integ_py1, integ1, integ11, integ_py1 */
     static unsigned int ParseResultToInteger(ParseResult const p);

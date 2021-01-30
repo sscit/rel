@@ -90,9 +90,15 @@ public:
     RdTypeInstance() : type(nullptr) { }
     // pointer to the type specification
     RsType const * type;
-    // path to the file, where this type instance originates from
-    std::string file_origin;
     std::vector<RdTypeInstanceAttribute> attributes;
+};
+
+// contains all type instances of a file
+class RdFile {
+public:
+    RdFile() { }
+    std::string filename;
+    std::vector<RdTypeInstance> type_instances;
 };
 
 #endif

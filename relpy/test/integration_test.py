@@ -17,11 +17,11 @@ def test_rel_py():
     assert ret == rel.ParseResult.NoExceptionOccurred
 
     data = relparser.GetDatabase()
-    assert len(data) == 4
+    assert len(data[0].type_instances) == 4
 
     # check that the data structure looks as expected
     counter = 1
-    for d in data:
+    for d in data[0].type_instances:
         assert len(d.attributes) == 4
         assert d.attributes[0].name.Get() == "unique_id"
         assert d.attributes[0].string_value.Get() == "ReqId" + str(counter)

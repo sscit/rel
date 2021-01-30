@@ -97,7 +97,7 @@ void Lexer::AddTokenToList(std::string const &s, TokenType const &tt) {
     int current_position = current_position_in_line - s.size();
     current_position = std::abs(current_position);
 
-    Token t(s, tt, filename, current_line, current_position);
+    Token t(s, tt, *filename, current_line, current_position);
     token_list->push_back(t); 
 
     if(l.GetCurrentLogLevel() == LogLevel::DBUG) {
@@ -246,7 +246,7 @@ void Lexer::Read(FileTokenData& data) {
     FileReader &file_reader = data.GetFileReader();
     file_reader.OpenFile(data.filepath.c_str());
     token_list = &data.token_list;
-    filename = data.filepath;
+    filename = &data.filepath;
     // Line and current position start from 0 index
     current_line = 0;
     current_position_in_line = 0;
