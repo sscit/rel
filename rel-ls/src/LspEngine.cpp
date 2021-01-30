@@ -6,10 +6,7 @@
 LspEngine::LspEngine(Logger& logger) : ws(logger), l(logger) { }
 LspEngine::~LspEngine() { }
 
-
-
-DataType LspEngine::DetermineDataType(Uri const& uri)
-{
+DataType LspEngine::DetermineDataType(Uri const& uri) {
     DataType ret = DataType::Unknown;
 
     if (uri.IsRequirementsSpecification())
@@ -44,20 +41,18 @@ void LspEngine::HandleMessage(json const input_message) {
             text = input_message["params"]["contentChanges"][0]["text"];
         }
 
-        ws.UpdateFile(uri, text);
-        l.LOG(LogLevel::DBUG, "REL document " + uri.GetPath() + " has been opened or changed");
-
-        ParseDocument(uri, text);
+        if(uri.IsRequirementsData() || uri.IsRequirementsSpecification()) {
+            l.LOG(LogLevel::DBUG, "REL document " + uri.GetPath() + " has been opened or changed");
+            ParseDocument(uri, text);
+        }
     }
 }
 
-void LspEngine::ParseDocument(Uri const& uri, std::string const& text)
-{
-    DataType file_type = DetermineDataType(uri);
-
+void LspEngine::ParseDocument(Uri const& uri, std::string const& text) {
     FileReader f(text);
-    FileTokenData data(file_type, f);
-    data.filepath = uri.GetPath();
+    FileTokenData &data = ws.GetFileHandler(uri);
+    data.SetFileReader(f);
+    data.token_list.clear();
 
     Lexer lex(l);
     lex.Read(data);

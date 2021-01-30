@@ -16,6 +16,7 @@ TEST_F(UriTestFixture, CheckUriElements)
     EXPECT_EQ(sample_uri, my_uri.GetUri());
     EXPECT_EQ("file", my_uri.GetScheme());
     EXPECT_EQ("/home/myuser/tmp/reltest", my_uri.GetPath());
+    EXPECT_EQ(DataType::Unknown, my_uri.GetDataType());
 }
 
 TEST_F(UriTestFixture, CheckUriElements2)
@@ -35,6 +36,7 @@ TEST_F(UriTestFixture, filetype1)
 
     EXPECT_TRUE(my_uri.IsRequirementsSpecification());
     EXPECT_FALSE(my_uri.IsRequirementsData());
+    EXPECT_EQ(DataType::RequirementsSpecification, my_uri.GetDataType());
 }
 
 TEST_F(UriTestFixture, filetype2)
@@ -44,6 +46,7 @@ TEST_F(UriTestFixture, filetype2)
 
     EXPECT_FALSE(my_uri.IsRequirementsSpecification());
     EXPECT_TRUE(my_uri.IsRequirementsData());
+    EXPECT_EQ(DataType::RequirementsData, my_uri.GetDataType());
 }
 
 TEST_F(UriTestFixture, Factory)

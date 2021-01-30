@@ -24,19 +24,23 @@ public:
 
     bool IsWorkspaceInitialized() const;
     void SetWorkspaceToInitialized(Uri const&);
-    void UpdateFile(Uri const&, std::string const&);
-    std::string& GetFileContent(Uri const&);
     void ParseTokens(FileTokenData const&);
+    /* Returns Workspace's data structure to handle the
+     * file identified by the Uri
+     */
+    FileTokenData& GetFileHandler(Uri const &);
 
 private:
     void ParseAllFilesOnceAtStart();
+    void LexFile(FileTokenData&);
+    void ReadAndParseDataFiles();
+    void ReadAndParseSpecFiles();
 
     Logger &l;
     bool workspace_is_initialized;
     FileEngine file_engine;
     Uri root_uri;
-    // contains the content of the files in workspace
-    std::map<std::string, std::string> files;
+    std::vector<FileTokenData> input_files;
 
     RsParser rs_parser;
     RdParser rd_parser;

@@ -24,6 +24,16 @@ Uri Uri::CreateFileUriFromPath(std::string const& path) {
     return ret;
 }
 
+DataType Uri::GetDataType() const {
+    if(IsRequirementsSpecification()) {
+        return DataType::RequirementsSpecification;
+    }
+    else if(IsRequirementsData()) {
+        return DataType::RequirementsData;
+    }
+    else return DataType::Unknown;
+}
+
 bool Uri::IsRequirementsSpecification() const {
     if (path.find(".rs") != std::string::npos)
         return true;
