@@ -93,6 +93,16 @@ TEST_F(RsParserTestFixture, WrongTypeDefinition2) {
     ASSERT_THROW(ParseTokens(d), RsTypeException);
 }
 
+TEST_F(RsParserTestFixture, WrongTypeDefinitionDuplicateAttribute) {
+    testdata = "type XXX { attr3 : string, attr3 : int,}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ASSERT_THROW(ParseTokens(d), RsTypeException);
+}
+
 TEST_F(RsParserTestFixture, TypeAndEnum) {
     testdata = "enum XXX { A,B,C,} type MyType { att1 : id, /* blabal l */ att2 : XXX, att3 : int,}";
 
