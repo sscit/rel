@@ -16,6 +16,14 @@ Requirement
 
 Requirement
 {
+    Identifier : dsl22,
+    Text : "Attribute names within type definitions shall be unique.",
+    State : Accepted,
+    ImplementationStatus : Implemented,
+}
+
+Requirement
+{
     Identifier : dsl3,
     Text : "The REL language shall support enum definitions.",
     State : Accepted,

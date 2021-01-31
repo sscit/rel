@@ -72,6 +72,11 @@ protected:
      * Req: dsl3
      */
     bool IsEnumValueUnique(RsEnum const&, RsRdIdentifier const&);
+    /* Returns true, if the attribute name used hasn't been used already
+     * before within the type, false otherwise
+     * Req: dsl22
+     */
+    bool IsAttributeNameUnique(RsType const&, RsRdIdentifier const&);
     /* Returns the filename, where a type has been defined
      * Req: integ3
      */

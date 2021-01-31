@@ -183,6 +183,19 @@ RsEnum RsParser::EnumDefinition(FileTokenData const& tokens, std::list<Token>::c
     return enumeration;
 }
 
+bool RsParser::IsAttributeNameUnique(RsType const& type, RsRdIdentifier const& new_attribute) {
+    bool ret = true;
+
+    for(auto const& a : type.attributes) {
+        if (a.Get().compare(new_attribute.Get()) == 0) {
+            ret = false;
+            break;
+        }
+    }
+
+    return ret;
+}
+
 RsType RsParser::TypeDefinition(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
     l.LOG(LogLevel::DBUG, "Parsing Type");
     Token const &type_token = *iter;
@@ -200,11 +213,15 @@ RsType RsParser::TypeDefinition(FileTokenData const& tokens, std::list<Token>::c
 
             RsTypeAttribute type_attribute;
             type_attribute.name = Identifier(tokens, iter);
+            if(IsAttributeNameUnique(type, type_attribute.name) == false) {
+                throw RsTypeException(SafeDeref(tokens,iter), "Attribute name " + type_attribute.name.Get() + " already used.");
+            }
             iter++;
+
             EnsureToken(tokens, iter, TokenType::COLON, RsTypeException(SafeDeref(tokens,iter), "Wrong token, expected :"));
             iter++;
             if(iter->GetTokenType() == TokenType::ID ||
-                 iter->GetTokenType() == TokenType::STRING ||
+               iter->GetTokenType() == TokenType::STRING ||
                iter->GetTokenType() == TokenType::LINK ||
                iter->GetTokenType() == TokenType::INT) {
                 type_attribute.token_of_attribute = *iter;
