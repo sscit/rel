@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <mutex>
 
 #define LOG(level, msg) LogMessage(level, msg, __FILE__, __LINE__)
 
@@ -34,6 +35,7 @@ private:
     /* Req: parser1 */
     std::string LogLevelToString(LogLevel const l) const;
 
+    mutable std::mutex mtx;
     std::ofstream file_access;
     LogLevel current_loglevel;
 };

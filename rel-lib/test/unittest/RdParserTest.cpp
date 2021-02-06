@@ -37,10 +37,10 @@ TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks) {
     ParseTokens(d_data);
 
     EXPECT_EQ(database.size(), 1);
-    EXPECT_EQ(database[0].type_instances.size(), 3);
-    EXPECT_EQ(database[0].type_instances[0].attributes.size(), 3);
-    EXPECT_EQ(database[0].type_instances[0].attributes[2].link_value.size(), 1);
-    EXPECT_EQ(database[0].type_instances[2].attributes[2].link_value.size(), 2);
+    EXPECT_EQ(database.front().type_instances.size(), 3);
+    EXPECT_EQ(database.front().type_instances[0].attributes.size(), 3);
+    EXPECT_EQ(database.front().type_instances[0].attributes[2].link_value.size(), 1);
+    EXPECT_EQ(database.front().type_instances[2].attributes[2].link_value.size(), 2);
 }
 
 TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks2) {
@@ -60,9 +60,9 @@ TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks2) {
     ParseTokens(d_data);
 
     EXPECT_EQ(database.size(), 1);
-    EXPECT_EQ(database[0].type_instances.size(), 1);
-    EXPECT_EQ(database[0].type_instances[0].attributes.size(), 3);
-    EXPECT_EQ(database[0].type_instances[0].attributes[2].link_value.size(), 6);
+    EXPECT_EQ(database.front().type_instances.size(), 1);
+    EXPECT_EQ(database.front().type_instances[0].attributes.size(), 3);
+    EXPECT_EQ(database.front().type_instances[0].attributes[2].link_value.size(), 6);
 }
 
 TEST_F(RdParserTestFixture, EmptyArrayOfLinks) {
@@ -150,7 +150,7 @@ TEST_F(RdParserTestFixture, UsingReservedKeywords) {
     ParseTokens(d_data);
 
     EXPECT_EQ(database.size(), 1);
-    EXPECT_EQ(database[0].type_instances[0].attributes.size(), 6);
+    EXPECT_EQ(database.front().type_instances[0].attributes.size(), 6);
 }
 
 TEST_F(RdParserTestFixture, SingleDataset) {
@@ -169,8 +169,8 @@ TEST_F(RdParserTestFixture, SingleDataset) {
 
     ParseTokens(d_data);
 
-    EXPECT_EQ(database[0].type_instances.size(), 1);
-    EXPECT_EQ(database[0].type_instances[0].attributes.size(), 2);
+    EXPECT_EQ(database.front().type_instances.size(), 1);
+    EXPECT_EQ(database.front().type_instances[0].attributes.size(), 2);
 }
 
 TEST_F(RdParserTestFixture, SingleDataset2) {
@@ -190,8 +190,8 @@ TEST_F(RdParserTestFixture, SingleDataset2) {
     ParseTokens(d_data);
 
     EXPECT_EQ(database.size(), 1);
-    EXPECT_EQ(database[0].type_instances.size(), 1);
-    EXPECT_EQ(database[0].type_instances[0].attributes.size(), 4);
+    EXPECT_EQ(database.front().type_instances.size(), 1);
+    EXPECT_EQ(database.front().type_instances[0].attributes.size(), 4);
 }
 
 TEST_F(RdParserTestFixture, DatasetWithMaskedQuotationMark) {
@@ -210,8 +210,8 @@ TEST_F(RdParserTestFixture, DatasetWithMaskedQuotationMark) {
 
     ParseTokens(d_data);
 
-    EXPECT_EQ(database[0].type_instances.size(), 1);
-    EXPECT_EQ(database[0].type_instances[0].attributes.size(), 1);
+    EXPECT_EQ(database.front().type_instances.size(), 1);
+    EXPECT_EQ(database.front().type_instances[0].attributes.size(), 1);
 }
 
 TEST_F(RdParserTestFixture, DatasetWithEnum) {

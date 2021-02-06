@@ -31,18 +31,23 @@ public:
     /* returns all type instances that have been read
      * Req: integ_py1
      */
-    std::vector<RdFile> GetDatabase();
+    std::list<RdFile> GetDatabase();
 
     /* Req: integ_py1, integ1, integ11, integ_py1 */
     static unsigned int ParseResultToInteger(ParseResult const p);
 
 private:
     /* Req: integ_py1, integ1, integ11, integ_py1 */
-    void ReadAndParseDataFiles(std::vector<FileTokenData> &);
+    ParseResult ReadAndParseDataFiles(std::vector<FileTokenData> &);
     /* Req: integ_py1, integ1, integ11, integ_py1 */
     void ReadAndParseSpecFiles(std::vector<FileTokenData> &);
     /* Req: integ_py1, integ1, integ11, integ_py1 */
     void LexFile(FileTokenData&);
+
+    /* Req: parser1 */
+    ParseResult LogFileIoException(FileIoException &);
+    /* Req: parser1 */
+    ParseResult LogParseException(ParseException &);
 
     Logger &l;
     FileEngine const &rel_model;
