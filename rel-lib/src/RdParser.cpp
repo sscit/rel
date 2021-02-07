@@ -3,13 +3,15 @@
 
 #include "RdParser.h"
 
-RdParser::RdParser(Logger &logger, RsParser const & s) : Parser(logger), specification(s) { }
+RdParser::RdParser(Logger &logger, RsParser const & s) : Parser(logger), specification(s) {
+    current_file_to_add = 1;
+}
 
 ParsingStatistic RdParser::GetParsingStatistics() const {
     return statistic;
 }
 
-std::vector<RdFile> RdParser::GetDatabase() {
+std::list<RdFile> RdParser::GetDatabase() {
     return database;
 }
 
@@ -34,7 +36,7 @@ void RdParser::EnsureToken(FileTokenData const& tokens, std::list<Token>::const_
 
 void RdParser::CheckAllLinks() {
     l.LOG(LogLevel::DBUG, "Checking that all links defined exist and point to valid ids");
-
+    std::lock_guard<std::mutex> db_lock(mtx);
     for(auto const& files : database) {
         for(auto const& instance : files.type_instances) {
             for(unsigned int j=0; j<instance.attributes.size(); j++) {
@@ -273,6 +275,7 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
 
 void RdParser::CleanupUniqueIdDatabase(std::string const& uri) {
     // Clear old unique ids originating from this file out of the data base
+    std::lock_guard<std::mutex> db_lock(mtx);
     for( auto const & to : unique_id_origin) {
         if(to.uri.compare(uri) == 0) {
             unique_ids.erase(to.type_name); 
@@ -287,6 +290,7 @@ void RdParser::CleanupUniqueIdDatabase(std::string const& uri) {
 }
 
 void RdParser::AddUniqueIdToDatabase(RdString const& unique_id, std::string const& uri) {
+    std::lock_guard<std::mutex> db_lock(mtx);
     unique_ids.insert({unique_id.value, unique_id});
 
     TypeOrigin new_unique_id(uri);
@@ -296,6 +300,7 @@ void RdParser::AddUniqueIdToDatabase(RdString const& unique_id, std::string cons
 
 void RdParser::CleanupDatabase(std::string const& path) {
     // Clear old database entries originating from this file
+    std::lock_guard<std::mutex> db_lock(mtx);
     database.erase( std::remove_if(database.begin(), database.end(),
         [&](RdFile &f){
             return (f.filename.compare(path) == 0);
@@ -303,7 +308,7 @@ void RdParser::CleanupDatabase(std::string const& path) {
     ), database.end() );
 }
 
-void RdParser::ParseTokens(FileTokenData const& tokens) {
+void RdParser::ParseTokens(FileTokenData const& tokens, unsigned int const file_index) {
     statistic.number_of_files++;
     CleanupUniqueIdDatabase(tokens.filepath);
     CleanupDatabase(tokens.filepath);
@@ -341,7 +346,19 @@ void RdParser::ParseTokens(FileTokenData const& tokens) {
             iter++;
     }
 
+    AddToDatabase(new_types, file_index);
+}
+
+void RdParser::AddToDatabase(RdFile const& new_types, unsigned int const file_index) {
+    //std::lock_guard<std::mutex> db_lock(mtx);
+    std::unique_lock<std::mutex> db_lock(mtx);
+    db_access.wait(db_lock, [&]{return file_index <= current_file_to_add;});
+
+    l.LOG(LogLevel::INFO, "Storing AST Elements of file " + new_types.filename + " in database.");
     database.push_back(new_types);
+    current_file_to_add++;
+    db_lock.unlock();
+    db_access.notify_all();
 }
 
 RdParser::~RdParser() { }

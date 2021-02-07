@@ -42,3 +42,19 @@ Requirement
     State : Accepted,
     ImplementationStatus : Implemented,
 }
+
+Requirement
+{
+    Identifier : integ24,
+    Text : "The parser shall produce a deterministic output. Same input shall always lead to same output.",
+    State : Accepted,
+    ImplementationStatus : Implemented,
+}
+
+Requirement
+{
+    Identifier : integ25,
+    Text : "The parser shall preserve the order of type instances induced by the input data.",
+    State : Accepted,
+    ImplementationStatus : Implemented,
+}

@@ -1,1 +1,1 @@
-build --copt="-std=c++17" --copt="-Werror" --copt="-O3"
+build --copt="-std=c++17" --copt="-Werror" --copt="-O3" --linkopt="-pthread"

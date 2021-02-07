@@ -34,6 +34,14 @@ Requirement
 
 Requirement
 {
+    Identifier : integ23,
+    Text : "All files shall be parsed in alphabetical order, sorted by their path.",
+    State : Accepted,
+    ImplementationStatus : Implemented,
+}
+
+Requirement
+{
     Identifier : integ_py1,
     Text : "REL parser shall be integrated into python environment, so that
     custom validators and data exporters can be written in python.",
