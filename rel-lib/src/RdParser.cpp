@@ -7,7 +7,7 @@ RdParser::RdParser(Logger &logger, RsParser const & s) : Parser(logger), specifi
     current_file_to_add = 1;
 }
 
-ParsingStatistic RdParser::GetParsingStatistics() const {
+ParsingStatistic const& RdParser::GetParsingStatistics() const {
     return statistic;
 }
 
@@ -309,7 +309,7 @@ void RdParser::CleanupDatabase(std::string const& path) {
 }
 
 void RdParser::ParseTokens(FileTokenData const& tokens, unsigned int const file_index) {
-    statistic.number_of_files++;
+    statistic.IncreaseNrOfFiles();
     CleanupUniqueIdDatabase(tokens.filepath);
     CleanupDatabase(tokens.filepath);
 
@@ -330,7 +330,7 @@ void RdParser::ParseTokens(FileTokenData const& tokens, unsigned int const file_
             try {
                 RdTypeInstance t = TypeInstance(tokens, iter);
                 new_types.type_instances.push_back(t);
-                statistic.number_of_type_instances++;
+                statistic.IncreaseNrOfTypeInstances();
             }
             catch(std::out_of_range &e) {
                 l.LOG(LogLevel::DBUG, "Type instance not ready to be parsed completely, hit Array out of bounds.");
@@ -350,7 +350,6 @@ void RdParser::ParseTokens(FileTokenData const& tokens, unsigned int const file_
 }
 
 void RdParser::AddToDatabase(RdFile const& new_types, unsigned int const file_index) {
-    //std::lock_guard<std::mutex> db_lock(mtx);
     std::unique_lock<std::mutex> db_lock(mtx);
     db_access.wait(db_lock, [&]{return file_index <= current_file_to_add;});
 
