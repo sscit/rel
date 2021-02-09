@@ -20,12 +20,18 @@ public:
     ParsingStatistic() {
         number_of_files = 0;
         number_of_type_instances = 0;
-        number_of_attributes = 0;
     }
 
+    void IncreaseNrOfFiles() { std::lock_guard<std::mutex> lock(mtx); number_of_files++; }
+    void IncreaseNrOfTypeInstances() { std::lock_guard<std::mutex> lock(mtx); number_of_type_instances++; }
+
+    int GetNrOfFiles() const { return number_of_files; }
+    int GetNrOfTypeInstances() const { return number_of_type_instances; }
+
+private:
+    mutable std::mutex mtx;
     int number_of_files;
     int number_of_type_instances;
-    int number_of_attributes;
 };
 
 class RdParser : public Parser {
@@ -38,7 +44,7 @@ public:
     // Req: dsl5
     void CheckAllLinks();
     // Req: parser1
-    ParsingStatistic GetParsingStatistics() const;
+    ParsingStatistic const& GetParsingStatistics() const;
 
     /* returns all type instances that have been read
      * Req: integ_py1
