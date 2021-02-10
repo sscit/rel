@@ -125,10 +125,6 @@ ParseResult RelParser::ReadAndParseDataFiles(std::vector<FileTokenData> &input_f
     // check all links
     rd_parser.CheckAllLinks();
 
-    const ParsingStatistic &s = rd_parser.GetParsingStatistics();
-    l.LOG(LogLevel::INFO, "# files parsed: " + std::to_string(s.GetNrOfFiles()));
-    l.LOG(LogLevel::INFO, "# type instances parsed: " + std::to_string(s.GetNrOfTypeInstances()));
-
     return result;
 }
 
