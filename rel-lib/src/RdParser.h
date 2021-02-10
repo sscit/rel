@@ -15,25 +15,6 @@
 #include "AST.h"
 #include "RsParser.h"
 
-class ParsingStatistic {
-public:
-    ParsingStatistic() {
-        number_of_files = 0;
-        number_of_type_instances = 0;
-    }
-
-    void IncreaseNrOfFiles() { std::lock_guard<std::mutex> lock(mtx); number_of_files++; }
-    void IncreaseNrOfTypeInstances() { std::lock_guard<std::mutex> lock(mtx); number_of_type_instances++; }
-
-    int GetNrOfFiles() const { return number_of_files; }
-    int GetNrOfTypeInstances() const { return number_of_type_instances; }
-
-private:
-    mutable std::mutex mtx;
-    int number_of_files;
-    int number_of_type_instances;
-};
-
 class RdParser : public Parser {
 public:
     RdParser(Logger&, RsParser const &);
@@ -43,13 +24,11 @@ public:
     void ParseTokens(FileTokenData const&, unsigned int const = 0);
     // Req: dsl5
     void CheckAllLinks();
-    // Req: parser1
-    ParsingStatistic const& GetParsingStatistics() const;
 
     /* returns all type instances that have been read
      * Req: integ_py1
      */
-    std::list<RdFile> GetDatabase();
+    std::list<RdFile> const& GetDatabase() const;
 
 protected:
     // Req: dsl9
@@ -100,7 +79,6 @@ protected:
     // Map contains all unique ids, to quickly check if an id has been used before
     std::map<std::string, RdString> unique_ids;
     std::list<TypeOrigin> unique_id_origin;
-    ParsingStatistic statistic;
 };
 
 #endif /* RDPARSER_H_ */

@@ -7,11 +7,7 @@ RdParser::RdParser(Logger &logger, RsParser const & s) : Parser(logger), specifi
     current_file_to_add = 1;
 }
 
-ParsingStatistic const& RdParser::GetParsingStatistics() const {
-    return statistic;
-}
-
-std::list<RdFile> RdParser::GetDatabase() {
+std::list<RdFile> const& RdParser::GetDatabase() const {
     return database;
 }
 
@@ -309,7 +305,6 @@ void RdParser::CleanupDatabase(std::string const& path) {
 }
 
 void RdParser::ParseTokens(FileTokenData const& tokens, unsigned int const file_index) {
-    statistic.IncreaseNrOfFiles();
     CleanupUniqueIdDatabase(tokens.filepath);
     CleanupDatabase(tokens.filepath);
 
@@ -330,7 +325,6 @@ void RdParser::ParseTokens(FileTokenData const& tokens, unsigned int const file_
             try {
                 RdTypeInstance t = TypeInstance(tokens, iter);
                 new_types.type_instances.push_back(t);
-                statistic.IncreaseNrOfTypeInstances();
             }
             catch(std::out_of_range &e) {
                 l.LOG(LogLevel::DBUG, "Type instance not ready to be parsed completely, hit Array out of bounds.");
