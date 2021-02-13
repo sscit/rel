@@ -34,6 +34,10 @@ private:
      */
     std::string data;
     unsigned int current_pos;
+
+    const char * file_ptr;
+    size_t length;
+    const char * end_of_file;
 };
 
 #endif /* FILEREADER_H_ */
