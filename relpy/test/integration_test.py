@@ -26,6 +26,10 @@ def test_rel_py():
         assert d.attributes[0].name.Get() == "unique_id"
         assert d.attributes[0].string_value.Get() == "ReqId" + str(counter)
         assert d.attributes[1].name.Get() == "text"
+
+        if d.attributes[0].string_value.Get() == "ReqId1":
+            assert d.attributes[1].string_value.Get() == "Full Char äöÜß汉ṕò²³"
+
         assert d.attributes[2].name.Get() == "status"
         assert d.attributes[2].enum_value.Get() == "Accepted"
         assert len(d.attributes[3].link_value) >= 1

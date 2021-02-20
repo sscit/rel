@@ -1,7 +1,7 @@
 ReqDef
 {
     unique_id : ReqId1,
-    text : "System Requirement",
+    text : "Full Char äöÜß汉ṕò²³",
     status : Accepted,
     parent_req : ReqId1,
 }
