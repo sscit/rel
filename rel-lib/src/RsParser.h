@@ -14,16 +14,16 @@
 #include "AST.h"
 #include "Parser.h"
 
-/* class maps the URI of the file, where a 
-   type or enum definition comes from, 
-   to the unique name */
+/* class maps the path of the file, where a
+   type or enum definition comes from,
+   to the unique name of the type */
 class TypeOrigin
 {
 public:
     TypeOrigin();
     TypeOrigin(std::string const&);
 
-    std::string uri;
+    std::string path;
     std::string type_name;
 };
 

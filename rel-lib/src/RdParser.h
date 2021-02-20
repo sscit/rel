@@ -15,6 +15,21 @@
 #include "AST.h"
 #include "RsParser.h"
 
+/* Represent the exact location
+ * of an identifier within a file
+ */
+class IdentifierPosition
+{
+public:
+    IdentifierPosition() : line_number(0), position_in_line(0), length(0) {}
+    IdentifierPosition(std::string const&, unsigned int const, unsigned short const, unsigned short const);
+
+    std::string identifier_name;
+    unsigned int line_number;
+    unsigned short position_in_line;
+    unsigned short length;
+};
+
 class RdParser : public Parser {
 public:
     RdParser(Logger&, RsParser const &);
@@ -29,6 +44,10 @@ public:
      * Req: integ_py1
      */
     std::list<RdFile> const& GetDatabase() const;
+    /* returns true if the position provided represents a link, false otherwise.
+       If true, then the target of the link is returned via parameters.
+     */
+    bool GetTargetOfLink(std::string const&, IdentifierPosition const&, IdentifierPosition&, std::string&);
 
 protected:
     // Req: dsl9
@@ -44,7 +63,7 @@ protected:
     // Req: integ3
     void CleanupDatabase(std::string const&);
     // Req: integ3
-    void AddUniqueIdToDatabase(RdString const&, std::string const&);
+    void AddUniqueIdToDatabase(RdString const&, std::string const&, Token const&);
     // Req: dsl3
     bool EnumValueExists(std::vector<RsRdIdentifier> const &enum_values, RsRdIdentifier &enum_value) const;
     /* Method checks whether the attribute value identified in the data has the right
@@ -63,6 +82,10 @@ protected:
      * Req: perf1
      */
     void AddToDatabase(RdFile const&, unsigned int const);
+    /* Add the link's position in file to the data structure 
+     * Req: 
+     */
+    void StoreLinkLocationInFile(std::string const&, RsRdIdentifier const&, Token const&);
 
     // Variables for multithread support
     mutable std::mutex mtx;
@@ -76,9 +99,14 @@ protected:
     RsParser const &specification;
     // Contains the actual data out of all .rd files
     std::list<RdFile> database;
-    // Map contains all unique ids, to quickly check if an id has been used before
-    std::map<std::string, RdString> unique_ids;
+    /* Map contains all unique ids and their position,
+     * to quickly query ids, e.g. to check if they exist already
+     */
+    std::map<std::string, IdentifierPosition> unique_ids;
     std::list<TypeOrigin> unique_id_origin;
+
+    // map contains all link's positions in a file. Key is filename
+    std::map<std::string, std::vector<IdentifierPosition> > links;
 };
 
 #endif /* RDPARSER_H_ */

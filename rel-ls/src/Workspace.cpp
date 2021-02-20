@@ -18,6 +18,10 @@ void Workspace::ParseTokens(FileTokenData const& tokens) {
     }
 }
 
+bool Workspace::GetTargetOfLink(std::string const& filename, IdentifierPosition const& link, IdentifierPosition& target, std::string& target_filename) {
+    return rd_parser.GetTargetOfLink(filename, link, target, target_filename);
+}
+
 FileTokenData& Workspace::GetFileHandler(Uri const &uri) {
     for(auto &f : input_files) {
         if(uri.GetPath().compare(f.filepath) == 0) {

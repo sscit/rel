@@ -3,6 +3,10 @@
 
 #include "RdParser.h"
 
+IdentifierPosition::IdentifierPosition(std::string const& name,
+        unsigned int const ln, unsigned short const pil, unsigned short const l) :
+        identifier_name(name), line_number(ln), position_in_line(pil), length(l) { }
+
 RdParser::RdParser(Logger &logger, RsParser const & s) : Parser(logger), specification(s) {
     current_file_to_add = 1;
 }
@@ -114,6 +118,7 @@ void RdParser::ParseArrayOfLinks(FileTokenData const& tokens, std::list<Token>::
     while( (iter->GetTokenType() != TokenType::ARRAY_END) && (iter != tokens.token_list.end()) ) {
         EnsureToken(tokens, iter, TokenType::IDENTIFIER, ArrayException(SafeDeref(tokens,iter), "Wrong token, expected identifier"));
         type_instance_attribute.link_value.push_back(Identifier(tokens, iter));
+        StoreLinkLocationInFile(tokens.filepath,type_instance_attribute.link_value.back(), *iter);
         iter++;
 
         EnsureToken(tokens, iter, TokenType::COMMA, ArrayException(SafeDeref(tokens,iter), "Wrong token, expected ,"));
@@ -127,6 +132,36 @@ void RdParser::ParseArrayOfLinks(FileTokenData const& tokens, std::list<Token>::
         throw ArrayException(array_start, "Array empty");
     }
 }
+
+bool RdParser::GetTargetOfLink(std::string const& filename, IdentifierPosition const& link, 
+                               IdentifierPosition& target, std::string& target_path) {
+    bool ret = false;
+
+    std::vector<IdentifierPosition>& links_in_file = links[filename];
+
+    for(IdentifierPosition const& p : links_in_file) {
+        if(link.line_number == p.line_number) {
+            if(link.position_in_line >= p.position_in_line && 
+               link.position_in_line < (p.position_in_line + p.length)
+            ) {
+                /* At the position provided, a link is located. Now return the position
+                 * of the link target */
+                ret = true;
+                std::string const& id = p.identifier_name;
+                target = unique_ids[id];
+                for(TypeOrigin const& t : unique_id_origin) {
+                    if(t.type_name.compare(id) == 0) {
+                        target_path = t.path;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    return ret;
+}
+
 
 RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
     Token const &type_token = *iter;
@@ -217,37 +252,25 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
             }
             else if(type_instance_attribute.name->token_of_attribute.GetTokenType() == TokenType::LINK) {
                 type_instance_attribute.link_value.push_back(Identifier(tokens, iter));
-                l.LOG(LogLevel::DBUG, "attribute of type link parsed. One link has been set.");
+                l.LOG(LogLevel::DBUG, "attribute value of type link parsed. One link has been set.");
+                StoreLinkLocationInFile(tokens.filepath,type_instance_attribute.link_value.back(), *iter);
             }
             else if(type_instance_attribute.name->token_of_attribute.GetTokenType() == TokenType::ID) {
                 type_instance_attribute.string_value.value = *(iter->GetTokenValue());
                 l.LOG(LogLevel::DBUG, "attribute of type id parsed");
+                // ensure uniqueness of ID
+                if(unique_ids.find(type_instance_attribute.string_value.value) != unique_ids.end()) {
+                    throw RdTypeException(SafeDeref(tokens,iter), "ID already used");
+                }
+                else {
+                    AddUniqueIdToDatabase(type_instance_attribute.string_value, tokens.filepath, *iter);
+                }
             }
             else
                 throw RdTypeException(SafeDeref(tokens,iter), "Unexpected token");
         }
-        else if(iter->GetTokenType() == TokenType::ID) {
-            l.LOG(LogLevel::DBUG, "attribute value of type id identified");
-            if(HasAttributeValueCorrectType(*type_instance_attribute.name, TokenType::ID)) {
-                type_instance_attribute.string_value.value = *(iter->GetTokenValue());
-                l.LOG(LogLevel::DBUG, "attribute value of type id parsed");
-            }
-            else {
-                throw RdTypeException(SafeDeref(tokens,iter), "Attribute value has wrong type, expected id");
-            }
-        }
         else {
             throw RdTypeException(SafeDeref(tokens,iter), "Unexpected token");
-        }
-
-        // check for unique id, if this attribute defined an id
-        if(type_definition->attributes[number_of_elements].token_of_attribute.GetTokenType() == TokenType::ID) {
-            if(unique_ids.find(type_instance_attribute.string_value.value) != unique_ids.end()) {
-                throw RdTypeException(SafeDeref(tokens,iter), "ID already used");
-            }
-            else {
-                AddUniqueIdToDatabase(type_instance_attribute.string_value, tokens.filepath);
-            }
         }
 
         type_instance.attributes.push_back(type_instance_attribute);
@@ -269,25 +292,34 @@ RdTypeInstance RdParser::TypeInstance(FileTokenData const& tokens, std::list<Tok
     return type_instance;
 }
 
-void RdParser::CleanupUniqueIdDatabase(std::string const& uri) {
+void RdParser::StoreLinkLocationInFile(std::string const& filename, RsRdIdentifier const& link, Token const& t) {
+    // Add the link's position in file to the data structure
+    std::lock_guard<std::mutex> db_lock(mtx);
+    std::vector<IdentifierPosition>& link_ds = links[filename];
+    IdentifierPosition pos(link.Get(), t.GetLineNumberOfToken(), t.GetPositionInLineOfToken(), t.GetTokenValue()->size());
+    link_ds.push_back(pos);
+}
+
+void RdParser::CleanupUniqueIdDatabase(std::string const& path) {
     // Clear old unique ids originating from this file out of the data base
     std::lock_guard<std::mutex> db_lock(mtx);
     for( auto const & to : unique_id_origin) {
-        if(to.uri.compare(uri) == 0) {
+        if(to.path.compare(path) == 0) {
             unique_ids.erase(to.type_name); 
         }
     }
 
     unique_id_origin.remove_if(
         [&](TypeOrigin &to){
-            return (to.uri.compare(uri) == 0);
+            return (to.path.compare(path) == 0);
         }
     );
 }
 
-void RdParser::AddUniqueIdToDatabase(RdString const& unique_id, std::string const& uri) {
+void RdParser::AddUniqueIdToDatabase(RdString const& unique_id, std::string const& uri, Token const& token) {
     std::lock_guard<std::mutex> db_lock(mtx);
-    unique_ids.insert({unique_id.value, unique_id});
+    IdentifierPosition pos(unique_id.Get(), token.GetLineNumberOfToken(), token.GetPositionInLineOfToken(), token.GetTokenValue()->size());
+    unique_ids.insert({unique_id.value, pos});
 
     TypeOrigin new_unique_id(uri);
     new_unique_id.type_name = unique_id.value;
@@ -307,6 +339,7 @@ void RdParser::CleanupDatabase(std::string const& path) {
 void RdParser::ParseTokens(FileTokenData const& tokens, unsigned int const file_index) {
     CleanupUniqueIdDatabase(tokens.filepath);
     CleanupDatabase(tokens.filepath);
+    links[tokens.filepath].clear();
 
     RdFile new_types;
     new_types.filename = tokens.filepath;
