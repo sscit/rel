@@ -27,6 +27,28 @@ void FileTokenData::SetFileReader(FileReader& fr) {
     file_access = fr;
 }
 
+// ############ Implementation of class PositionInFile
+PositionInFile::PositionInFile() { 
+    Reset(); 
+}
+
+void PositionInFile::Reset() {
+     current_line = 0;
+     current_position_in_line = 0;
+     last_token_start = -1;
+}
+
+void PositionInFile::Newline() {
+     current_line++;
+     current_position_in_line = 0;
+     last_token_start = -1;
+}
+
+void PositionInFile::CountChar(char const c) {   
+    if( (c != ' ' && last_token_start == -1) )
+        last_token_start = current_position_in_line;
+    current_position_in_line++;
+}
 
 // ############ Implementation of class Lexer
 Lexer::Lexer(Logger &logger) : l(logger)  {
@@ -53,8 +75,7 @@ Lexer::Lexer(Logger &logger) : l(logger)  {
     operator_table["["] = TokenType::ARRAY_BEGIN;
     operator_table["]"] = TokenType::ARRAY_END;
 
-    current_line = 0;
-    current_position_in_line = 0;
+    pos_counter.Reset();
 }
 
 bool Lexer::IsInteger(std::string const &s) {
@@ -94,11 +115,11 @@ bool Lexer::IsString(std::string const &s) {
 }
 
 void Lexer::AddTokenToList(std::string const &s, TokenType const &tt) {
-    int current_position = current_position_in_line - s.size();
-    current_position = std::abs(current_position);
+    l.LOG(LogLevel::DBUG, std::to_string(pos_counter.current_position_in_line) + " " + std::to_string(s.size()) + " " + std::to_string(pos_counter.last_token_start));
 
-    Token t(s, tt, *filename, current_line, current_position);
+    Token t(s, tt, *filename, pos_counter.current_line, pos_counter.last_token_start);
     token_list->push_back(t); 
+    pos_counter.last_token_start = -1;
 
     if(l.GetCurrentLogLevel() == LogLevel::DBUG) {
         std::string logmessage = "Token detected and stored: ";
@@ -141,13 +162,13 @@ TokenType Lexer::GetTokenTypeOfOperatorOrKeyword(std::string const& s) {
 
 bool Lexer::IsOperator(SlidingWindow const& l) const {
     char buf[2];
-    buf[0] = l.front();
+    buf[0] = l.front().c;
 
     if(buf[0] == '{' || buf[0] == '}' || buf[0] == ':' || buf[0] == ',' || buf[0] == '\"')
         return true;
 
-    buf[0] = l.front();
-    buf[1] = l.back();
+    buf[0] = l.front().c;
+    buf[1] = l.back().c;
 
     if( (buf[0] == '/' && buf[1] == '/') ||
         (buf[0] == '/' && buf[1] == '*') ||
@@ -179,7 +200,7 @@ bool Lexer::IsLinebreak(const std::string& s) {
     return false;
 }
 
-void Lexer::CheckStringandAddToken(std::string &current_str, const char next_char) {
+void Lexer::CheckStringandAddToken(std::string &current_str, char const next_char) {
     if( IsOperatorOrKeyword(current_str) ) {
         /* to avoid that a keyword is falsely identified a the beginning
          * of a string or identifier, e.g. *id*entifier, check the next character, too */
@@ -248,8 +269,7 @@ void Lexer::Read(FileTokenData& data) {
     token_list = &data.token_list;
     filename = &data.filepath;
     // Line and current position start from 0 index
-    current_line = 0;
-    current_position_in_line = 0;
+    pos_counter.Reset();
 
     if(file_reader.IsFileOpen()) {
         std::string current_str;
@@ -257,40 +277,45 @@ void Lexer::Read(FileTokenData& data) {
         // window moving across the input file, always keeps two chars
         SlidingWindow sliding_window;
         char c;
+        unsigned int current_line = 0;
+        unsigned int position_in_line = 0;
 
         // read first char in advance
         if(file_reader.GetChar(c)) {
-            current_position_in_line++;
-            sliding_window.push_back(c);
+            CharAndPos x;
+            // store the exact location of the char together with the character
+            x.c = c; x.pos = position_in_line;
+            sliding_window.push_back(x);
+            position_in_line++;
         }
 
         while(!sliding_window.empty()) {
             if(file_reader.GetChar(c)) {
-                current_position_in_line++;
-                sliding_window.push_back(c);
-            }
-
-            // discard whitespaces
-            if(current_str.size()==0 && IsWhitespace(sliding_window.front())) {
-                sliding_window.pop_front();
-                continue;
+                CharAndPos x;
+                x.c = c; x.pos = position_in_line;
+                sliding_window.push_back(x);
+                position_in_line++;
             }
 
             // identify line break directly
             if(IsLinebreak(current_str)) {
-                current_line++;
-                current_position_in_line=1;
                 AddTokenToList(current_str, operator_table[current_str]);
+                pos_counter.Newline();
+                position_in_line=0;
+                current_line++;
                 current_str.clear();
             }
-            else if(IsDelimiter(sliding_window.front()) ||
+            else if(IsDelimiter(sliding_window.front().c) ||
                     IsOperator(sliding_window) ||
                     IsOperatorOrKeyword(current_str)) {
-                CheckStringandAddToken(current_str, sliding_window.front());
+                CheckStringandAddToken(current_str, sliding_window.front().c);
             }
 
-            if(!IsWhitespace(sliding_window.front()))
-                current_str.append(1, sliding_window.front());
+            // consider the char in the position counter only when it is used
+            pos_counter.CountChar(sliding_window.front().c);
+            if(!IsWhitespace(sliding_window.front().c)) {
+                current_str.append(1, sliding_window.front().c);   
+            }
 
             sliding_window.pop_front();
         }

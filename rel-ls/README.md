@@ -13,6 +13,7 @@ Currently supported version of LSP: [3.15](https://microsoft.github.io/language-
 | Feature         | Status      |
 | -------------   |-------------|
 | Diagnostics     | implemented |
+| Resolution of links and ability to follow them within the project | implemented |
 | Auto Completion | Planned     |
 
 
