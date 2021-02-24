@@ -20,9 +20,9 @@ protected:
 
 TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks) {
     spec = "type Req { Identifier : id, Text : string, Parent : link,}";
-    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : p1,}       \
-            Req { Identifier : p2, Text : \"Parent Req 2\", Parent : [p2,],}    \
-            Req { Identifier : c1, Text : \"Child Req\", Parent : [p1,p2,],}    ";
+    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : p1,}  \n     \
+            Req { Identifier : p22, Text : \"Parent Req 2\", Parent : [p22,],}    \
+            Req { Identifier : c1, Text : \"Child Req\", Parent : [p1,p22,],}    ";
 
     FileReader r_spec(spec);
     FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
@@ -41,6 +41,13 @@ TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks) {
     EXPECT_EQ(database.front().type_instances[0].attributes.size(), 3);
     EXPECT_EQ(database.front().type_instances[0].attributes[2].link_value.size(), 1);
     EXPECT_EQ(database.front().type_instances[2].attributes[2].link_value.size(), 2);
+
+    // check positions of unique ids
+    EXPECT_EQ(unique_ids.size(), 3);
+    EXPECT_EQ(unique_ids["p1"].line_number, 0);
+    EXPECT_EQ(unique_ids["p1"].length, 2);
+    EXPECT_EQ(unique_ids["p22"].line_number, 1);
+    EXPECT_EQ(unique_ids["p22"].length, 3);
 }
 
 TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks2) {

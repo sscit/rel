@@ -5,7 +5,7 @@
 
 TypeOrigin::TypeOrigin() { }
 
-TypeOrigin::TypeOrigin(std::string const& u) : uri(u) { }
+TypeOrigin::TypeOrigin(std::string const& p) : path(p) { }
 
 
 RsParser::RsParser(Logger &logger) : Parser(logger) { }
@@ -59,16 +59,16 @@ void RsParser::EnsureToken(FileTokenData const& tokens, std::list<Token>::const_
 }
 
 template<class T>
-void RsParser::CleanupDatabase(std::string const& uri, std::map<std::string, T>& all,
+void RsParser::CleanupDatabase(std::string const& path, std::map<std::string, T>& all,
                      std::list<TypeOrigin>& origin) {
     // Clear old definitions originating from this file out of the data base
     for( auto const & to : origin) {
-        if(to.uri.compare(uri) == 0)
+        if(to.path.compare(path) == 0)
             all.erase(to.type_name);
     }
     origin.remove_if(
         [&](TypeOrigin &to){ 
-            return (to.uri.compare(uri) == 0); 
+            return (to.path.compare(path) == 0);
         }
     );
 }

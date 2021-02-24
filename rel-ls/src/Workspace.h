@@ -29,6 +29,10 @@ public:
      * file identified by the Uri
      */
     FileTokenData& GetFileHandler(Uri const &);
+    /* returns true if the position provided represents a link, false otherwise.
+       If true, then the target of the link is returned via parameter.
+     */
+    bool GetTargetOfLink(std::string const&, IdentifierPosition const&, IdentifierPosition&, std::string&);
 
 private:
     void ParseAllFilesOnceAtStart();
