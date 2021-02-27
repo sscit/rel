@@ -9,7 +9,7 @@ protected:
 
   void SetUp() override {
       token_list = new std::list<Token>();
-      //logger.SetLogLevel(LogLevel::DBUG);
+      logger.SetLogLevel(LogLevel::DBUG);
   }
 
   void TearDown() override {
@@ -101,6 +101,14 @@ TEST_F(LexerTestFixture, TypeDefinition)
     lexer_test.Read(d);
 
     EXPECT_EQ(d.token_list.size(), 12);
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 0);
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 0);
+    EXPECT_EQ(d.token_list.back().GetLineNumberOfToken(), 0);
+    EXPECT_EQ(d.token_list.back().GetPositionInLineOfToken(), 41);
+
+    d.token_list.pop_front();
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 5);
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 0);
 }
 
 TEST_F(LexerTestFixture, EnumDefinition)
@@ -112,6 +120,66 @@ TEST_F(LexerTestFixture, EnumDefinition)
     lexer_test.Read(d);
 
     EXPECT_EQ(d.token_list.size(), 5);
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 0);
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 0);
+    EXPECT_EQ(d.token_list.back().GetPositionInLineOfToken(), 18);
+    EXPECT_EQ(d.token_list.back().GetLineNumberOfToken(), 0);
+}
+
+TEST_F(LexerTestFixture, EnumDefinition2)
+{
+    testdata = "enum XXX {MyAttr}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 5);
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 0);
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 0);
+    EXPECT_EQ(d.token_list.back().GetPositionInLineOfToken(), 16);
+    EXPECT_EQ(d.token_list.back().GetLineNumberOfToken(), 0);
+}
+
+TEST_F(LexerTestFixture, EnumDefinitionWithLineBreaks)
+{
+    testdata = "enum XXX \n      { \n MyAttr \n   }";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+    lexer_test.Read(d);
+
+    EXPECT_EQ(d.token_list.size(), 8);
+    //enum
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 0);
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 0);
+    //XXX
+    d.token_list.pop_front();
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 0);
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 5);
+    // \n
+    d.token_list.pop_front();
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 0);
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 9);
+    // {
+    d.token_list.pop_front();
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 1);
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 6);
+    // \n
+    d.token_list.pop_front();
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 1);
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 8);
+    // MyAttr
+    d.token_list.pop_front();
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 2);
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 1);
+    // \n
+    d.token_list.pop_front();
+    EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 2);
+    EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 8);
+    // }
+    EXPECT_EQ(d.token_list.back().GetPositionInLineOfToken(), 3);
+    EXPECT_EQ(d.token_list.back().GetLineNumberOfToken(), 3);
 }
 
 TEST_F(LexerTestFixture, EnumDefinitionWithComment)
@@ -140,18 +208,18 @@ TEST_F(LexerTestFixture, IsOperatorOrKeyword)
 {
     SlidingWindow v;
 
-    v.push_back('/');
-    v.push_back('*');
+    v.push_back({'/', 0});
+    v.push_back({'*', 0});
     EXPECT_TRUE( IsOperator(v) );
 
     v.clear();
-    v.push_back('*');
-    v.push_back('/');
+    v.push_back({'*', 0});
+    v.push_back({'/', 0});
     EXPECT_TRUE( IsOperator(v) );
 
     v.clear();
-    v.push_back('\\');
-    v.push_back('\"');
+    v.push_back({'\\',0});
+    v.push_back({'\"',0});
     EXPECT_TRUE( IsOperator(v) );
 
     EXPECT_TRUE( IsOperatorOrKeyword("//") );
@@ -285,7 +353,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString2) {
 
 TEST_F(LexerTestFixture, IdentifyTokenInString3) {
     std::string xx = "hello";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, 0);
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ(token_list->front().GetTokenType(), TokenType::IDENTIFIER);
@@ -293,7 +361,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString3) {
 
 TEST_F(LexerTestFixture, IdentifyTokenInString4) {
     std::string xx = "43847";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, 0);
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ(token_list->front().GetTokenType(), TokenType::INTEGER_VALUE);
@@ -301,7 +369,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString4) {
 
 TEST_F(LexerTestFixture, IdentifyTokenInString5) {
     std::string xx = "438_47";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, 0);
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ(token_list->front().GetTokenType(), TokenType::STRING_VALUE);
@@ -309,7 +377,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString5) {
 
 TEST_F(LexerTestFixture, IdentifyTokenInString6) {
     std::string xx = ":";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, 0);
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ(token_list->front().GetTokenType(), TokenType::COLON);
@@ -317,7 +385,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString6) {
 
 TEST_F(LexerTestFixture, IdentifyTokenInString7) {
     std::string xx = "//";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, 0);
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ(token_list->front().GetTokenType(), TokenType::LINE_COMMENT);
@@ -325,7 +393,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString7) {
 
 TEST_F(LexerTestFixture, IdentifyTokenInString8) {
     std::string xx = "/*";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, 0);
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ(token_list->front().GetTokenType(), TokenType::COMMENT_BLOCK_START);
@@ -333,7 +401,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString8) {
 
 TEST_F(LexerTestFixture, IdentifyTokenInString9) {
     std::string xx = "*/";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, 0);
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ(token_list->front().GetTokenType(), TokenType::COMMENT_BLOCK_END);
@@ -341,7 +409,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString9) {
 
 TEST_F(LexerTestFixture, IdentifyTokenInString10) {
     std::string xx = ",";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, 0);
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ(token_list->front().GetTokenType(), TokenType::COMMA);
@@ -349,7 +417,7 @@ TEST_F(LexerTestFixture, IdentifyTokenInString10) {
 
 TEST_F(LexerTestFixture, IdentifyTokenInString11) {
     std::string xx = "{";
-    CheckStringandAddToken(xx);
+    CheckStringandAddToken(xx, 0);
 
     EXPECT_EQ(token_list->size(), 1);
     EXPECT_EQ(token_list->front().GetTokenType(), TokenType::BRACKET_OPEN);

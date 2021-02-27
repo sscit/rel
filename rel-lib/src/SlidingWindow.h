@@ -6,12 +6,18 @@
 
 #include <vector>
 
-class SlidingWindow : public std::vector<char> {
+class CharAndPos {
+public:
+    char c;
+    unsigned int pos;
+};
+
+class SlidingWindow : public std::vector<CharAndPos> {
 public:
     SlidingWindow();
     virtual ~SlidingWindow();
 
-    char pop_front();
+    CharAndPos pop_front();
 };
 
 #endif /* SLIDINGWINDOW_H_ */

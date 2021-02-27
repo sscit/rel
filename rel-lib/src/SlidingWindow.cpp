@@ -9,8 +9,8 @@ SlidingWindow::SlidingWindow() {
 
 SlidingWindow::~SlidingWindow() { }
 
-char SlidingWindow::pop_front() {
-    char ret = 0;
+CharAndPos SlidingWindow::pop_front() {
+    CharAndPos ret;
     if(size() > 0) {
         ret = *(begin());
         erase(begin());
