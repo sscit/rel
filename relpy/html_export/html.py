@@ -32,8 +32,9 @@ if relparser.ProcessRelModel() == rel.ParseResult.NoExceptionOccurred:
                         print(str(elem.integer_value.Get()))
                     elif elem.enum_value.Get() != "":
                         print(elem.enum_value.Get())
-                    elif elem.link_value.Get() != "":
-                        print(elem.link_value.Get())
+                    elif len(elem.link_value) > 0:
+                        for link in elem.link_value:
+                            print(link.Get() + " ")
 
                     print("</i></p>")
 
