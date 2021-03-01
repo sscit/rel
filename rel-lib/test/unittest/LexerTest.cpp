@@ -9,7 +9,7 @@ protected:
 
   void SetUp() override {
       token_list = new std::list<Token>();
-      logger.SetLogLevel(LogLevel::DBUG);
+      //logger.SetLogLevel(LogLevel::DBUG);
   }
 
   void TearDown() override {
@@ -265,6 +265,16 @@ TEST_F(LexerTestFixture, IsIdentifier)
     EXPECT_TRUE ( IsIdentifier("a") );
     EXPECT_TRUE ( IsIdentifier("X") );
     EXPECT_TRUE ( IsIdentifier("_") );
+    EXPECT_TRUE ( IsIdentifier("ab.cd") );
+    EXPECT_TRUE ( IsIdentifier("XHDHD.") );
+    EXPECT_TRUE ( IsIdentifier("XH.DHD") );
+    EXPECT_TRUE ( IsIdentifier("a.b.c.d.") );
+    EXPECT_TRUE ( IsIdentifier("a.b.c.d.erere") );
+    EXPECT_TRUE ( IsIdentifier(".b.c.d.erere") );
+    EXPECT_TRUE ( IsIdentifier(".") );
+    EXPECT_TRUE ( IsIdentifier(".fsa") );
+    EXPECT_TRUE ( IsIdentifier("......___....") );
+    EXPECT_TRUE ( IsIdentifier(".....") );
 
     EXPECT_FALSE ( IsIdentifier("20_30") );
     EXPECT_FALSE ( IsIdentifier("1") );
@@ -274,6 +284,7 @@ TEST_F(LexerTestFixture, IsIdentifier)
     EXPECT_FALSE ( IsIdentifier("-1273t67") );
     EXPECT_FALSE ( IsIdentifier("1237") );
     EXPECT_FALSE ( IsIdentifier(" ") );
+    EXPECT_FALSE ( IsIdentifier("-----") );
 }
 
 TEST_F(LexerTestFixture, IsString)

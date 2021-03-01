@@ -201,6 +201,27 @@ TEST_F(RdParserTestFixture, SingleDataset2) {
     EXPECT_EQ(database.front().type_instances[0].attributes.size(), 4);
 }
 
+TEST_F(RdParserTestFixture, DatasetWithNamespace) {
+    spec = "type System.OS { Identifier : id, Number : int, Text : string, Parent : link,}";
+    data = "System.OS { Identifier : OS.r1, Number : 1234, Text : \"1234\", Parent : OS.r1,}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+
+    ParseTokens(d_data);
+
+    EXPECT_EQ(database.size(), 1);
+    EXPECT_EQ(database.front().type_instances.size(), 1);
+    EXPECT_EQ(database.front().type_instances[0].attributes.size(), 4);
+}
+
 TEST_F(RdParserTestFixture, DatasetWithMaskedQuotationMark) {
     spec = "type Req { Text : string, }";
     data = "Req { Text : \"I would like to \\\"emphasize\\\" this part and mo\\\"re\",}";
@@ -238,6 +259,33 @@ TEST_F(RdParserTestFixture, DatasetWithEnum) {
 
     RdParser rd_parser(logger, rs_parser);
     rd_parser.ParseTokens(d_data);
+
+    EXPECT_EQ(rd_parser.GetDatabase().size(), 1);
+    EXPECT_EQ(rd_parser.GetDatabase().front().type_instances.size(), 1);
+    EXPECT_EQ(rd_parser.GetDatabase().front().type_instances[0].attributes.size(), 1);
+}
+
+TEST_F(RdParserTestFixture, DatasetWithNamespaceEnum) {
+    spec = "type Req { Color : OS.Color,} enum OS.Color {Clr.red, Clr.blue,}";
+    data = "Req { Color : Clr.red,}";
+
+    FileReader r_spec(spec);
+    FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
+
+    FileReader r_data(data);
+    FileTokenData d_data(DataType::RequirementsData, r_data);
+
+    lexer_test.Read(d_spec);
+    lexer_test.Read(d_data);
+    rs_parser.ParseTokens(d_spec);
+    rs_parser.CheckAllEnumTypes();
+
+    RdParser rd_parser(logger, rs_parser);
+    rd_parser.ParseTokens(d_data);
+
+    EXPECT_EQ(rd_parser.GetDatabase().size(), 1);
+    EXPECT_EQ(rd_parser.GetDatabase().front().type_instances.size(), 1);
+    EXPECT_EQ(rd_parser.GetDatabase().front().type_instances[0].attributes.size(), 1);
 }
 
 TEST_F(RdParserTestFixture, ParseErrorWrongToken) {

@@ -48,7 +48,7 @@ TEST_F(FileEngineFixture, SearchFileNonRecursive2) {
 
     std::vector<FileTokenData> res = GetListOfFiles();
 
-    EXPECT_EQ(res.size(), 2);
+    EXPECT_EQ(res.size(), 3);
 }
 
 TEST_F(FileEngineFixture, SearchFileRecursive1) {
@@ -57,7 +57,7 @@ TEST_F(FileEngineFixture, SearchFileRecursive1) {
 
     std::vector<FileTokenData> res = GetListOfFiles();
 
-    EXPECT_EQ(res.size(), 7);
+    EXPECT_EQ(res.size(), 9);
 }
 
 TEST_F(FileEngineFixture, NoDirectorySpecified) {
@@ -73,7 +73,7 @@ TEST_F(FileEngineFixture, SearchMultipleDirs) {
 
     std::vector<FileTokenData> res = GetListOfFiles();
 
-    EXPECT_EQ(res.size(), 4);
+    EXPECT_EQ(res.size(), 5);
 }
 
 TEST_F(FileEngineFixture, SearchMultipleDirsRecursively) {
@@ -83,5 +83,5 @@ TEST_F(FileEngineFixture, SearchMultipleDirsRecursively) {
 
     std::vector<FileTokenData> res = GetListOfFiles();
 
-    EXPECT_EQ(res.size(), 9);
+    EXPECT_EQ(res.size(), 11);
 }

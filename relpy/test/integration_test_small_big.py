@@ -22,7 +22,7 @@ def test_small_and_big_project():
     for files in data:
         type_inst = type_inst + len(files.type_instances)
 
-    assert type_inst == 4045
+    assert type_inst == 4047
 
 # main
 test_small_and_big_project()

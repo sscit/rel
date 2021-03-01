@@ -25,7 +25,7 @@ filegroup(
 
 filegroup(
     name = "big_test_model",
-    srcs = glob(["big/**/*.rd"]) + ["big/spec.rs"],
+    srcs = glob(["big/**/*.rd"]) + ["big/spec.rs"] + ["big/spec_camera.rs"],
     visibility = ["//visibility:public"],
 )
 sh_binary(
