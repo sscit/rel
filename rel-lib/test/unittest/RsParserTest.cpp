@@ -63,6 +63,20 @@ TEST_F(RsParserTestFixture, TypeDefinition) {
     EXPECT_EQ(all_types["XXX"].attributes.size(), 4);
 }
 
+TEST_F(RsParserTestFixture, TypeDefinitionWithNamespace) {
+    testdata = "type System.OS { attribute : id, attribtue2 : link, attr3 : string, attr4 : int,}";
+
+    FileReader r(testdata);
+    FileTokenData d(DataType::RequirementsSpecification, r);
+
+    lexer_test.Read(d);
+    ParseTokens(d);
+
+    EXPECT_EQ(all_enums.size(), 0);
+    EXPECT_EQ(all_types.size(), 1);
+    EXPECT_EQ(all_types["System.OS"].attributes.size(), 4);
+}
+
 TEST_F(RsParserTestFixture, WrongToken) {
     testdata = ",type XXX { attribute  id, attribtue2 : link, attr3 : string, attr4 : int,}";
 

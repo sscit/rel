@@ -21,7 +21,7 @@ def test_big_project():
     for files in data:
         nr_of_type_instances = nr_of_type_instances + len(files.type_instances)
 
-    assert nr_of_type_instances == 4041
+    assert nr_of_type_instances == 4043
 
     # check that the data has been parsed properly
     for files in data:
