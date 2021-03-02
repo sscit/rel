@@ -29,6 +29,8 @@ public:
 private:
     // Method prepares the response for initialization
     void RespondToInitialize(json const&);
+    // Method prepares the response for a definition request
+    void RespondToDefinition(json const&);
     // make a full message out of the json data provided and
     // send it out
     void SendMessageToClient(json const&);

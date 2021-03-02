@@ -17,6 +17,43 @@ DataType LspEngine::DetermineDataType(Uri const& uri) {
     return ret;
 }
 
+void LspEngine::RespondToDefinition(json const &input_message) {
+    Uri current_file (input_message["params"]["textDocument"]["uri"]);
+    IdentifierPosition link;
+    link.line_number = input_message["params"]["position"]["line"];
+    link.position_in_line = input_message["params"]["position"]["character"];
+    IdentifierPosition target;
+    std::string target_path;
+
+    json response_message {
+        { "id", input_message["id"] },
+        { "result", "" }
+    };
+
+    if(ws.GetTargetOfLink(current_file.GetPath(), link, target, target_path )) {
+        json location {
+            {"uri", target_path},
+            { "range", {
+                {"start", {
+                    { "line", target.line_number },
+                    { "character", target.position_in_line },
+                }},
+                { "end", {
+                    { "line", target.line_number },
+                    { "character", target.position_in_line + target.length },
+                }},
+            }},
+        };
+
+        response_message = {
+            { "id", input_message["id"] },
+            { "result", location }
+        };
+    }
+
+    SendMessageToClient(response_message);
+}
+
 void LspEngine::HandleMessage(json const input_message) {
     if(input_message["method"] == "initialize") {
         l.LOG(LogLevel::DBUG, "Initialize Message received");
@@ -31,40 +68,7 @@ void LspEngine::HandleMessage(json const input_message) {
     }
     else if (input_message["method"] == "textDocument/definition") {
         l.LOG(LogLevel::DBUG, "Definition Request received");
-        Uri current_file (input_message["params"]["textDocument"]["uri"]);
-        IdentifierPosition link;
-        link.line_number = input_message["params"]["position"]["line"];
-        link.position_in_line = input_message["params"]["position"]["character"];
-        IdentifierPosition target;
-        std::string target_path;
-
-        json response_message {
-            { "id", input_message["id"] },
-            { "result", "" }
-        };
-
-        if(ws.GetTargetOfLink(current_file.GetPath(), link, target, target_path )) {
-            json location {
-                {"uri", target_path},
-                { "range", {
-                    {"start", {
-                        { "line", target.line_number },
-                        { "character", target.position_in_line },
-                    }},
-                    { "end", {
-                        { "line", target.line_number },
-                        { "character", target.position_in_line + target.length },
-                    }},
-                }},
-            };
-
-            response_message = {
-                { "id", input_message["id"] },
-                { "result", location }
-            };
-        }
-
-        SendMessageToClient(response_message);
+        RespondToDefinition(input_message);
     }
     else if (input_message["method"] == "textDocument/didOpen" ||
              input_message["method"] == "textDocument/didChange") {
@@ -78,7 +82,8 @@ void LspEngine::HandleMessage(json const input_message) {
             text = input_message["params"]["contentChanges"][0]["text"];
         }
 
-        if(current_file.IsRequirementsData() || current_file.IsRequirementsSpecification()) {
+        if( (current_file.IsRequirementsData() || current_file.IsRequirementsSpecification()) &&
+             text.size() > 0 ) {
             l.LOG(LogLevel::DBUG, "REL document " + current_file.GetPath() + " has been opened or changed");
             ParseDocument(current_file, text);
         }
