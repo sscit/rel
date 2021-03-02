@@ -115,8 +115,6 @@ bool Lexer::IsString(std::string const &s) {
 }
 
 void Lexer::AddTokenToList(std::string const &s, TokenType const &tt) {
-    l.LOG(LogLevel::DBUG, std::to_string(pos_counter.current_position_in_line) + " " + std::to_string(s.size()) + " " + std::to_string(pos_counter.last_token_start));
-
     Token t(s, tt, *filename, pos_counter.current_line, pos_counter.last_token_start);
     token_list->push_back(t); 
     pos_counter.last_token_start = -1;
