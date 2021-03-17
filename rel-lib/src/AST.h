@@ -30,6 +30,9 @@ class RsTypeAttribute {
 public:
     // returns the name of the attribute
     std::string Get() const { return name.Get(); }
+    // returns true, if this attribute is of type id
+    bool IsTypeId() const;
+
     RsRdIdentifier name;
     /* Token that defines the type of this RsTypeAttribute,
        e.g. link, or the enum identifier */
