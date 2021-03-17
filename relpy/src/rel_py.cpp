@@ -21,6 +21,7 @@ PYBIND11_MODULE(librel_py, m) {
 
     py::class_<RsTypeAttribute>(m, "RsTypeAttribute")
         .def("Get", &RsTypeAttribute::Get)
+        .def("IsTypeId", &RsTypeAttribute::IsTypeId)
         .def_readwrite("enum_definition", &RsTypeAttribute::enum_definition);
 
     py::class_<RsType>(m, "RsType")
