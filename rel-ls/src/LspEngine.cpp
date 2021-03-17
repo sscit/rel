@@ -52,20 +52,75 @@ void LspEngine::RespondToDefinition(json const& input_message) {
 }
 
 void LspEngine::HandleMessage(json const input_message) {
-    if (input_message["method"] == "initialize") {
+    l.LOG(LogLevel::DBUG, "hier3");
+    if ( (input_message.count("method") > 0) && (input_message["method"] == "initialize") ) {
         l.LOG(LogLevel::DBUG, "Initialize Message received");
 
         Uri root_uri(input_message["params"]["rootUri"]);
         // TODO what if root uri is Null?
         ws.SetWorkspaceToInitialized(root_uri);
         RespondToInitialize(input_message);
-    } else if (input_message["method"] == "initialized") {
+    } else if ((input_message.count("method") > 0) && (input_message["method"] == "initialized")) {
         l.LOG(LogLevel::DBUG, "Initialized Message received");
-    } else if (input_message["method"] == "textDocument/definition") {
+
+        json pattern_array = json::array();
+        json const pattern {
+            {"pattern", {
+                { "glob" , "**​/*.{rs,rd}"}
+                //{ "glob" , "*"}
+                }
+            }
+        };
+        pattern_array.push_back(pattern);
+        json const file_operation_reg_options {
+            {"filters" ,  pattern_array}
+        };
+
+        // dynamically request
+/*
+        json const language1 {
+            { "language", "javascript" }
+        };
+        json const language2 {
+            { "language", "rel" }
+        };
+        json larr  = json::array();
+        larr.push_back(language1);
+        //larr.push_back(language2);
+        json const opt {
+        { "documentSelector", larr }
+        };*/
+
+        json registrations = json::array();
+        json const registration1 {
+            {"id", "dhjas88-asdhjkahsd89as-dhas89"},
+            {"method", "workspace/didRenameFiles"},
+            {"registerOptions", file_operation_reg_options},
+        };
+        json const registration2 {
+            {"id", "dhjas88-asdhjkahsd89as-dhas90"},
+            {"method", "workspace/didDeleteFiles"},
+            {"registerOptions", file_operation_reg_options},
+        };
+        registrations.push_back(registration1);
+        registrations.push_back(registration2);
+
+
+        json const request_register_cap {
+            {"id", "register_caps"},
+            {"method", "client/registerCapability"},
+            {"params", {
+            {"registrations", registrations},
+            }}
+        };
+        SendMessageToClient(request_register_cap);
+
+
+    } else if ((input_message.count("method") > 0) && (input_message["method"] == "textDocument/definition")) {
         l.LOG(LogLevel::DBUG, "Definition Request received");
         RespondToDefinition(input_message);
-    } else if (input_message["method"] == "textDocument/didOpen" ||
-               input_message["method"] == "textDocument/didChange") {
+    } else if ((input_message.count("method") > 0) && (input_message["method"] == "textDocument/didOpen" ||
+               input_message["method"] == "textDocument/didChange")) {
         Uri current_file(input_message["params"]["textDocument"]["uri"]);
         std::string text;
 
@@ -163,29 +218,55 @@ json LspEngine::CreateDiagnosticsFromException(ParseException const& e) {
 void LspEngine::RespondToInitialize(json const& input_message) {
     json const text_document_sync_options{
         {"openClose", true},
-        {"change", 1},  // TextDocumentSyncKind.Full
-        {"willSave", false},
-        {"willSaveWaitUntil", false},
-        {"save", {{"includeText", false}}},
+        {"change", 1}  // TextDocumentSyncKind.Full
     };
 
     json const completion_options{
         {"resolveProvider", true},
         {"triggerCharacters", {}},
     };
-
-    json const initialize_result{
-        {"capabilities",
-         {
-             {"textDocumentSync", text_document_sync_options},
-             {"completionProvider", completion_options},
-             {"definitionProvider", true},
-         }}};
+#if 1
+        json pattern_array = json::array();
+        json const pattern {
+            {"pattern", {
+                { "glob" , "**​/*.{rs,rd}"}
+                //{ "glob" , "*"}
+                }
+            }
+        };
+        pattern_array.push_back(pattern);
+        json const file_operation_reg_options {
+            {"filters" ,  pattern_array}
+        };
+        json const workspace {
+                { 
+                   "fileOperations", {
+                   { "didRename", file_operation_reg_options},
+                   { "didDelete", file_operation_reg_options},
+            }
+            }
+        };
+#endif
+        json const initialize_result {
+            {
+                "capabilities",
+                {
+                    { "textDocumentSync", text_document_sync_options },
+                    { "completionProvider", completion_options },
+                    { "definitionProvider", true},
+                    { "workspace", workspace},
+                }
+            }
+        };
 
     json const response_message{{"id", input_message["id"]},
                                 {"result", initialize_result}};
 
     SendMessageToClient(response_message);
+
+    
+	
+
 }
 
 void LspEngine::SendMessageToClient(json const& message_body) {

@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
         if (message.IsMessageReady()) {
             l.LOG(LogLevel::DBUG, "Message received:");
             l.LOG(LogLevel::DBUG, message.GetMessage());
-
+	    l.LOG(LogLevel::DBUG, "hier2"); 	
             lsp.HandleMessage(json::parse(message.GetMessage()));
 
             message.Clear();
