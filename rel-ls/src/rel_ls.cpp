@@ -1,22 +1,22 @@
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
-#include "nlohmann/json.hpp"
 
 #include "Logger.h"
-#include "MsgBuffer.h"
 #include "LspEngine.h"
+#include "MsgBuffer.h"
+#include "nlohmann/json.hpp"
 
 using namespace nlohmann;
 
-void ProcessCommandLine(int const argc, char const * const argv[], Logger &l) {
-    if(argc > 1) {
-        for(int i=1; i<argc; ++i) {
+void ProcessCommandLine(int const argc, char const* const argv[], Logger& l) {
+    if (argc > 1) {
+        for (int i = 1; i < argc; ++i) {
             std::string argument(argv[i]);
 
-            if(argument.compare("-v") == 0)
+            if (argument.compare("-v") == 0)
                 l.SetLogLevel(LogLevel::INFO);
-            else if(argument.compare("-vv") == 0)
+            else if (argument.compare("-vv") == 0)
                 l.SetLogLevel(LogLevel::DBUG);
         }
     }
@@ -33,9 +33,8 @@ int main(int argc, char* argv[]) {
     l.LOG(LogLevel::DBUG, "starting processing");
     while (std::cin.get(c)) {
         message.AddChar(c);
-        
-        if(message.IsMessageReady())
-        {
+
+        if (message.IsMessageReady()) {
             l.LOG(LogLevel::DBUG, "Message received:");
             l.LOG(LogLevel::DBUG, message.GetMessage());
 

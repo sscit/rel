@@ -4,8 +4,8 @@
 #ifndef TOKEN_H_
 #define TOKEN_H_
 
-#include <string>
 #include <iostream>
+#include <string>
 
 enum class TokenType : unsigned char {
     // reserved keywords
@@ -37,27 +37,28 @@ enum class TokenType : unsigned char {
     STRING_VALUE,
     INTEGER_VALUE,
 };
-std::ostream &operator<<( std::ostream&, const TokenType&);
+std::ostream &operator<<(std::ostream &, const TokenType &);
 
 /* Represents a token which is an entity of the language */
 class Token {
-public:
+   public:
     Token();
-    Token(std::string const&, TokenType const&, std::string const&, unsigned int const, unsigned int const);
+    Token(std::string const &, TokenType const &, std::string const &,
+          unsigned int const, unsigned int const);
     ~Token();
 
     bool Compare(std::string const input);
     TokenType GetTokenType() const;
-    std::string const * GetTokenValue() const;
-    std::string const * GetFilename() const;
+    std::string const *GetTokenValue() const;
+    std::string const *GetFilename() const;
     unsigned int GetLineNumberOfToken() const;
     unsigned short GetPositionInLineOfToken() const;
 
-    static std::string TokenTypeToString(TokenType const&);
+    static std::string TokenTypeToString(TokenType const &);
 
-private:
+   private:
     std::string token_value;
-    std::string const * filename;
+    std::string const *filename;
     unsigned int line_number;
     unsigned short position_in_line;
     TokenType token_type;

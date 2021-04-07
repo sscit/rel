@@ -3,7 +3,7 @@
 
 #include "FileReader.h"
 
-FileReader::FileReader() : FileReader("") { }
+FileReader::FileReader() : FileReader("") {}
 
 FileReader::FileReader(std::string testdata) {
     data = testdata;
@@ -16,18 +16,16 @@ FileReader::FileReader(FileReader const &f) : FileReader("") {
     current_pos = f.current_pos;
 }
 
-FileReader::~FileReader() {
-    delete filestream;
-}
+FileReader::~FileReader() { delete filestream; }
 
-void FileReader::OpenFile(const char* path) {
-    if(data.length() == 0) {
+void FileReader::OpenFile(const char *path) {
+    if (data.length() == 0) {
         filestream->open(path, std::fstream::in);
     }
 }
 
 void FileReader::Close() {
-    if(data.length() == 0) {
+    if (data.length() == 0) {
         filestream->close();
     }
 }
@@ -35,10 +33,9 @@ void FileReader::Close() {
 bool FileReader::IsFileOpen() const {
     bool ret;
 
-    if(data.length() == 0) {
+    if (data.length() == 0) {
         ret = filestream->is_open();
-    }
-    else {
+    } else {
         ret = true;
     }
 
@@ -46,19 +43,17 @@ bool FileReader::IsFileOpen() const {
 }
 
 bool FileReader::GetChar(char &c) {
-    if(data.length() == 0) {
-        if(filestream->get(c)) {
+    if (data.length() == 0) {
+        if (filestream->get(c)) {
             return true;
-        }
-        else return false;
-    }
-    else {
-        if(current_pos < data.size()) {
+        } else
+            return false;
+    } else {
+        if (current_pos < data.size()) {
             c = data[current_pos];
             current_pos++;
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }

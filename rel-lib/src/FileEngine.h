@@ -4,9 +4,10 @@
 #ifndef FILEENGINE_H_
 #define FILEENGINE_H_
 
-#include <vector>
-#include <set>
 #include <filesystem>
+#include <set>
+#include <vector>
+
 #include "Lexer.h"
 
 bool ftd_cmp(FileTokenData const &a, FileTokenData const &b);
@@ -14,7 +15,7 @@ bool ftd_cmp(FileTokenData const &a, FileTokenData const &b);
 /* Class searches for all relevant files within all directories provided,
    that shall be read and parsed */
 class FileEngine {
-public:
+   public:
     FileEngine(Logger &);
     virtual ~FileEngine();
 
@@ -36,11 +37,12 @@ public:
     // Req: integ2
     bool GetSearchRecursive() const;
 
-protected:
+   protected:
     // Req: integ2, integ22
-    template<typename T>
-    void CreateFileTokenData(T const&, std::map<std::string, DataType>&,
-                             std::set<FileTokenData, decltype(ftd_cmp)*>&) const;
+    template <typename T>
+    void CreateFileTokenData(
+        T const &, std::map<std::string, DataType> &,
+        std::set<FileTokenData, decltype(ftd_cmp) *> &) const;
 
     bool search_recursive;
     std::vector<std::string> directories;

@@ -3,15 +3,13 @@
 
 #include "SlidingWindow.h"
 
-SlidingWindow::SlidingWindow() {
-    reserve(2);
-}
+SlidingWindow::SlidingWindow() { reserve(2); }
 
-SlidingWindow::~SlidingWindow() { }
+SlidingWindow::~SlidingWindow() {}
 
 CharAndPos SlidingWindow::pop_front() {
     CharAndPos ret;
-    if(size() > 0) {
+    if (size() > 0) {
         ret = *(begin());
         erase(begin());
     }

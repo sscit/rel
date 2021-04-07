@@ -2,15 +2,17 @@
 /* Copyright (c) 2020-present Stefan Schlichthärle */
 
 #include "Parser.h"
+
 #include "ParseException.h"
 
-Parser::Parser(Logger &logger) : l(logger) { }
+Parser::Parser(Logger& logger) : l(logger) {}
 
-Parser::~Parser() { }
+Parser::~Parser() {}
 
-RsRdIdentifier Parser::Identifier(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
+RsRdIdentifier Parser::Identifier(FileTokenData const& tokens,
+                                  std::list<Token>::const_iterator& iter) {
     l.LOG(LogLevel::DBUG, "Parsing Identifier");
-    Token const &identifier = *iter;
+    Token const& identifier = *iter;
 
     RsRdIdentifier data;
     data.name = *identifier.GetTokenValue();
@@ -20,40 +22,47 @@ RsRdIdentifier Parser::Identifier(FileTokenData const& tokens, std::list<Token>:
     return data;
 }
 
-void Parser::LineComment(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
+void Parser::LineComment(FileTokenData const& tokens,
+                         std::list<Token>::const_iterator& iter) {
     l.LOG(LogLevel::DBUG, "Parsing Line Comment");
 
-    while(iter != tokens.token_list.end() &&
-          iter->GetTokenType() != TokenType::END_OF_LINE)
+    while (iter != tokens.token_list.end() &&
+           iter->GetTokenType() != TokenType::END_OF_LINE)
         iter++;
 
     l.LOG(LogLevel::DBUG, "Parsing Line Comment Finished");
 }
 
-void Parser::MultiLineComment(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
+void Parser::MultiLineComment(FileTokenData const& tokens,
+                              std::list<Token>::const_iterator& iter) {
     l.LOG(LogLevel::DBUG, "Parsing Multi Line Comment");
-    Token const &multi_line_comment_start = *iter;
+    Token const& multi_line_comment_start = *iter;
 
-    while(iter->GetTokenType() != TokenType::COMMENT_BLOCK_END
-          && iter != tokens.token_list.end())
+    while (iter->GetTokenType() != TokenType::COMMENT_BLOCK_END &&
+           iter != tokens.token_list.end())
         iter++;
 
-    if(iter == tokens.token_list.end()) {
-        throw CommentException(multi_line_comment_start, "End token for Multi Line Comment not found");
+    if (iter == tokens.token_list.end()) {
+        throw CommentException(multi_line_comment_start,
+                               "End token for Multi Line Comment not found");
     }
 }
 
-bool Parser::IsNextToken(FileTokenData const& tokens, std::list<Token>::const_iterator& iter, TokenType const& tt) {
-    while(iter->GetTokenType() == TokenType::END_OF_LINE)
-        iter++;
+bool Parser::IsNextToken(FileTokenData const& tokens,
+                         std::list<Token>::const_iterator& iter,
+                         TokenType const& tt) {
+    while (iter->GetTokenType() == TokenType::END_OF_LINE) iter++;
 
-    if(iter->GetTokenType() == tt)
+    if (iter->GetTokenType() == tt)
         return true;
-    else return false;
+    else
+        return false;
 }
 
-Token Parser::SafeDeref(FileTokenData const& tokens, std::list<Token>::const_iterator& iter) {
-    if(iter != tokens.token_list.end())
+Token Parser::SafeDeref(FileTokenData const& tokens,
+                        std::list<Token>::const_iterator& iter) {
+    if (iter != tokens.token_list.end())
         return *iter;
-    else return tokens.token_list.back();
+    else
+        return tokens.token_list.back();
 }

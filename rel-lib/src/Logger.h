@@ -4,10 +4,10 @@
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
-#include <string>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <mutex>
+#include <string>
 
 #define LOG(level, msg) LogMessage(level, msg, __FILE__, __LINE__)
 
@@ -19,7 +19,7 @@ enum class LogLevel {
 };
 
 class Logger {
-public:
+   public:
     Logger();
     Logger(std::string const);
     virtual ~Logger();
@@ -29,9 +29,10 @@ public:
     /* Req: parser4 */
     LogLevel GetCurrentLogLevel() const;
     /* Req: parser1 */
-    void LogMessage(LogLevel const, std::string const, std::string const, int const);
+    void LogMessage(LogLevel const, std::string const, std::string const,
+                    int const);
 
-private:
+   private:
     /* Req: parser1 */
     std::string LogLevelToString(LogLevel const l) const;
 

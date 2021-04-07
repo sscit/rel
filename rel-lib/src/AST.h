@@ -4,13 +4,14 @@
 #ifndef AST_H_
 #define AST_H_
 
-#include <vector>
 #include <string>
+#include <vector>
+
 #include "Token.h"
 
 /* Data Structures of AST, used for .rs and .rd syntax */
 class RsRdIdentifier {
-public:
+   public:
     // returns the name of the identifier
     std::string Get() const { return name; }
     std::string name;
@@ -18,7 +19,7 @@ public:
 
 // AST elements used in .rs files
 class RsEnum {
-public:
+   public:
     // returns the name of the enum type
     std::string Get() const { return name.Get(); }
     RsRdIdentifier name;
@@ -27,7 +28,7 @@ public:
 
 // Represents an entry of a type definition
 class RsTypeAttribute {
-public:
+   public:
     // returns the name of the attribute
     std::string Get() const { return name.Get(); }
     // returns true, if this attribute is of type id
@@ -42,7 +43,7 @@ public:
 };
 
 class RsType {
-public:
+   public:
     // returns the name of the type
     std::string Get() const { return name.Get(); }
     RsRdIdentifier name;
@@ -51,24 +52,24 @@ public:
 
 // AST elements used in .rd files
 class RdString {
-public:
+   public:
     // returns the string value
     std::string Get() const { return value; }
     std::string value;
 };
 
 class RdInteger {
-public:
-    RdInteger() : value(0), is_valid(false) { }
-    RdInteger(int const v) : value(v), is_valid(true) { }
+   public:
+    RdInteger() : value(0), is_valid(false) {}
+    RdInteger(int const v) : value(v), is_valid(true) {}
     /* returns the integer value
      * Req: dsl9
      */
     int Get() const { return value; }
     // returns true, if class contains valid data
-    bool IsValid() const { return is_valid;}
+    bool IsValid() const { return is_valid; }
 
-private:
+   private:
     int value;
     // true, if class contains valid data
     bool is_valid;
@@ -76,9 +77,9 @@ private:
 
 // represents one attribute of the type instance
 class RdTypeInstanceAttribute {
-public:
+   public:
     // pointer to the definition of the attribute from type definition
-    RsTypeAttribute const * name;
+    RsTypeAttribute const* name;
     // attribute's value
     RdString string_value;
     RdInteger integer_value;
@@ -89,17 +90,17 @@ public:
 };
 
 class RdTypeInstance {
-public:
-    RdTypeInstance() : type(nullptr) { }
+   public:
+    RdTypeInstance() : type(nullptr) {}
     // pointer to the type specification
-    RsType const * type;
+    RsType const* type;
     std::vector<RdTypeInstanceAttribute> attributes;
 };
 
 // contains all type instances of a file
 class RdFile {
-public:
-    RdFile() { }
+   public:
+    RdFile() {}
     std::string filename;
     std::vector<RdTypeInstance> type_instances;
 };

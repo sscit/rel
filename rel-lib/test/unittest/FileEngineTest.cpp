@@ -2,20 +2,16 @@
 #include "rel-lib/src/FileEngine.h"
 
 class FileEngineFixture : public ::testing::Test, public FileEngine {
-protected:
-  FileEngineFixture() : FileEngine(logger) {
+   protected:
+    FileEngineFixture() : FileEngine(logger) {}
 
-  }
+    void SetUp() override {
+        // logger.SetLogLevel(LogLevel::DBUG);
+    }
 
-  void SetUp() override {
-      //logger.SetLogLevel(LogLevel::DBUG);
-  }
+    void TearDown() override {}
 
-  void TearDown() override {
-
-  }
-
-  Logger logger;
+    Logger logger;
 };
 
 TEST_F(FileEngineFixture, ParseDirectoriesRecursive) {
@@ -25,7 +21,6 @@ TEST_F(FileEngineFixture, ParseDirectoriesRecursive) {
     SetSearchRecursive(false);
     EXPECT_FALSE(GetSearchRecursive());
 }
-
 
 TEST_F(FileEngineFixture, DirectoriesToSearchFor1) {
     SetDirectory("/bla");

@@ -2,30 +2,28 @@
 #include "rel-lib/src/RsParser.h"
 
 class RsParserTestFixture : public ::testing::Test, public RsParser {
-protected:
-  RsParserTestFixture() : RsParser(logger), lexer_test(logger) {
-    //logger.SetLogLevel(LogLevel::DBUG);
-  }
+   protected:
+    RsParserTestFixture() : RsParser(logger), lexer_test(logger) {
+        // logger.SetLogLevel(LogLevel::DBUG);
+    }
 
-  void SetUp() override {
-      
-  }
+    void SetUp() override {}
 
-  void TearDown() override {
-      
-  }
+    void TearDown() override {}
 
-  Logger logger;
-  std::string testdata;
-  Lexer lexer_test;
+    Logger logger;
+    std::string testdata;
+    Lexer lexer_test;
 };
 
 TEST_F(RsParserTestFixture, TypeDefinitionWithComments) {
     /* Note that the backslash "\"" is already stripped away by the
-       C++ parser. It is used to break this string into multiple lines in C++ editor,
-       to make the test more readable. It is not part of the testdata string, which is parsed.
+       C++ parser. It is used to break this string into multiple lines in C++
+       editor, to make the test more readable. It is not part of the testdata
+       string, which is parsed.
     */
-    testdata = "type XXX {\n               \
+    testdata =
+        "type XXX {\n               \
                 // bla blab lab la\n       \
                 attribute : id,\n          \
                 /* bla blab lab la\n       \
@@ -50,7 +48,9 @@ TEST_F(RsParserTestFixture, TypeDefinitionWithComments) {
 }
 
 TEST_F(RsParserTestFixture, TypeDefinition) {
-    testdata = "type XXX { attribute : id, attribtue2 : link, attr3 : string, attr4 : int,}";
+    testdata =
+        "type XXX { attribute : id, attribtue2 : link, attr3 : string, attr4 : "
+        "int,}";
 
     FileReader r(testdata);
     FileTokenData d(DataType::RequirementsSpecification, r);
@@ -64,7 +64,9 @@ TEST_F(RsParserTestFixture, TypeDefinition) {
 }
 
 TEST_F(RsParserTestFixture, TypeDefinitionWithNamespace) {
-    testdata = "type System.OS { attribute : id, attribtue2 : link, attr3 : string, attr4 : int,}";
+    testdata =
+        "type System.OS { attribute : id, attribtue2 : link, attr3 : string, "
+        "attr4 : int,}";
 
     FileReader r(testdata);
     FileTokenData d(DataType::RequirementsSpecification, r);
@@ -78,7 +80,9 @@ TEST_F(RsParserTestFixture, TypeDefinitionWithNamespace) {
 }
 
 TEST_F(RsParserTestFixture, WrongToken) {
-    testdata = ",type XXX { attribute  id, attribtue2 : link, attr3 : string, attr4 : int,}";
+    testdata =
+        ",type XXX { attribute  id, attribtue2 : link, attr3 : string, attr4 : "
+        "int,}";
 
     FileReader r(testdata);
     FileTokenData d(DataType::RequirementsSpecification, r);
@@ -88,7 +92,9 @@ TEST_F(RsParserTestFixture, WrongToken) {
 }
 
 TEST_F(RsParserTestFixture, WrongTypeDefinition) {
-    testdata = "type XXX { attribute  id, attribtue2 : link, attr3 : string, attr4 : int,}";
+    testdata =
+        "type XXX { attribute  id, attribtue2 : link, attr3 : string, attr4 : "
+        "int,}";
 
     FileReader r(testdata);
     FileTokenData d(DataType::RequirementsSpecification, r);
@@ -98,7 +104,9 @@ TEST_F(RsParserTestFixture, WrongTypeDefinition) {
 }
 
 TEST_F(RsParserTestFixture, WrongTypeDefinition2) {
-    testdata = "type XXX { attribute : id, attribtue2 : link, attr3 : string, attr4 : int}";
+    testdata =
+        "type XXX { attribute : id, attribtue2 : link, attr3 : string, attr4 : "
+        "int}";
 
     FileReader r(testdata);
     FileTokenData d(DataType::RequirementsSpecification, r);
@@ -118,14 +126,16 @@ TEST_F(RsParserTestFixture, WrongTypeDefinitionDuplicateAttribute) {
 }
 
 TEST_F(RsParserTestFixture, TypeAndEnum) {
-    testdata = "enum XXX { A,B,C,} type MyType { att1 : id, /* blabal l */ att2 : XXX, att3 : int,}";
+    testdata =
+        "enum XXX { A,B,C,} type MyType { att1 : id, /* blabal l */ att2 : "
+        "XXX, att3 : int,}";
 
     FileReader r(testdata);
     FileTokenData d(DataType::RequirementsSpecification, r);
 
     lexer_test.Read(d);
     ParseTokens(d);
-    
+
     EXPECT_EQ(all_enums.size(), 1);
     EXPECT_EQ(all_enums["XXX"].enum_elements.size(), 3);
     EXPECT_EQ(all_types.size(), 1);
@@ -140,7 +150,7 @@ TEST_F(RsParserTestFixture, EnumDefinitions) {
 
     lexer_test.Read(d);
     ParseTokens(d);
-    
+
     EXPECT_EQ(all_enums.size(), 2);
     EXPECT_EQ(all_enums["XXX"].enum_elements.size(), 3);
     EXPECT_EQ(all_types.size(), 0);

@@ -7,13 +7,13 @@
 #include <vector>
 
 class CharAndPos {
-public:
+   public:
     char c;
     unsigned int pos;
 };
 
 class SlidingWindow : public std::vector<CharAndPos> {
-public:
+   public:
     SlidingWindow();
     virtual ~SlidingWindow();
 

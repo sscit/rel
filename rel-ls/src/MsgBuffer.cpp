@@ -3,11 +3,11 @@
 
 #include "MsgBuffer.h"
 
-MsgBuffer::MsgBuffer(Logger& logger) : header_finished(false), message_length(0), l(logger) { }
-MsgBuffer::~MsgBuffer() { }
+MsgBuffer::MsgBuffer(Logger& logger)
+    : header_finished(false), message_length(0), l(logger) {}
+MsgBuffer::~MsgBuffer() {}
 
-void MsgBuffer::Clear()
-{
+void MsgBuffer::Clear() {
     message_length = 0;
     message.clear();
     current_str.clear();
@@ -18,29 +18,24 @@ void MsgBuffer::Clear()
 
 bool MsgBuffer::IsMessageReady() const {
     bool ret = true;
-    
-    if(header_finished == false)
+
+    if (header_finished == false)
         ret = false;
-    else if(message.length() < message_length) {
+    else if (message.length() < message_length) {
         ret = false;
-    }
-    else
+    } else
         ret = true;
-    
+
     return ret;
 }
 
-std::string MsgBuffer::GetMessage() const {
-    return message;
-}
+std::string MsgBuffer::GetMessage() const { return message; }
 
-void MsgBuffer::ParseHeader() { 
-    if(current_str == "\r\n") {
+void MsgBuffer::ParseHeader() {
+    if (current_str == "\r\n") {
         header_finished = true;
         l.LOG(LogLevel::DBUG, "Header has been parsed");
-    }
-    else
-    {
+    } else {
         auto eol_pos = current_str.find("\r\n");
         if (eol_pos != std::string::npos) {
             std::string tuple = current_str.substr(0, eol_pos);
@@ -66,10 +61,9 @@ void MsgBuffer::ExtractDataFromHeader() {
 }
 
 void MsgBuffer::AddChar(char const c) {
-    if(header_finished) {
+    if (header_finished) {
         message.push_back(c);
-    }
-    else {
+    } else {
         current_str.push_back(c);
         ParseHeader();
     }

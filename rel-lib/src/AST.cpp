@@ -4,9 +4,8 @@
 #include "AST.h"
 
 bool RsTypeAttribute::IsTypeId() const {
-    if(token_of_attribute.GetTokenType() == TokenType::ID) {
+    if (token_of_attribute.GetTokenType() == TokenType::ID) {
         return true;
-    }
-    else return false;
+    } else
+        return false;
 }
-

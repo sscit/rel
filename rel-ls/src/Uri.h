@@ -5,11 +5,12 @@
 #define URI_H_
 
 #include <string>
+
 #include "Lexer.h"
 
 // Class is used to handle URIs provided by the client
 class Uri {
-public:
+   public:
     Uri();
     Uri(std::string const&);
     ~Uri();
@@ -24,12 +25,10 @@ public:
     bool IsRequirementsSpecification() const;
     bool IsRequirementsData() const;
 
-private:
+   private:
     std::string uri;
     std::string scheme;
     std::string path;
-
-
 };
 
-#endif 
+#endif
