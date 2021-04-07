@@ -3,28 +3,35 @@
 
 #include "Workspace.h"
 
-Workspace::Workspace(Logger& logger) : l(logger), workspace_is_initialized(false), file_engine(logger),
-                                       rs_parser(logger), rd_parser(logger, rs_parser) { }
-Workspace::~Workspace() { }
+Workspace::Workspace(Logger& logger)
+    : l(logger),
+      workspace_is_initialized(false),
+      file_engine(logger),
+      rs_parser(logger),
+      rd_parser(logger, rs_parser) {}
+Workspace::~Workspace() {}
 
 void Workspace::ParseTokens(FileTokenData const& tokens) {
-    if(tokens.GetDataTypeOfTokenList() == DataType::RequirementsSpecification) {
+    if (tokens.GetDataTypeOfTokenList() ==
+        DataType::RequirementsSpecification) {
         rs_parser.ParseTokens(tokens);
         rs_parser.CheckAllEnumTypes();
-    }
-    else if(tokens.GetDataTypeOfTokenList() == DataType::RequirementsData) {
+    } else if (tokens.GetDataTypeOfTokenList() == DataType::RequirementsData) {
         rd_parser.ParseTokens(tokens);
         rd_parser.CheckAllLinks();
     }
 }
 
-bool Workspace::GetTargetOfLink(std::string const& filename, IdentifierPosition const& link, IdentifierPosition& target, std::string& target_filename) {
+bool Workspace::GetTargetOfLink(std::string const& filename,
+                                IdentifierPosition const& link,
+                                IdentifierPosition& target,
+                                std::string& target_filename) {
     return rd_parser.GetTargetOfLink(filename, link, target, target_filename);
 }
 
-FileTokenData& Workspace::GetFileHandler(Uri const &uri) {
-    for(auto &f : input_files) {
-        if(uri.GetPath().compare(f.filepath) == 0) {
+FileTokenData& Workspace::GetFileHandler(Uri const& uri) {
+    for (auto& f : input_files) {
+        if (uri.GetPath().compare(f.filepath) == 0) {
             return f;
         }
     }
@@ -50,36 +57,39 @@ void Workspace::SetWorkspaceToInitialized(Uri const& uri) {
     ParseAllFilesOnceAtStart();
 }
 
-void Workspace::ParseAllFilesOnceAtStart()
-{
-    // Parse relevant files in workspace at startup, to create the data structures
+void Workspace::ParseAllFilesOnceAtStart() {
+    // Parse relevant files in workspace at startup, to create the data
+    // structures
     file_engine.SetSearchRecursive(true);
     file_engine.SetDirectory(root_uri.GetPath());
 
-    l.LOG(LogLevel::DBUG, "Looking for files starting from " + root_uri.GetPath());
+    l.LOG(LogLevel::DBUG,
+          "Looking for files starting from " + root_uri.GetPath());
     input_files = file_engine.GetListOfFiles();
 
     try {
         ReadAndParseSpecFiles();
         ReadAndParseDataFiles();
-    }
-    catch (FileIoException &e) {
+    } catch (FileIoException& e) {
         /* do not handle errors at this time*/
-    }
-    catch(ParseException &e) {
+    } catch (ParseException& e) {
         /* do not handle errors at this time*/
     }
 }
 
 void Workspace::LexFile(FileTokenData& file) {
-    l.LOG(LogLevel::INFO, "Reading file " + file.filepath + " and creating tokens");
+    l.LOG(LogLevel::INFO,
+          "Reading file " + file.filepath + " and creating tokens");
     Lexer lex(l);
     lex.Read(file);
 }
 
 void Workspace::ReadAndParseDataFiles() {
     std::vector<FileTokenData>::iterator iter = input_files.begin();
-    while( (iter = std::find_if(iter, input_files.end(), [](FileTokenData &d){return (d.GetDataTypeOfTokenList() == DataType::RequirementsData);})) != input_files.end() ) {
+    while ((iter = std::find_if(iter, input_files.end(), [](FileTokenData& d) {
+                return (d.GetDataTypeOfTokenList() ==
+                        DataType::RequirementsData);
+            })) != input_files.end()) {
         LexFile(*iter);
 
         l.LOG(LogLevel::INFO, "Parsing of tokens from " + iter->filepath);
@@ -96,7 +106,10 @@ void Workspace::ReadAndParseDataFiles() {
 void Workspace::ReadAndParseSpecFiles() {
     /* Lex and parse the specification files, to build up the spec */
     std::vector<FileTokenData>::iterator iter = input_files.begin();
-    while( (iter = std::find_if(iter, input_files.end(), [](FileTokenData &d){return (d.GetDataTypeOfTokenList() == DataType::RequirementsSpecification);})) != input_files.end() ) {
+    while ((iter = std::find_if(iter, input_files.end(), [](FileTokenData& d) {
+                return (d.GetDataTypeOfTokenList() ==
+                        DataType::RequirementsSpecification);
+            })) != input_files.end()) {
         LexFile(*iter);
 
         l.LOG(LogLevel::INFO, "Parsing tokens from " + iter->filepath);
@@ -109,5 +122,3 @@ void Workspace::ReadAndParseSpecFiles() {
     // Ensure, that all enum types used exist
     rs_parser.CheckAllEnumTypes();
 }
-
-

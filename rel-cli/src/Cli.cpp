@@ -3,21 +3,22 @@
 
 #include "Cli.h"
 
-Cli::Cli() { }
-Cli::~Cli() { }
+Cli::Cli() {}
+Cli::~Cli() {}
 
-void Cli::ProcessCommandLine(int const argc, char const * const argv[], FileEngine &f, Logger &l) const {
+void Cli::ProcessCommandLine(int const argc, char const *const argv[],
+                             FileEngine &f, Logger &l) const {
     std::string root_dir(".");
 
-    if(argc > 1) {
-        for(int i=1; i<argc; ++i) {
+    if (argc > 1) {
+        for (int i = 1; i < argc; ++i) {
             std::string argument(argv[i]);
 
-            if(argument.compare("-r") == 0)
+            if (argument.compare("-r") == 0)
                 f.SetSearchRecursive(true);
-            else if(argument.compare("-v") == 0)
+            else if (argument.compare("-v") == 0)
                 l.SetLogLevel(LogLevel::INFO);
-            else if(argument.compare("-vv") == 0)
+            else if (argument.compare("-vv") == 0)
                 l.SetLogLevel(LogLevel::DBUG);
             else
                 f.SetDirectory(argument);
@@ -25,7 +26,7 @@ void Cli::ProcessCommandLine(int const argc, char const * const argv[], FileEngi
     }
 }
 
-int Cli::Run(int argc, char* argv[]) {
+int Cli::Run(int argc, char *argv[]) {
     auto t1 = std::chrono::high_resolution_clock::now();
 
     Logger logger_object;
@@ -36,9 +37,12 @@ int Cli::Run(int argc, char* argv[]) {
     ParseResult res = rel.ProcessRelModel();
 
     auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    
-    logger_object.LOG(LogLevel::INFO, "Execution Time: " + std::to_string(duration) + " microseconds");
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+
+    logger_object.LOG(
+        LogLevel::INFO,
+        "Execution Time: " + std::to_string(duration) + " microseconds");
 
     return RelParser::ParseResultToInteger(res);
 }

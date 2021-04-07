@@ -4,8 +4,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "rel-lib/src/Logger.h"
 #include "rel-lib/src/FileEngine.h"
+#include "rel-lib/src/Logger.h"
 #include "rel-lib/src/RelParser.h"
 
 namespace py = pybind11;
@@ -28,9 +28,7 @@ PYBIND11_MODULE(librel_py, m) {
         .def("Get", &RsType::Get)
         .def_readwrite("attributes", &RsType::attributes);
 
-
-    py::class_<RdString>(m, "RdString")
-        .def("Get", &RdString::Get);
+    py::class_<RdString>(m, "RdString").def("Get", &RdString::Get);
 
     py::class_<RdInteger>(m, "RdInteger")
         .def("Get", &RdInteger::Get)
@@ -51,7 +49,6 @@ PYBIND11_MODULE(librel_py, m) {
         .def_readwrite("filename", &RdFile::filename)
         .def_readwrite("type_instances", &RdFile::type_instances);
 
-
     py::enum_<LogLevel>(m, "LogLevel")
         .value("ERROR", LogLevel::ERROR)
         .value("WARNING", LogLevel::WARNING)
@@ -63,16 +60,15 @@ PYBIND11_MODULE(librel_py, m) {
         .def(py::init<const std::string>())
         .def("SetLogLevel", &Logger::SetLogLevel)
         .def("GetCurrentLogLevel", &Logger::GetCurrentLogLevel)
-        .def("LogMessage", &Logger::LogMessage, 
-             py::arg("loglevel") = LogLevel::WARNING, py::arg("message") = "", py::arg("filename") = "Unset", py::arg("line_number") = -1);
-
+        .def("LogMessage", &Logger::LogMessage,
+             py::arg("loglevel") = LogLevel::WARNING, py::arg("message") = "",
+             py::arg("filename") = "Unset", py::arg("line_number") = -1);
 
     py::class_<FileEngine>(m, "FileEngine")
         .def(py::init<Logger&>())
         .def("SetSearchRecursive", &FileEngine::SetSearchRecursive)
         .def("GetSearchRecursive", &FileEngine::GetSearchRecursive)
         .def("SetDirectory", &FileEngine::SetDirectory);
-
 
     py::enum_<ParseResult>(m, "ParseResult")
         .value("NoExceptionOccurred", ParseResult::NoExceptionOccurred)
@@ -83,5 +79,5 @@ PYBIND11_MODULE(librel_py, m) {
         .def("ProcessRelModel", &RelParser::ProcessRelModel)
         .def("GetDatabase", &RelParser::GetDatabase);
 
-    m.doc() = "REL - Python integration"; // optional module docstring
+    m.doc() = "REL - Python integration";  // optional module docstring
 }

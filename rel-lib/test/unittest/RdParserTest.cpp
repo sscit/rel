@@ -2,25 +2,27 @@
 #include "rel-lib/src/RdParser.h"
 
 class RdParserTestFixture : public ::testing::Test, public RdParser {
-protected:
-  RdParserTestFixture() : RdParser(logger, rs_parser), lexer_test(logger), rs_parser(logger) { }
+   protected:
+    RdParserTestFixture()
+        : RdParser(logger, rs_parser), lexer_test(logger), rs_parser(logger) {}
 
-  void SetUp() override { 
-    //logger.SetLogLevel(LogLevel::DBUG);
-  }
+    void SetUp() override {
+        // logger.SetLogLevel(LogLevel::DBUG);
+    }
 
-  void TearDown() override { }
+    void TearDown() override {}
 
-  Logger logger;
-  std::string spec;
-  std::string data;
-  Lexer lexer_test;
-  RsParser rs_parser;
+    Logger logger;
+    std::string spec;
+    std::string data;
+    Lexer lexer_test;
+    RsParser rs_parser;
 };
 
 TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks) {
     spec = "type Req { Identifier : id, Text : string, Parent : link,}";
-    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : p1,}  \n     \
+    data =
+        "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : p1,}  \n     \
             Req { Identifier : p22, Text : \"Parent Req 2\", Parent : [p22,],}    \
             Req { Identifier : c1, Text : \"Child Req\", Parent : [p1,p22,],}    ";
 
@@ -39,8 +41,10 @@ TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks) {
     EXPECT_EQ(database.size(), 1);
     EXPECT_EQ(database.front().type_instances.size(), 3);
     EXPECT_EQ(database.front().type_instances[0].attributes.size(), 3);
-    EXPECT_EQ(database.front().type_instances[0].attributes[2].link_value.size(), 1);
-    EXPECT_EQ(database.front().type_instances[2].attributes[2].link_value.size(), 2);
+    EXPECT_EQ(
+        database.front().type_instances[0].attributes[2].link_value.size(), 1);
+    EXPECT_EQ(
+        database.front().type_instances[2].attributes[2].link_value.size(), 2);
 
     // check positions of unique ids
     EXPECT_EQ(unique_ids.size(), 3);
@@ -52,7 +56,9 @@ TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks) {
 
 TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks2) {
     spec = "type Req { Identifier : id, Text : string, Parent : link,}";
-    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : [p1,p1,p1,p1,p1,p1,],}";
+    data =
+        "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : "
+        "[p1,p1,p1,p1,p1,p1,],}";
 
     FileReader r_spec(spec);
     FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
@@ -69,7 +75,8 @@ TEST_F(RdParserTestFixture, DatasetWithArrayOfLinks2) {
     EXPECT_EQ(database.size(), 1);
     EXPECT_EQ(database.front().type_instances.size(), 1);
     EXPECT_EQ(database.front().type_instances[0].attributes.size(), 3);
-    EXPECT_EQ(database.front().type_instances[0].attributes[2].link_value.size(), 6);
+    EXPECT_EQ(
+        database.front().type_instances[0].attributes[2].link_value.size(), 6);
 }
 
 TEST_F(RdParserTestFixture, EmptyArrayOfLinks) {
@@ -108,7 +115,9 @@ TEST_F(RdParserTestFixture, ArrayWithWrongLinks) {
 
 TEST_F(RdParserTestFixture, ArrayWithWrongLinks2) {
     spec = "type Req { Identifier : id, Text : string, Parent : link,}";
-    data = "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : [\"id4#udz\"],}";
+    data =
+        "Req { Identifier : p1, Text : \"Parent Req 1\", Parent : "
+        "[\"id4#udz\"],}";
 
     FileReader r_spec(spec);
     FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
@@ -141,8 +150,12 @@ TEST_F(RdParserTestFixture, ArrayWithSyntaxError) {
 }
 
 TEST_F(RdParserTestFixture, UsingReservedKeywords) {
-    spec = "type Req { unique_id : id, another_id : id, thirdId : id, fid : id , fifthid : id , sixid : id,}";
-    data = "Req { unique_id : typeXX, another_id : enumXX, thirdId : idXX, fid : intXX, fifthid : stringXX, sixid : linkXX,}";
+    spec =
+        "type Req { unique_id : id, another_id : id, thirdId : id, fid : id , "
+        "fifthid : id , sixid : id,}";
+    data =
+        "Req { unique_id : typeXX, another_id : enumXX, thirdId : idXX, fid : "
+        "intXX, fifthid : stringXX, sixid : linkXX,}";
 
     FileReader r_spec(spec);
     FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
@@ -181,8 +194,11 @@ TEST_F(RdParserTestFixture, SingleDataset) {
 }
 
 TEST_F(RdParserTestFixture, SingleDataset2) {
-    spec = "type Req { Identifier : id, Number : int, Text : string, Parent : link,}";
-    data = "Req { Identifier : r1, Number : 1234, Text : \"1234\", Parent : r1,}";
+    spec =
+        "type Req { Identifier : id, Number : int, Text : string, Parent : "
+        "link,}";
+    data =
+        "Req { Identifier : r1, Number : 1234, Text : \"1234\", Parent : r1,}";
 
     FileReader r_spec(spec);
     FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
@@ -202,8 +218,12 @@ TEST_F(RdParserTestFixture, SingleDataset2) {
 }
 
 TEST_F(RdParserTestFixture, DatasetWithNamespace) {
-    spec = "type System.OS { Identifier : id, Number : int, Text : string, Parent : link,}";
-    data = "System.OS { Identifier : OS.r1, Number : 1234, Text : \"1234\", Parent : OS.r1,}";
+    spec =
+        "type System.OS { Identifier : id, Number : int, Text : string, Parent "
+        ": link,}";
+    data =
+        "System.OS { Identifier : OS.r1, Number : 1234, Text : \"1234\", "
+        "Parent : OS.r1,}";
 
     FileReader r_spec(spec);
     FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
@@ -224,7 +244,9 @@ TEST_F(RdParserTestFixture, DatasetWithNamespace) {
 
 TEST_F(RdParserTestFixture, DatasetWithMaskedQuotationMark) {
     spec = "type Req { Text : string, }";
-    data = "Req { Text : \"I would like to \\\"emphasize\\\" this part and mo\\\"re\",}";
+    data =
+        "Req { Text : \"I would like to \\\"emphasize\\\" this part and "
+        "mo\\\"re\",}";
 
     FileReader r_spec(spec);
     FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
@@ -253,7 +275,7 @@ TEST_F(RdParserTestFixture, DatasetWithEnum) {
     FileTokenData d_data(DataType::RequirementsData, r_data);
 
     lexer_test.Read(d_spec);
-    lexer_test.Read(d_data);   
+    lexer_test.Read(d_data);
     rs_parser.ParseTokens(d_spec);
     rs_parser.CheckAllEnumTypes();
 
@@ -262,7 +284,8 @@ TEST_F(RdParserTestFixture, DatasetWithEnum) {
 
     EXPECT_EQ(rd_parser.GetDatabase().size(), 1);
     EXPECT_EQ(rd_parser.GetDatabase().front().type_instances.size(), 1);
-    EXPECT_EQ(rd_parser.GetDatabase().front().type_instances[0].attributes.size(), 1);
+    EXPECT_EQ(
+        rd_parser.GetDatabase().front().type_instances[0].attributes.size(), 1);
 }
 
 TEST_F(RdParserTestFixture, DatasetWithNamespaceEnum) {
@@ -285,7 +308,8 @@ TEST_F(RdParserTestFixture, DatasetWithNamespaceEnum) {
 
     EXPECT_EQ(rd_parser.GetDatabase().size(), 1);
     EXPECT_EQ(rd_parser.GetDatabase().front().type_instances.size(), 1);
-    EXPECT_EQ(rd_parser.GetDatabase().front().type_instances[0].attributes.size(), 1);
+    EXPECT_EQ(
+        rd_parser.GetDatabase().front().type_instances[0].attributes.size(), 1);
 }
 
 TEST_F(RdParserTestFixture, ParseErrorWrongToken) {
@@ -392,7 +416,9 @@ TEST_F(RdParserTestFixture, TypeInstanceElementWrong_OneElementMissing) {
 
 TEST_F(RdParserTestFixture, TypeInstanceElementWrong_TooManyElements) {
     spec = "type Req { unique_id : id, Text : string,}";
-    data = "Req { unique_id : r1, Text : \"mytext\", Text2 : \"one attribute too much\",}";
+    data =
+        "Req { unique_id : r1, Text : \"mytext\", Text2 : \"one attribute too "
+        "much\",}";
 
     FileReader r_spec(spec);
     FileTokenData d_spec(DataType::RequirementsSpecification, r_spec);
@@ -472,9 +498,9 @@ TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongLinkValue) {
     FileTokenData d_data(DataType::RequirementsData, r_data);
 
     lexer_test.Read(d_spec);
-    lexer_test.Read(d_data);   
+    lexer_test.Read(d_data);
     rs_parser.ParseTokens(d_spec);
-        
+
     ASSERT_THROW(ParseTokens(d_data), RdTypeException);
 }
 
@@ -489,9 +515,9 @@ TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongStringValue) {
     FileTokenData d_data(DataType::RequirementsData, r_data);
 
     lexer_test.Read(d_spec);
-    lexer_test.Read(d_data);   
+    lexer_test.Read(d_data);
     rs_parser.ParseTokens(d_spec);
-        
+
     ASSERT_THROW(ParseTokens(d_data), RdTypeException);
 }
 
@@ -506,9 +532,9 @@ TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongStringValue2) {
     FileTokenData d_data(DataType::RequirementsData, r_data);
 
     lexer_test.Read(d_spec);
-    lexer_test.Read(d_data);   
+    lexer_test.Read(d_data);
     rs_parser.ParseTokens(d_spec);
-        
+
     ASSERT_THROW(ParseTokens(d_data), RdTypeException);
 }
 
@@ -523,9 +549,9 @@ TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongIntValue) {
     FileTokenData d_data(DataType::RequirementsData, r_data);
 
     lexer_test.Read(d_spec);
-    lexer_test.Read(d_data);   
+    lexer_test.Read(d_data);
     rs_parser.ParseTokens(d_spec);
-        
+
     ASSERT_THROW(ParseTokens(d_data), RdTypeException);
 }
 
@@ -540,9 +566,9 @@ TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongIdValue) {
     FileTokenData d_data(DataType::RequirementsData, r_data);
 
     lexer_test.Read(d_spec);
-    lexer_test.Read(d_data);   
+    lexer_test.Read(d_data);
     rs_parser.ParseTokens(d_spec);
-        
+
     ASSERT_THROW(ParseTokens(d_data), RdTypeException);
 }
 
@@ -557,9 +583,9 @@ TEST_F(RdParserTestFixture, TypeInstanceWrong_WrongIdValue2) {
     FileTokenData d_data(DataType::RequirementsData, r_data);
 
     lexer_test.Read(d_spec);
-    lexer_test.Read(d_data);   
+    lexer_test.Read(d_data);
     rs_parser.ParseTokens(d_spec);
-        
+
     ASSERT_THROW(ParseTokens(d_data), RdTypeException);
 }
 
@@ -579,4 +605,3 @@ TEST_F(RdParserTestFixture, DeveloperIsWritingReqsNotFinished) {
 
     ASSERT_THROW(ParseTokens(d_data), RdTypeException);
 }
-

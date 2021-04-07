@@ -2,21 +2,17 @@
 #include "rel-lib/src/Token.h"
 
 class TokenFixture : public ::testing::Test, public Token {
-protected:
-  TokenFixture() : Token() {
+   protected:
+    TokenFixture() : Token() {}
 
-  }
+    void SetUp() override {
+        // logger.SetLogLevel(LogLevel::DBUG);
+    }
 
-  void SetUp() override {
-      //logger.SetLogLevel(LogLevel::DBUG);
-  }
+    void TearDown() override {}
 
-  void TearDown() override {
-
-  }
-
-  std::string token_value = "id";
-  std::string filename = "data.rd";
+    std::string token_value = "id";
+    std::string filename = "data.rd";
 };
 
 TEST_F(TokenFixture, CheckGetMethods) {
@@ -35,4 +31,3 @@ TEST_F(TokenFixture, CompareTokenValue) {
     EXPECT_TRUE(t.Compare("id"));
     EXPECT_FALSE(t.Compare("id2"));
 }
-

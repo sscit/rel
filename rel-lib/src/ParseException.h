@@ -4,14 +4,14 @@
 #ifndef PARSEEXCEPTION_H_
 #define PARSEEXCEPTION_H_
 
-#include <string>
 #include <exception>
-#include "Token.h"
-#include "AST.h"
+#include <string>
 
+#include "AST.h"
+#include "Token.h"
 
 class FileIoException : public std::exception {
-public:
+   public:
     FileIoException(std::string const&, std::string const&);
     virtual ~FileIoException();
 
@@ -20,14 +20,13 @@ public:
     /* Req: parser1 */
     std::string GetFilePath() const;
 
-protected:
+   protected:
     std::string const filepath;
     std::string const error_message;
 };
 
-
 class TypeNotFoundException : public std::exception {
-public:
+   public:
     TypeNotFoundException();
     virtual ~TypeNotFoundException();
 
@@ -36,7 +35,7 @@ public:
 };
 
 class ParseException : public std::exception {
-public:
+   public:
     ParseException();
     ParseException(Token const, std::string const);
     virtual ~ParseException();
@@ -44,13 +43,13 @@ public:
     /* Req: parser1 */
     Token GetToken() const;
 
-protected:
+   protected:
     Token const token;
     std::string const custom_message;
 };
 
 class WrongTokenException : public ParseException {
-public:
+   public:
     WrongTokenException(Token const, std::string const msg = "");
     ~WrongTokenException();
 
@@ -59,7 +58,7 @@ public:
 };
 
 class CommentException : public ParseException {
-public:
+   public:
     CommentException(Token const, std::string const msg = "");
     ~CommentException();
 
@@ -68,7 +67,7 @@ public:
 };
 
 class RsEnumException : public ParseException {
-public:
+   public:
     RsEnumException(Token const, std::string const msg = "");
     ~RsEnumException();
 
@@ -77,7 +76,7 @@ public:
 };
 
 class RsTypeException : public ParseException {
-public:
+   public:
     RsTypeException(Token const, std::string const msg = "");
     ~RsTypeException();
 
@@ -86,7 +85,7 @@ public:
 };
 
 class EnumUsedButNotDefinedException : public ParseException {
-public:
+   public:
     EnumUsedButNotDefinedException(Token const, std::string const msg = "");
     ~EnumUsedButNotDefinedException();
 
@@ -95,7 +94,7 @@ public:
 };
 
 class RdStringException : public ParseException {
-public:
+   public:
     RdStringException(Token const, std::string const msg = "");
     ~RdStringException();
 
@@ -104,7 +103,7 @@ public:
 };
 
 class ArrayException : public ParseException {
-public:
+   public:
     ArrayException(Token const, std::string const msg = "");
     ~ArrayException();
 
@@ -113,7 +112,7 @@ public:
 };
 
 class RdTypeException : public ParseException {
-public:
+   public:
     RdTypeException(RdTypeInstance const);
     RdTypeException(Token const, std::string const msg = "");
     ~RdTypeException();
@@ -121,10 +120,8 @@ public:
     /* Req: parser1 */
     virtual const char* what() const throw();
 
-private:
+   private:
     RdTypeInstance const rd_type;
 };
-
-
 
 #endif /* PARSEEXCEPTION_H_ */

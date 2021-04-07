@@ -4,16 +4,17 @@
 #ifndef MSGBUFFER_H_
 #define MSGBUFFER_H_
 
-#include <string>
 #include <iostream>
 #include <map>
+#include <string>
+
 #include "Logger.h"
 
 // Class is used to build up a message, before
 // the actual JSON interpretation
 class MsgBuffer {
-public:
-    MsgBuffer(Logger&);
+   public:
+    MsgBuffer(Logger &);
     ~MsgBuffer();
 
     void AddChar(char const);
@@ -21,8 +22,8 @@ public:
     std::string GetMessage() const;
     void Clear();
 
-private:
-    /* Method checks, if current_str contains a valid header 
+   private:
+    /* Method checks, if current_str contains a valid header
        If yes, transfer it to map data structure. */
     void ParseHeader();
     void ExtractDataFromHeader();
@@ -33,10 +34,10 @@ private:
 
     unsigned int message_length;
     std::string message;
-    
+
     std::map<std::string, std::string> headers;
 
     Logger &l;
 };
 
-#endif 
+#endif

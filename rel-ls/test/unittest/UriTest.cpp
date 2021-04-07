@@ -2,14 +2,13 @@
 #include "rel-ls/src/Uri.h"
 
 class UriTestFixture : public ::testing::Test {
-protected:
-  UriTestFixture() { }
-  void SetUp() override { }
-  void TearDown() override { }
+   protected:
+    UriTestFixture() {}
+    void SetUp() override {}
+    void TearDown() override {}
 };
 
-TEST_F(UriTestFixture, CheckUriElements)
-{
+TEST_F(UriTestFixture, CheckUriElements) {
     std::string sample_uri = "file:///home/myuser/tmp/reltest";
     Uri my_uri(sample_uri);
 
@@ -19,8 +18,7 @@ TEST_F(UriTestFixture, CheckUriElements)
     EXPECT_EQ(DataType::Unknown, my_uri.GetDataType());
 }
 
-TEST_F(UriTestFixture, CheckUriElements2)
-{
+TEST_F(UriTestFixture, CheckUriElements2) {
     std::string sample_uri = "file://example.com:1234/home/myuser/tmp/reltest";
     Uri my_uri(sample_uri);
 
@@ -29,8 +27,7 @@ TEST_F(UriTestFixture, CheckUriElements2)
     EXPECT_EQ("/home/myuser/tmp/reltest", my_uri.GetPath());
 }
 
-TEST_F(UriTestFixture, filetype1)
-{
+TEST_F(UriTestFixture, filetype1) {
     std::string sample_uri = "file://example.com:1234/home/myuser/tmp/spec.rs";
     Uri my_uri(sample_uri);
 
@@ -39,8 +36,7 @@ TEST_F(UriTestFixture, filetype1)
     EXPECT_EQ(DataType::RequirementsSpecification, my_uri.GetDataType());
 }
 
-TEST_F(UriTestFixture, filetype2)
-{
+TEST_F(UriTestFixture, filetype2) {
     std::string sample_uri = "file://example.com:1234/home/myuser/tmp/data.rd";
     Uri my_uri(sample_uri);
 
@@ -49,11 +45,10 @@ TEST_F(UriTestFixture, filetype2)
     EXPECT_EQ(DataType::RequirementsData, my_uri.GetDataType());
 }
 
-TEST_F(UriTestFixture, Factory)
-{
+TEST_F(UriTestFixture, Factory) {
     std::string const path = "/home/myuser/tmp/data.rd";
     Uri my_uri = Uri::CreateFileUriFromPath(path);
 
     EXPECT_EQ(path, my_uri.GetPath());
-    EXPECT_EQ("file://"+path, my_uri.GetUri());
+    EXPECT_EQ("file://" + path, my_uri.GetUri());
 }

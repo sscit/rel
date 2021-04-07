@@ -4,22 +4,22 @@
 #ifndef FILEREADER_H_
 #define FILEREADER_H_
 
-#include <string>
 #include <fstream>
 #include <iostream>
+#include <string>
 
 /* Class abstracts from C++ file reading interface.
    FileReader can either read from a file, or read data directly
    from string provided. */
 class FileReader {
-public:
+   public:
     FileReader();
     FileReader(std::string);
     FileReader(FileReader const &f);
     ~FileReader();
 
     /* Req: integ1, integ11 */
-    void OpenFile(const char*);
+    void OpenFile(const char *);
     /* Req: integ1, integ11 */
     bool IsFileOpen() const;
     /* Req: integ1, integ11 */
@@ -27,7 +27,7 @@ public:
     /* Req: integ1, integ11 */
     bool GetChar(char &);
 
-private:
+   private:
     std::fstream *filestream;
     /* Is used for testing purposes, to supply data to read
      * via string instead of accessing the file system.

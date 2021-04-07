@@ -1,17 +1,15 @@
 #include "gtest/gtest.h"
 #include "rel-cli/src/Cli.h"
 
+class CliTestFixture : public ::testing::Test {
+   protected:
+    CliTestFixture() {}
 
-class CliTestFixture : public ::testing::Test
-{
-protected:
-  CliTestFixture() { }
+    void SetUp() override {}
 
-  void SetUp() override { }
+    void TearDown() override {}
 
-  void TearDown() override { }
-
-  Cli rel_cli;
+    Cli rel_cli;
 };
 
 TEST_F(CliTestFixture, ReturnValueValidProject) {

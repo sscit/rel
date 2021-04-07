@@ -2,23 +2,19 @@
 #include "rel-lib/src/Lexer.h"
 
 class LexerTestFixture : public ::testing::Test, public Lexer {
-protected:
-  LexerTestFixture() : Lexer(logger), lexer_test(logger) {
+   protected:
+    LexerTestFixture() : Lexer(logger), lexer_test(logger) {}
 
-  }
+    void SetUp() override {
+        token_list = new std::list<Token>();
+        // logger.SetLogLevel(LogLevel::DBUG);
+    }
 
-  void SetUp() override {
-      token_list = new std::list<Token>();
-      //logger.SetLogLevel(LogLevel::DBUG);
-  }
+    void TearDown() override { delete token_list; }
 
-  void TearDown() override {
-      delete token_list;
-  }
-
-  Logger logger;
-  std::string testdata;
-  Lexer lexer_test;
+    Logger logger;
+    std::string testdata;
+    Lexer lexer_test;
 };
 
 TEST_F(LexerTestFixture, AllTokensInString) {
@@ -41,7 +37,8 @@ TEST_F(LexerTestFixture, AllTokensInString2) {
 
     EXPECT_EQ(d.token_list.size(), 6);
     EXPECT_EQ(d.token_list.front().GetTokenType(), TokenType::QUOTATION_MARK);
-    EXPECT_EQ(std::next(d.token_list.begin(), 2)->GetTokenType(), TokenType::QUOTATION_MARK_MASKED);
+    EXPECT_EQ(std::next(d.token_list.begin(), 2)->GetTokenType(),
+              TokenType::QUOTATION_MARK_MASKED);
 }
 
 TEST_F(LexerTestFixture, AllTokensInString3) {
@@ -53,7 +50,8 @@ TEST_F(LexerTestFixture, AllTokensInString3) {
 
     EXPECT_EQ(d.token_list.size(), 6);
     EXPECT_EQ(d.token_list.front().GetTokenType(), TokenType::QUOTATION_MARK);
-    EXPECT_EQ(std::next(d.token_list.begin(), 2)->GetTokenType(), TokenType::QUOTATION_MARK_MASKED);
+    EXPECT_EQ(std::next(d.token_list.begin(), 2)->GetTokenType(),
+              TokenType::QUOTATION_MARK_MASKED);
 }
 
 TEST_F(LexerTestFixture, AllTokensInString4) {
@@ -65,9 +63,11 @@ TEST_F(LexerTestFixture, AllTokensInString4) {
 
     EXPECT_EQ(d.token_list.size(), 3);
     EXPECT_EQ(d.token_list.front().GetTokenType(), TokenType::QUOTATION_MARK);
-    EXPECT_EQ(std::next(d.token_list.begin(), 1)->GetTokenType(), TokenType::STRING_VALUE);
+    EXPECT_EQ(std::next(d.token_list.begin(), 1)->GetTokenType(),
+              TokenType::STRING_VALUE);
     EXPECT_EQ(std::next(d.token_list.begin(), 1)->GetTokenValue()->size(), 5);
-    EXPECT_EQ(std::next(d.token_list.begin(), 2)->GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(std::next(d.token_list.begin(), 2)->GetTokenType(),
+              TokenType::QUOTATION_MARK);
 }
 
 TEST_F(LexerTestFixture, AllTokensInString5) {
@@ -79,7 +79,8 @@ TEST_F(LexerTestFixture, AllTokensInString5) {
 
     EXPECT_EQ(d.token_list.size(), 9);
     EXPECT_EQ(d.token_list.front().GetTokenType(), TokenType::QUOTATION_MARK);
-    EXPECT_EQ(std::next(d.token_list.begin(), 8)->GetTokenType(), TokenType::QUOTATION_MARK);
+    EXPECT_EQ(std::next(d.token_list.begin(), 8)->GetTokenType(),
+              TokenType::QUOTATION_MARK);
 }
 
 TEST_F(LexerTestFixture, AllTokensInString6) {
@@ -92,8 +93,7 @@ TEST_F(LexerTestFixture, AllTokensInString6) {
     EXPECT_EQ(d.token_list.size(), 7);
 }
 
-TEST_F(LexerTestFixture, TypeDefinition)
-{
+TEST_F(LexerTestFixture, TypeDefinition) {
     testdata = "type XXX { attribute : id, status : New, }";
 
     FileReader r(testdata);
@@ -111,8 +111,7 @@ TEST_F(LexerTestFixture, TypeDefinition)
     EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 0);
 }
 
-TEST_F(LexerTestFixture, EnumDefinition)
-{
+TEST_F(LexerTestFixture, EnumDefinition) {
     testdata = "enum XXX { MyAttr }";
 
     FileReader r(testdata);
@@ -126,8 +125,7 @@ TEST_F(LexerTestFixture, EnumDefinition)
     EXPECT_EQ(d.token_list.back().GetLineNumberOfToken(), 0);
 }
 
-TEST_F(LexerTestFixture, EnumDefinition2)
-{
+TEST_F(LexerTestFixture, EnumDefinition2) {
     testdata = "enum XXX {MyAttr}";
 
     FileReader r(testdata);
@@ -141,8 +139,7 @@ TEST_F(LexerTestFixture, EnumDefinition2)
     EXPECT_EQ(d.token_list.back().GetLineNumberOfToken(), 0);
 }
 
-TEST_F(LexerTestFixture, EnumDefinitionWithLineBreaks)
-{
+TEST_F(LexerTestFixture, EnumDefinitionWithLineBreaks) {
     testdata = "enum XXX \n      { \n MyAttr \n   }";
 
     FileReader r(testdata);
@@ -150,10 +147,10 @@ TEST_F(LexerTestFixture, EnumDefinitionWithLineBreaks)
     lexer_test.Read(d);
 
     EXPECT_EQ(d.token_list.size(), 8);
-    //enum
+    // enum
     EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 0);
     EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 0);
-    //XXX
+    // XXX
     d.token_list.pop_front();
     EXPECT_EQ(d.token_list.front().GetLineNumberOfToken(), 0);
     EXPECT_EQ(d.token_list.front().GetPositionInLineOfToken(), 5);
@@ -182,8 +179,7 @@ TEST_F(LexerTestFixture, EnumDefinitionWithLineBreaks)
     EXPECT_EQ(d.token_list.back().GetLineNumberOfToken(), 3);
 }
 
-TEST_F(LexerTestFixture, EnumDefinitionWithComment)
-{
+TEST_F(LexerTestFixture, EnumDefinitionWithComment) {
     testdata = "enum XXX/*anInlineComment*/{ MyAttr }";
 
     FileReader r(testdata);
@@ -193,8 +189,7 @@ TEST_F(LexerTestFixture, EnumDefinitionWithComment)
     EXPECT_EQ(d.token_list.size(), 8);
 }
 
-TEST_F(LexerTestFixture, LineComment)
-{
+TEST_F(LexerTestFixture, LineComment) {
     testdata = "// test line comment\n";
 
     FileReader r(testdata);
@@ -204,146 +199,142 @@ TEST_F(LexerTestFixture, LineComment)
     EXPECT_EQ(d.token_list.size(), 5);
 }
 
-TEST_F(LexerTestFixture, IsOperatorOrKeyword)
-{
+TEST_F(LexerTestFixture, IsOperatorOrKeyword) {
     SlidingWindow v;
 
     v.push_back({'/', 0});
     v.push_back({'*', 0});
-    EXPECT_TRUE( IsOperator(v) );
+    EXPECT_TRUE(IsOperator(v));
 
     v.clear();
     v.push_back({'*', 0});
     v.push_back({'/', 0});
-    EXPECT_TRUE( IsOperator(v) );
+    EXPECT_TRUE(IsOperator(v));
 
     v.clear();
-    v.push_back({'\\',0});
-    v.push_back({'\"',0});
-    EXPECT_TRUE( IsOperator(v) );
+    v.push_back({'\\', 0});
+    v.push_back({'\"', 0});
+    EXPECT_TRUE(IsOperator(v));
 
-    EXPECT_TRUE( IsOperatorOrKeyword("//") );
-    EXPECT_TRUE( IsOperatorOrKeyword("/*") );
-    EXPECT_TRUE( IsOperatorOrKeyword("\"") );
-    EXPECT_TRUE( IsOperatorOrKeyword("\\\"") );
-    EXPECT_TRUE( IsOperatorOrKeyword("string") );
-    EXPECT_TRUE( IsOperatorOrKeyword("int") );
-    EXPECT_TRUE( IsOperatorOrKeyword("enum") );
+    EXPECT_TRUE(IsOperatorOrKeyword("//"));
+    EXPECT_TRUE(IsOperatorOrKeyword("/*"));
+    EXPECT_TRUE(IsOperatorOrKeyword("\""));
+    EXPECT_TRUE(IsOperatorOrKeyword("\\\""));
+    EXPECT_TRUE(IsOperatorOrKeyword("string"));
+    EXPECT_TRUE(IsOperatorOrKeyword("int"));
+    EXPECT_TRUE(IsOperatorOrKeyword("enum"));
 
-    EXPECT_FALSE( IsOperatorOrKeyword("xx") );
-    EXPECT_FALSE( IsOperatorOrKeyword("1hd") );
-    EXPECT_FALSE( IsOperatorOrKeyword("int2") );
-    EXPECT_FALSE( IsOperatorOrKeyword("dahsdjhaskjdhkas") );
+    EXPECT_FALSE(IsOperatorOrKeyword("xx"));
+    EXPECT_FALSE(IsOperatorOrKeyword("1hd"));
+    EXPECT_FALSE(IsOperatorOrKeyword("int2"));
+    EXPECT_FALSE(IsOperatorOrKeyword("dahsdjhaskjdhkas"));
 }
 
-TEST_F(LexerTestFixture, IsWhitespaceOrDelimiter)
-{
-    EXPECT_TRUE( IsWhitespace(' ') );
-    EXPECT_TRUE( IsWhitespace('\t') );
-    EXPECT_FALSE( IsWhitespace('b') );
-    EXPECT_FALSE( IsWhitespace('x') );
-    EXPECT_FALSE( IsWhitespace('0') );
+TEST_F(LexerTestFixture, IsWhitespaceOrDelimiter) {
+    EXPECT_TRUE(IsWhitespace(' '));
+    EXPECT_TRUE(IsWhitespace('\t'));
+    EXPECT_FALSE(IsWhitespace('b'));
+    EXPECT_FALSE(IsWhitespace('x'));
+    EXPECT_FALSE(IsWhitespace('0'));
 
-    EXPECT_TRUE( IsDelimiter(' ') );
-    EXPECT_TRUE( IsDelimiter('\r') );
-    EXPECT_TRUE( IsDelimiter('\n') );
-    EXPECT_FALSE( IsDelimiter('b') );
-    EXPECT_FALSE( IsDelimiter('x') );
-    EXPECT_FALSE( IsDelimiter('0') );
+    EXPECT_TRUE(IsDelimiter(' '));
+    EXPECT_TRUE(IsDelimiter('\r'));
+    EXPECT_TRUE(IsDelimiter('\n'));
+    EXPECT_FALSE(IsDelimiter('b'));
+    EXPECT_FALSE(IsDelimiter('x'));
+    EXPECT_FALSE(IsDelimiter('0'));
 }
 
-TEST_F(LexerTestFixture, IsIdentifier)
-{
-    EXPECT_TRUE ( IsIdentifier("asbd") );
-    EXPECT_TRUE ( IsIdentifier("Xhdsa") );
-    EXPECT_TRUE ( IsIdentifier("JDASU") );
-    EXPECT_TRUE ( IsIdentifier("ash_dhuzd") );
-    EXPECT_TRUE ( IsIdentifier("XB_dhs_ASdzz") );
-    EXPECT_TRUE ( IsIdentifier("a20_30") );
-    EXPECT_TRUE ( IsIdentifier("_20_30") );
-    EXPECT_TRUE ( IsIdentifier("_ident") );
-    EXPECT_TRUE ( IsIdentifier("a") );
-    EXPECT_TRUE ( IsIdentifier("X") );
-    EXPECT_TRUE ( IsIdentifier("_") );
-    EXPECT_TRUE ( IsIdentifier("ab.cd") );
-    EXPECT_TRUE ( IsIdentifier("XHDHD.") );
-    EXPECT_TRUE ( IsIdentifier("XH.DHD") );
-    EXPECT_TRUE ( IsIdentifier("a.b.c.d.") );
-    EXPECT_TRUE ( IsIdentifier("a.b.c.d.erere") );
-    EXPECT_TRUE ( IsIdentifier(".b.c.d.erere") );
-    EXPECT_TRUE ( IsIdentifier(".") );
-    EXPECT_TRUE ( IsIdentifier(".fsa") );
-    EXPECT_TRUE ( IsIdentifier("......___....") );
-    EXPECT_TRUE ( IsIdentifier(".....") );
+TEST_F(LexerTestFixture, IsIdentifier) {
+    EXPECT_TRUE(IsIdentifier("asbd"));
+    EXPECT_TRUE(IsIdentifier("Xhdsa"));
+    EXPECT_TRUE(IsIdentifier("JDASU"));
+    EXPECT_TRUE(IsIdentifier("ash_dhuzd"));
+    EXPECT_TRUE(IsIdentifier("XB_dhs_ASdzz"));
+    EXPECT_TRUE(IsIdentifier("a20_30"));
+    EXPECT_TRUE(IsIdentifier("_20_30"));
+    EXPECT_TRUE(IsIdentifier("_ident"));
+    EXPECT_TRUE(IsIdentifier("a"));
+    EXPECT_TRUE(IsIdentifier("X"));
+    EXPECT_TRUE(IsIdentifier("_"));
+    EXPECT_TRUE(IsIdentifier("ab.cd"));
+    EXPECT_TRUE(IsIdentifier("XHDHD."));
+    EXPECT_TRUE(IsIdentifier("XH.DHD"));
+    EXPECT_TRUE(IsIdentifier("a.b.c.d."));
+    EXPECT_TRUE(IsIdentifier("a.b.c.d.erere"));
+    EXPECT_TRUE(IsIdentifier(".b.c.d.erere"));
+    EXPECT_TRUE(IsIdentifier("."));
+    EXPECT_TRUE(IsIdentifier(".fsa"));
+    EXPECT_TRUE(IsIdentifier("......___...."));
+    EXPECT_TRUE(IsIdentifier("....."));
 
-    EXPECT_FALSE ( IsIdentifier("20_30") );
-    EXPECT_FALSE ( IsIdentifier("1") );
-    EXPECT_FALSE ( IsIdentifier("1abs") );
-    EXPECT_FALSE ( IsIdentifier("/§&dasdas") );
-    EXPECT_FALSE ( IsIdentifier("asdhdja_&dhas") );
-    EXPECT_FALSE ( IsIdentifier("-1273t67") );
-    EXPECT_FALSE ( IsIdentifier("1237") );
-    EXPECT_FALSE ( IsIdentifier(" ") );
-    EXPECT_FALSE ( IsIdentifier("-----") );
+    EXPECT_FALSE(IsIdentifier("20_30"));
+    EXPECT_FALSE(IsIdentifier("1"));
+    EXPECT_FALSE(IsIdentifier("1abs"));
+    EXPECT_FALSE(IsIdentifier("/§&dasdas"));
+    EXPECT_FALSE(IsIdentifier("asdhdja_&dhas"));
+    EXPECT_FALSE(IsIdentifier("-1273t67"));
+    EXPECT_FALSE(IsIdentifier("1237"));
+    EXPECT_FALSE(IsIdentifier(" "));
+    EXPECT_FALSE(IsIdentifier("-----"));
 }
 
-TEST_F(LexerTestFixture, IsString)
-{
-    EXPECT_TRUE ( IsString("asbd") );
-    EXPECT_TRUE ( IsString("A") );
+TEST_F(LexerTestFixture, IsString) {
+    EXPECT_TRUE(IsString("asbd"));
+    EXPECT_TRUE(IsString("A"));
 
-    EXPECT_TRUE ( IsString("Xh---dsa") );
-    EXPECT_FALSE ( IsString("Xh-\r-dsa") );
-    EXPECT_FALSE ( IsString("Xh-\n-dsa") );
-    EXPECT_FALSE ( IsString("Xh-\r\n-dsa") );
-    EXPECT_FALSE ( IsString("\r") );
-    EXPECT_FALSE ( IsString("\n") );
-    EXPECT_FALSE ( IsString(" ") );
-    EXPECT_FALSE ( IsString("     xx  ") );
+    EXPECT_TRUE(IsString("Xh---dsa"));
+    EXPECT_FALSE(IsString("Xh-\r-dsa"));
+    EXPECT_FALSE(IsString("Xh-\n-dsa"));
+    EXPECT_FALSE(IsString("Xh-\r\n-dsa"));
+    EXPECT_FALSE(IsString("\r"));
+    EXPECT_FALSE(IsString("\n"));
+    EXPECT_FALSE(IsString(" "));
+    EXPECT_FALSE(IsString("     xx  "));
 }
 
 TEST_F(LexerTestFixture, IsInteger) {
-    EXPECT_TRUE ( IsInteger("-1") );
-    EXPECT_TRUE ( IsInteger("0") );
-    EXPECT_TRUE ( IsInteger("1") );
-    EXPECT_TRUE ( IsInteger("17262") );
-    EXPECT_TRUE ( IsInteger("-14726") );
+    EXPECT_TRUE(IsInteger("-1"));
+    EXPECT_TRUE(IsInteger("0"));
+    EXPECT_TRUE(IsInteger("1"));
+    EXPECT_TRUE(IsInteger("17262"));
+    EXPECT_TRUE(IsInteger("-14726"));
 
-    EXPECT_FALSE ( IsInteger("-1x4726") );
-    EXPECT_FALSE ( IsInteger("1x4726") );
-    EXPECT_FALSE ( IsInteger("$1x4726") );
-    EXPECT_FALSE ( IsInteger("a-1x4726") );
-    EXPECT_FALSE ( IsInteger("X") );
-    EXPECT_FALSE ( IsInteger("123sa") );
+    EXPECT_FALSE(IsInteger("-1x4726"));
+    EXPECT_FALSE(IsInteger("1x4726"));
+    EXPECT_FALSE(IsInteger("$1x4726"));
+    EXPECT_FALSE(IsInteger("a-1x4726"));
+    EXPECT_FALSE(IsInteger("X"));
+    EXPECT_FALSE(IsInteger("123sa"));
 }
 
 TEST_F(LexerTestFixture, IsDelimiter) {
-    EXPECT_TRUE ( IsDelimiter('\n') );
-    EXPECT_TRUE ( IsDelimiter('\r') );
-    EXPECT_TRUE ( IsDelimiter(' ') );
+    EXPECT_TRUE(IsDelimiter('\n'));
+    EXPECT_TRUE(IsDelimiter('\r'));
+    EXPECT_TRUE(IsDelimiter(' '));
 
-    EXPECT_FALSE ( IsDelimiter('a') );
-    EXPECT_FALSE ( IsDelimiter('x') );
-    EXPECT_FALSE ( IsDelimiter('_') );
-    EXPECT_FALSE ( IsDelimiter(0) );
+    EXPECT_FALSE(IsDelimiter('a'));
+    EXPECT_FALSE(IsDelimiter('x'));
+    EXPECT_FALSE(IsDelimiter('_'));
+    EXPECT_FALSE(IsDelimiter(0));
 }
 
 TEST_F(LexerTestFixture, IsLinebreak) {
-    EXPECT_TRUE ( IsLinebreak("\r\n") );
-    EXPECT_TRUE ( IsLinebreak("\n") );
+    EXPECT_TRUE(IsLinebreak("\r\n"));
+    EXPECT_TRUE(IsLinebreak("\n"));
 
-    EXPECT_FALSE ( IsLinebreak("ads") );
-    EXPECT_FALSE ( IsLinebreak("") );
-    EXPECT_FALSE ( IsLinebreak("_") );
+    EXPECT_FALSE(IsLinebreak("ads"));
+    EXPECT_FALSE(IsLinebreak(""));
+    EXPECT_FALSE(IsLinebreak("_"));
 }
 
 TEST_F(LexerTestFixture, IsWhitespace) {
-    EXPECT_TRUE ( IsWhitespace(' ') );
-    EXPECT_TRUE ( IsWhitespace('\t') );
+    EXPECT_TRUE(IsWhitespace(' '));
+    EXPECT_TRUE(IsWhitespace('\t'));
 
-    EXPECT_FALSE ( IsWhitespace('x') );
-    EXPECT_FALSE ( IsWhitespace(0) );
-    EXPECT_FALSE ( IsWhitespace('_') );
+    EXPECT_FALSE(IsWhitespace('x'));
+    EXPECT_FALSE(IsWhitespace(0));
+    EXPECT_FALSE(IsWhitespace('_'));
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString1) {
@@ -407,7 +398,8 @@ TEST_F(LexerTestFixture, IdentifyTokenInString8) {
     CheckStringandAddToken(xx, 0);
 
     EXPECT_EQ(token_list->size(), 1);
-    EXPECT_EQ(token_list->front().GetTokenType(), TokenType::COMMENT_BLOCK_START);
+    EXPECT_EQ(token_list->front().GetTokenType(),
+              TokenType::COMMENT_BLOCK_START);
 }
 
 TEST_F(LexerTestFixture, IdentifyTokenInString9) {
