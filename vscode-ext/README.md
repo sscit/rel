@@ -20,6 +20,13 @@ Description how to build the language server for REL from source code is availab
 
 ## Release Notes
 
+### v0.9.0
+
+Link to release and VSIX: https://github.com/sscit/rel/releases/tag/v0.9.0
+
+Limitations:
+- Requirements model is not updated, if files are deleted or renamed within VSCode. In this case, it is necessary, to restart VSCode, so that the workspace is parsed from scratch again.
+
 ### v0.6.0
 
 v0.6 of REL framework does not contain any changes on the Visual Studio Code Extension for REL. VSIX package of 0.5.0 can still be used.

@@ -2,7 +2,7 @@
     "name": "rel",
     "displayName": "REL - Requirements Engineering Language",
     "description": "REL - A Domain Specific Language for Requirements Engineering",
-    "version": "0.5.0",
+    "version": "0.9.0",
     "publisher": "sscit",
     "author": {
         "name": "Stefan Schlichthärle"
